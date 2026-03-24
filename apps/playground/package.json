@@ -1,11 +1,7 @@
 {
-  "name": "gerstner",
+  "name": "playground",
   "version": "0.1.0",
   "type": "module",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "scripts": {
     "dev": "vp dev",
     "build": "vp build",
@@ -16,7 +12,9 @@
     "test": "vp test"
   },
   "dependencies": {
-    "vite-plus": "^1.0.0"
+    "vite-plus": "^1.0.0",
+    "@gerstner/debug": "workspace:*",
+    "@gerstner/cli": "workspace:*"
   },
   "devDependencies": {
     "vite-plus": "^1.0.0"
