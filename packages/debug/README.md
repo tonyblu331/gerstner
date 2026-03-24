@@ -2,22 +2,14 @@
 
 Dev-only observer for Gerstner.
 
-This package does not own layout.
-It reads the public foundation tokens already exposed by `@gerstner/core` and visualizes them in the browser.
+This package does not own layout. It reads the public contract already exposed by `gerstner` and visualizes the current scope as human labels, Stride metrics, overlay guides, and exportable contract CSS.
 
-## What it does in this first pass
+## What this pass aligns
 
-- content-column overlay
-- full-width boundary hint
-- token inspector panel
-- floating badge
-- scope hover and Alt+click pinning
-- keyboard toggles
-- ResizeObserver refresh
-
-## What it deliberately does not fake
-
-The current phase-1 core does not expose a baseline token yet, so the debug UI shows the ruler as unavailable instead of inventing a value.
+- reads `--g-gutter`, `--g-frame`, `--g-content-inline`, `--g-col-unit-raw`, `--g-stride`, `--g-rhythm`, `--g-prose`
+- shows exact vs approximate vs independent alignment honestly
+- exports a valid `:root {}` contract block from the current scope
+- keeps the baseline ruler real because Phase 1 now exposes `--g-baseline`
 
 ## Suggested usage
 
@@ -27,7 +19,12 @@ import { initGerstnerDebug } from '@gerstner/debug'
 
 if (import.meta.env.DEV) {
   initGerstnerDebug({
-    defaultOpen: true
+    defaultOpen: false,
+    initial: {
+      overlay: true,
+      badge: true,
+      ruler: false
+    }
   })
 }
 ```
@@ -35,9 +32,9 @@ if (import.meta.env.DEV) {
 Mark interesting scopes with:
 
 ```html
-<section data-g-debug-scope data-g-debug-label="Breakout scene">
+<section data-g-debug-scope data-g-debug-label="Scene E · breakout">
   ...
 </section>
 ```
 
-Then hover those scopes to inspect them. Hold `Alt` and click to pin one.
+Hover a marked scope to inspect it. Hold Alt and click to pin it.

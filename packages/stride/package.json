@@ -1,6 +1,7 @@
 {
   "name": "gerstner",
   "version": "0.1.0",
+  "description": "CSS-only layout system with canonical g-* utilities",
   "private": true,
   "type": "module",
   "sideEffects": [
@@ -11,8 +12,10 @@
       "default": "./index.css"
     },
     "./index.css": "./index.css",
+    "./tokens": "./tokens.css",
     "./layout": "./layout.css",
-    "./rhythm": "./rhythm.css"
+    "./rhythm": "./rhythm.css",
+    "./presets": "./presets.css"
   },
   "peerDependencies": {
     "tailwindcss": "^4.0.0"

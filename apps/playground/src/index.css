@@ -2,17 +2,16 @@
 @import "../../../packages/stride/index.css";
 @import "@gerstner/debug/debug.css";
 
-@theme {
-  --color-gerstner-ink: oklch(0.26 0.02 264);
-  --color-gerstner-paper: oklch(0.98 0.01 95);
-  --color-gerstner-accent: oklch(0.69 0.15 249);
-  --color-gerstner-mint: oklch(0.88 0.07 177);
-  --font-display: Inter, ui-sans-serif, system-ui, sans-serif;
-}
-
 :root {
-  color: var(--color-gerstner-ink);
-  background: linear-gradient(180deg, white 0%, color-mix(in oklab, white 92%, var(--color-gerstner-paper)) 100%);
+  color-scheme: light;
+  --surface: oklch(0.985 0.004 95);
+  --surface-2: oklch(0.97 0.009 265);
+  --line: oklch(0.87 0.01 255);
+  --ink: oklch(0.26 0.02 264);
+  --muted: oklch(0.54 0.02 258);
+  --accent: oklch(0.69 0.15 249);
+  --mint: oklch(0.87 0.07 177);
+  background: linear-gradient(180deg, white 0%, color-mix(in oklab, white 94%, var(--surface-2)) 100%);
 }
 
 * {
@@ -22,80 +21,208 @@
 html,
 body,
 #app {
-  min-height: 100%;
+  min-block-size: 100%;
 }
 
 body {
   margin: 0;
-  font-family: var(--font-display);
-  color: var(--color-gerstner-ink);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  color: var(--ink);
+  background: inherit;
 }
 
-main {
-  padding-block: 2rem 5rem;
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.92em;
 }
 
-.playground-shell {
-  --g-content-max: 74rem;
-  row-gap: 2rem;
-}
-
-.hero-copy {
-  align-content: end;
-}
-
-.hero-media {
-  background:
-    radial-gradient(circle at 20% 20%, color-mix(in oklab, var(--color-gerstner-accent) 34%, white), transparent 38%),
-    radial-gradient(circle at 78% 30%, color-mix(in oklab, var(--color-gerstner-mint) 42%, white), transparent 28%),
-    linear-gradient(135deg, color-mix(in oklab, var(--color-gerstner-accent) 10%, white), color-mix(in oklab, var(--color-gerstner-mint) 14%, white));
+.site-shell {
+  row-gap: calc(var(--g-rhythm) * 3);
+  padding-block: calc(var(--g-rhythm) * 2) calc(var(--g-rhythm) * 6);
 }
 
 .scene {
   display: grid;
-  gap: 1rem;
+  gap: calc(var(--g-rhythm) * 1.5);
 }
 
-.scene h2,
-.scene p {
+.section-shell {
+  row-gap: calc(var(--g-rhythm) * 1.5);
+}
+
+.scene-copy > * {
   margin: 0;
 }
 
-.scene-label {
-  font-size: 0.825rem;
+.scene-kicker {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.hero-band {
+  align-items: stretch;
+}
+
+.hero-copy {
+  padding-block: calc(var(--g-rhythm) * 3) calc(var(--g-rhythm) * 2);
+}
+
+.hero-art {
+  min-block-size: 24rem;
+  background:
+    radial-gradient(circle at 20% 20%, color-mix(in oklab, var(--accent) 36%, white), transparent 35%),
+    radial-gradient(circle at 75% 30%, color-mix(in oklab, var(--mint) 52%, white), transparent 28%),
+    linear-gradient(135deg, color-mix(in oklab, var(--accent) 12%, white), color-mix(in oklab, var(--mint) 18%, white));
+}
+
+.card,
+.mini-card,
+.marker {
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: color-mix(in oklab, white 88%, var(--surface));
+  box-shadow: 0 0.65rem 2rem color-mix(in oklab, black 8%, transparent);
+}
+
+.card {
+  min-block-size: 5rem;
+  padding: 1rem 1.1rem;
+}
+
+.card.alt {
+  background: color-mix(in oklab, white 82%, var(--mint));
+}
+
+.card.tinted {
+  background: color-mix(in oklab, white 80%, var(--accent));
+}
+
+.mini-card {
+  min-block-size: 4.5rem;
+  padding: 0.85rem 0.95rem;
+}
+
+.raw-band > .card,
+.collection > .card {
+  min-block-size: 6rem;
+}
+
+.type-board {
+  gap: calc(var(--g-rhythm) * 2);
+}
+
+.type-board h3,
+.type-board h4,
+.type-board p {
+  margin: 0;
+}
+
+.meta-row {
+  margin: 0 0 calc(var(--g-rhythm) * 1.5);
+  color: var(--muted);
+}
+
+.token-readout {
+  --g-cols: 4;
+}
+
+.token-chip {
+  min-block-size: 4.5rem;
+  padding: 0.9rem 1rem;
+  border: 1px dashed color-mix(in oklab, var(--ink) 16%, transparent);
+  border-radius: 0.9rem;
+  background: color-mix(in oklab, white 86%, var(--surface-2));
+}
+
+.token-chip span,
+.token-chip strong {
+  display: block;
+}
+
+.token-chip span {
+  margin-block-end: 0.4rem;
+  font-size: 0.76rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  opacity: 0.62;
+  color: var(--muted);
 }
 
-.block {
-  min-height: 4rem;
+.viewport-safe {
+  min-block-size: 72svh;
+  display: grid;
+  place-content: end start;
+  background:
+    linear-gradient(180deg, color-mix(in oklab, white 98%, var(--surface-2)), color-mix(in oklab, white 88%, var(--accent)));
+}
+
+.from-band {
+  background: color-mix(in oklab, white 87%, var(--accent));
+}
+
+.exact-parent,
+.approx-parent {
+  position: relative;
+  padding-block-start: calc(var(--g-rhythm) * 2.5);
+}
+
+.marker {
+  min-block-size: 2.5rem;
+  padding: 0.55rem 0.7rem;
+  text-align: center;
+  color: var(--muted);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--accent) 10%, white) 0,
+      color-mix(in oklab, var(--accent) 10%, white) 2px,
+      transparent 2px,
+      transparent calc(var(--g-stride) / 2)
+    ),
+    white;
+}
+
+.exact-child,
+.approx-child {
+  padding-block-start: calc(var(--g-rhythm) * 1.5);
+}
+
+.independent-grid {
+  --g-gutter: clamp(1.4rem, 4vw, 2rem);
+  --g-min: 10rem;
+}
+
+.collection {
+  --g-min: 12rem;
+}
+
+.override-scope {
+  --g-cols: 6;
+  --g-gutter: 2rem;
   padding: 1rem;
+  border: 1px dashed color-mix(in oklab, var(--ink) 18%, transparent);
   border-radius: 1rem;
-  border: 1px solid color-mix(in oklab, var(--color-gerstner-ink) 12%, transparent);
-  background: color-mix(in oklab, var(--color-gerstner-accent) 5%, white);
+  background: color-mix(in oklab, white 92%, var(--surface-2));
 }
 
-.block.alt {
-  background: color-mix(in oklab, var(--color-gerstner-mint) 12%, white);
+.bullet-list {
+  margin: 0;
+  padding-inline-start: 1.2rem;
 }
 
-.block.neutral {
-  background: color-mix(in oklab, var(--color-gerstner-ink) 3%, white);
+.bullet-list li + li {
+  margin-block-start: 0.5rem;
 }
 
-.metrics {
-  --g-fit-min: 13rem;
-}
+@media (max-width: 920px) {
+  .site-shell {
+    padding-block-end: calc(var(--g-rhythm) * 4);
+  }
 
-.metrics .block {
-  min-height: 8rem;
-}
-
-.specimen-grid {
-  --g-cols: 12;
-}
-
-.specimen-grid > .block {
-  min-height: 5rem;
+  .hero-art {
+    min-block-size: 18rem;
+  }
 }

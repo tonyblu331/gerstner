@@ -1,85 +1,75 @@
-/*!
- * Stride Rhythm System
- * Vertical rhythm and spacing utilities for Gerstner
- */
+@layer gerstner.rhythm {
+  .g-prose {
+    font-size: var(--g-scale-0);
+    line-height: var(--g-prose);
+    max-inline-size: var(--g-measure);
+    text-wrap: pretty;
+  }
 
-/* Base rhythm variables */
-:root {
-  --g-type-base: 1rem;
-  --g-baseline: 0.5rem;
-  --g-leading-steps: 3;
-  --g-scale-ratio: 1.25;
-  --g-measure: 70ch;
-}
+  @supports (text-box: trim-start cap alphabetic) {
+    .g-prose {
+      text-box: trim-start cap alphabetic;
+    }
+  }
 
-/* Calculate leading from baseline and steps */
-:root {
-  --g-leading-body: calc(var(--g-baseline) * var(--g-leading-steps));
-  --g-leading-tight: calc(var(--g-baseline) * 2);
-  --g-leading-loose: calc(var(--g-baseline) * 4);
-}
+  .g-display {
+    font-size: var(--g-scale-5);
+    line-height: round(up, var(--g-scale-5), var(--g-baseline));
+    text-wrap: balance;
+  }
 
-/* Type scale calculations */
-:root {
-  --g-caption: calc(var(--g-type-base) / var(--g-scale-ratio));
-  --g-body: var(--g-type-base);
-  --g-title: calc(var(--g-type-base) * var(--g-scale-ratio));
-  --g-headline: calc(var(--g-type-base) * var(--g-scale-ratio) * var(--g-scale-ratio));
-  --g-display: calc(var(--g-type-base) * var(--g-scale-ratio) * var(--g-scale-ratio) * var(--g-scale-ratio));
-}
+  .g-heading {
+    font-size: var(--g-scale-3);
+    line-height: round(up, var(--g-scale-3), var(--g-baseline));
+    text-wrap: balance;
+  }
 
-/* Vertical rhythm utilities */
-.g-rhythm {
-  margin-top: var(--g-leading-body);
-  margin-bottom: var(--g-leading-body);
-}
+  @supports (text-box: trim-both cap alphabetic) {
+    .g-display,
+    .g-heading {
+      text-box: trim-both cap alphabetic;
+      line-height: 1.05;
+    }
+  }
 
-.g-rhythm-tight {
-  margin-top: var(--g-leading-tight);
-  margin-bottom: var(--g-leading-tight);
-}
+  .g-ui {
+    font-size: var(--g-scale--1);
+    line-height: 1;
+  }
 
-.g-rhythm-loose {
-  margin-top: var(--g-leading-loose);
-  margin-bottom: var(--g-leading-loose);
-}
+  .g-tight {
+    --g-density: var(--g-density-tight);
+  }
 
-.g-rhythm-top {
-  margin-top: var(--g-leading-body);
-}
+  .g-standard {
+    --g-density: var(--g-density-standard);
+  }
 
-.g-rhythm-bottom {
-  margin-bottom: var(--g-leading-body);
-}
+  .g-loose {
+    --g-density: var(--g-density-loose);
+  }
 
-/* Baseline grid alignment */
-.g-baseline {
-  display: grid;
-  align-content: baseline;
-}
+  .g-stack-1 > * + * {
+    margin-block-start: calc(var(--g-rhythm) * 1);
+  }
 
-/* Stack utilities for consistent spacing */
-.g-stack > * + * {
-  margin-top: var(--g-leading-body);
-}
+  .g-stack-2 > * + * {
+    margin-block-start: calc(var(--g-rhythm) * 2);
+  }
 
-.g-stack-tight > * + * {
-  margin-top: var(--g-leading-tight);
-}
+  .g-stack-3 > * + * {
+    margin-block-start: calc(var(--g-rhythm) * 3);
+  }
 
-.g-stack-loose > * + * {
-  margin-top: var(--g-leading-loose);
-}
+  .g-stack-4 > * + * {
+    margin-block-start: calc(var(--g-rhythm) * 4);
+  }
 
-/* Inline spacing */
-.g-space > * + * {
-  margin-left: var(--g-gutter, 1rem);
-}
+  .g-stack-5 > * + * {
+    margin-block-start: calc(var(--g-rhythm) * 5);
+  }
 
-.g-space-tight > * + * {
-  margin-left: calc(var(--g-gutter, 1rem) * 0.5);
-}
-
-.g-space-loose > * + * {
-  margin-left: calc(var(--g-gutter, 1rem) * 2);
+  .g-stack-6 > * + * {
+    margin-block-start: calc(var(--g-rhythm) * 6);
+  }
 }
