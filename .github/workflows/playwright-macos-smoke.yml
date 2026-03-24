@@ -1,0 +1,25 @@
+name: playwright-macos-smoke
+
+on:
+  push:
+    branches: [release/*, rc/*]
+  workflow_dispatch:
+
+concurrency:
+  group: playwright-macos-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version: '22'
+          cache: true
+
+      - run: vp install
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: npx playwright test --project=chromium --project=firefox --project=webkit
