@@ -6,12 +6,15 @@
   "scripts": {
     "ready": "vp fmt && vp lint && vp run test -r && vp run build -r",
     "dev": "vp run website#dev",
-    "prepare": "vp config"
+    "prepare": "vp config",
+    "sync": "syncpack fix",
+    "sync:check": "syncpack lint"
   },
   "engines": {
     "node": ">=22.12.0"
   },
   "devDependencies": {
+    "syncpack": "catalog:",
     "vite-plus": "catalog:"
   },
   "packageManager": "pnpm@10.33.0"
