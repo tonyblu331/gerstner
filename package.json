@@ -1,0 +1,20 @@
+{
+  "name": "gerstner",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vp dev",
+    "build": "vp build",
+    "preview": "vp preview",
+    "check": "vp check",
+    "lint": "vp lint",
+    "fmt": "vp fmt",
+    "test": "vp test"
+  },
+  "dependencies": {
+    "vite-plus": "^1.0.0"
+  },
+  "devDependencies": {
+    "vite-plus": "^1.0.0"
+  }
+}
