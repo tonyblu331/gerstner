@@ -6,6 +6,7 @@
   "scripts": {
     "ready": "vp fmt && vp lint && vp run test -r && vp run build -r",
     "dev": "vp run website#dev",
+    "preview:playground": "cd apps/playground && vp preview",
     "prepare": "vp config",
     "sync": "syncpack fix",
     "sync:check": "syncpack lint"
