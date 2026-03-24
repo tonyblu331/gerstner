@@ -1,5 +1,6 @@
 # Gerstner
 
+<<<<<<< HEAD
 **Gerstner, powered by Stride.**
 
 A type-first layout system for Tailwind v4.
@@ -352,3 +353,25 @@ Gerstner is for teams who want layout to feel like a system, not a pile of overr
 MIT with attribution clause.
 
 Use it, modify it, ship it. Attribution in published project READMEs is appreciated. Public talks, tutorials, and articles about the system should credit Gerstner.
+=======
+A Vite+ monorepo project.
+
+## Getting Started
+
+```bash
+# Install dependencies
+vp install
+
+# Start development server
+vp dev
+
+# Build for production
+vp build
+
+# Run tests
+vp test
+
+# Check code quality
+vp check
+```
+>>>>>>> f0ab5456477e2d646ebbbf2fd79be1ce26788625
