@@ -20,7 +20,29 @@ export default defineConfig({
     },
   },
 
-  staged: {
-    '*.{js,ts,tsx,jsx,cjs,mjs,css,md,json,yml,yaml}': 'vp check --fix',
+  run: {
+    tasks: {
+      verify: {
+        command: 'vp check',
+        env: ['CI'],
+      },
+      'pack:debug': {
+        command: 'cd packages/debug && vp pack',
+        dependsOn: ['verify'],
+      },
+      'pack:cli': {
+        command: 'cd packages/cli && vp pack',
+        dependsOn: ['verify'],
+      },
+      'build:playground': {
+        command: 'cd apps/playground && vp build',
+        dependsOn: ['verify'],
+      },
+      'test:playwright': {
+        command: 'npx playwright test',
+        cache: false,
+        dependsOn: ['build:playground'],
+      },
+    },
   },
 })
