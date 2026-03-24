@@ -2,8 +2,8 @@ import { defineConfig } from 'tsdown'
 
 export default defineConfig({
   entry: {
-    index: 'src/index.ts',
-    cli: 'src/cli.ts'
+    index: 'index.ts',
+    cli: 'cli.ts'
   },
   platform: 'node',
   format: ['esm'],

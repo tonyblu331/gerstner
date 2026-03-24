@@ -5,7 +5,11 @@
   "license": "MIT",
   "files": [
     "dist",
-    "src"
+    "cli.ts",
+    "commands",
+    "lib",
+    "templates",
+    "index.ts"
   ],
   "type": "module",
   "exports": {
