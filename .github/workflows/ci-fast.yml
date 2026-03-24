@@ -27,4 +27,5 @@ jobs:
       - run: vp run verify
       - run: vp run pack:debug
       - run: vp run pack:cli
+      - run: cd packages/cli && vp test
       - run: vp run build:playground

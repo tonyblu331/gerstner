@@ -77,23 +77,17 @@ importers:
   packages/cli:
     devDependencies:
       '@types/node':
-        specifier: 25.5.0
-        version: 25.5.0
-      '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260316.1
-        version: 7.0.0-dev.20260316.1
-      bumpp:
-        specifier: 11.0.1
-        version: 11.0.1
+        specifier: 'catalog:'
+        version: 24.12.0
       tsdown:
         specifier: 'catalog:'
         version: 0.21.4(@typescript/native-preview@7.0.0-dev.20260316.1)(typescript@6.0.2)
       typescript:
-        specifier: 6.0.2
+        specifier: 'catalog:'
         version: 6.0.2
       vite-plus:
         specifier: 'catalog:'
-        version: 0.1.14(@types/node@25.5.0)(jiti@2.6.1)(typescript@6.0.2)(vite@8.0.2(@types/node@25.5.0)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3)
+        version: 0.1.14(@types/node@24.12.0)(jiti@2.6.1)(typescript@6.0.2)(vite@8.0.2(@types/node@24.12.0)(jiti@2.6.1)(yaml@2.8.3))(yaml@2.8.3)
 
   packages/debug:
     devDependencies:
