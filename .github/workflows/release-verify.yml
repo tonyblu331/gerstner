@@ -1,0 +1,30 @@
+name: release-verify
+
+# VERIFICATION ONLY - Not ready for actual publishing yet
+# This workflow verifies packages are buildable before release
+# TODO: Add proper vp pack configs for packages/debug and packages/cli
+# TODO: Set up npm auth and actual publish steps
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version: '22'
+          cache: true
+
+      - run: vp install
+      - run: vp check
+      - run: cd packages/debug && vp pack
+      - run: cd packages/cli && vp pack
+
+      # TODO: Add actual npm publish steps here
+      # For now, this just verifies packages build correctly
