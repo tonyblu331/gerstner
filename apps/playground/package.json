@@ -12,11 +12,11 @@
     "test": "vp test"
   },
   "dependencies": {
-    "vite-plus": "^1.0.0",
+    "vite-plus": "0.1.14",
     "@gerstner/debug": "workspace:*",
     "@gerstner/cli": "workspace:*"
   },
   "devDependencies": {
-    "vite-plus": "^1.0.0"
+    "vite-plus": "0.1.14"
   }
 }
