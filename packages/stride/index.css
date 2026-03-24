@@ -16,6 +16,9 @@
   generalized compiler-grade line-mapping system yet.
 */
 
+@layer gerstner.tokens, gerstner.layout, gerstner.rhythm, gerstner.presets;
+
+@layer gerstner.tokens {
 @property --g-cols {
   syntax: '<integer>';
   inherits: true;
@@ -82,7 +85,9 @@
     --g-shell-edge-min: 1.5rem;
   }
 }
+}
 
+@layer gerstner.layout {
 /* Base grid primitives */
 .g {
   --g-cols-local: var(--g-cols);
@@ -215,6 +220,7 @@
   grid-column: 8 / breakout-end;
 }
 
+@layer gerstner.rhythm {
 /* Rhythm + type roles */
 .g-stack > * + * {
   margin-top: var(--g-stack-space, 1rem);
@@ -249,6 +255,8 @@
   font-size: var(--g-text-display);
   line-height: var(--g-leading-tight);
   text-wrap: balance;
+}
+
 }
 
 /* Debug-friendly cosmetics for the demo */
