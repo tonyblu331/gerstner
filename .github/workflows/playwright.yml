@@ -1,0 +1,32 @@
+name: playwright
+
+on:
+  pull_request:
+    paths:
+      - 'packages/core/**'
+      - 'packages/debug/**'
+      - 'packages/cli/**'
+      - 'apps/playground/**'
+      - 'tests/**'
+      - 'playwright.config.*'
+  push:
+    branches: [main]
+
+concurrency:
+  group: playwright-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version: '22'
+          cache: true
+
+      - run: vp install
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: npx playwright test --project=chromium --project=firefox --project=webkit

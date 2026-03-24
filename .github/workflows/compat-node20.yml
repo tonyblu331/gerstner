@@ -1,0 +1,22 @@
+name: compat-node20
+
+on:
+  schedule:
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+
+jobs:
+  compat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version: '20.19'
+          cache: true
+
+      - run: vp install
+      - run: vp check
+      - run: cd packages/debug && vp pack
+      - run: cd packages/cli && vp pack
