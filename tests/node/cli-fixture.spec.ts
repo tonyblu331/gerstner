@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { mkdtemp, mkdir, readFile, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
-import { runInit } from '../../packages/cli/src/commands/init'
+import { runInit } from '../../packages/cli/commands/init'
 
 describe('gerstner cli fixture tests', () => {
   it('generates contract files with exact content', async () => {
