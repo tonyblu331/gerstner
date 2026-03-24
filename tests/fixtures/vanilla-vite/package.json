@@ -1,0 +1,7 @@
+{
+  "name": "fixture-vanilla-vite",
+  "private": true,
+  "scripts": {
+    "dev": "vite"
+  }
+}

@@ -7,6 +7,9 @@
     "ready": "vp fmt && vp lint && vp run test -r && vp run build -r",
     "dev": "vp run website#dev",
     "preview:playground": "cd apps/playground && vp preview",
+    "cli": "cd packages/cli && tsdown && node dist/cli.mjs",
+    "cli:build": "cd packages/cli && tsdown",
+    "cli:test": "cd packages/cli && vp test",
     "prepare": "vp config",
     "sync": "syncpack fix",
     "sync:check": "syncpack lint"

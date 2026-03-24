@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "build:cli": "pnpm --filter @gerstner/cli build",
+    "typecheck:cli": "pnpm --filter @gerstner/cli typecheck",
+    "test:cli": "vitest run tests/node/cli-init.spec.ts tests/node/cli-init-fixtures.spec.ts",
+    "ci:cli": "pnpm build:cli && pnpm typecheck:cli && pnpm test:cli"
+  }
+}

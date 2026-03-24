@@ -41,6 +41,10 @@ export default defineConfig({
         command: 'cd packages/utils && tsdown',
         dependsOn: ['verify'],
       },
+      'test:cli': {
+        command: 'cd packages/cli && vp test',
+        dependsOn: ['pack:cli'],
+      },
       'build:playground': {
         command: 'cd apps/playground && vp build',
         dependsOn: ['verify'],
