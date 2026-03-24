@@ -1,4 +1,15 @@
 import './index.css'
+import { initGerstnerDebug } from '@gerstner/debug'
+
+// Initialize debug tools
+const debugController = initGerstnerDebug({
+  defaultOpen: false,
+  initial: {
+    overlay: true,
+    badge: true,
+    ruler: false
+  }
+})
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <main class="g-shell playground-shell g-type-body">
@@ -84,3 +95,8 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     </section>
   </main>
 `
+
+// Export debug controller for external access
+if (typeof window !== 'undefined') {
+  (window as any).gerstnerDebug = debugController
+}

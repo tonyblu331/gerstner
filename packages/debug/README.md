@@ -1,23 +1,43 @@
-# vite-plus-starter
+# @gerstner/debug
 
-A starter for creating a Vite Plus project.
+Dev-only observer for Gerstner.
 
-## Development
+This package does not own layout.
+It reads the public foundation tokens already exposed by `@gerstner/core` and visualizes them in the browser.
 
-- Install dependencies:
+## What it does in this first pass
 
-```bash
-vp install
+- content-column overlay
+- full-width boundary hint
+- token inspector panel
+- floating badge
+- scope hover and Alt+click pinning
+- keyboard toggles
+- ResizeObserver refresh
+
+## What it deliberately does not fake
+
+The current phase-1 core does not expose a baseline token yet, so the debug UI shows the ruler as unavailable instead of inventing a value.
+
+## Suggested usage
+
+```ts
+import '@gerstner/debug/debug.css'
+import { initGerstnerDebug } from '@gerstner/debug'
+
+if (import.meta.env.DEV) {
+  initGerstnerDebug({
+    defaultOpen: true
+  })
+}
 ```
 
-- Run the unit tests:
+Mark interesting scopes with:
 
-```bash
-vp test
+```html
+<section data-g-debug-scope data-g-debug-label="Breakout scene">
+  ...
+</section>
 ```
 
-- Build the library:
-
-```bash
-vp pack
-```
+Then hover those scopes to inspect them. Hold `Alt` and click to pin one.

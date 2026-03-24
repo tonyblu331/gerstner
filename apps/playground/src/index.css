@@ -1,5 +1,6 @@
 @import "tailwindcss";
-@import "../../../packages/core/index.css";
+@import "../../../packages/stride/index.css";
+@import "@gerstner/debug/debug.css";
 
 @theme {
   --color-gerstner-ink: oklch(0.26 0.02 264);
