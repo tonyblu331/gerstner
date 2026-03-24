@@ -1,6 +1,5 @@
 # Gerstner
 
-<<<<<<< HEAD
 **Gerstner, powered by Stride.**
 
 A type-first layout system for Tailwind v4.
