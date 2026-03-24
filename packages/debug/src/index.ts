@@ -512,7 +512,7 @@ function inferLabel(scope: HTMLElement): string {
 }
 
 function inferMode(scope: HTMLElement): string {
-  const classes = new Set(scope.classList)
+  const classes = new Set(Array.from(scope.classList))
 
   if (classes.has('g-fit') || classes.has('gc-fit')) {
     return 'fit'
