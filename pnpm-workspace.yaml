@@ -4,6 +4,7 @@ packages:
   - tools/*
 
 catalog:
+  '@playwright/test': ^1
   '@types/node': ^24
   '@tailwindcss/vite': ^4
   syncpack: ^14.2.1

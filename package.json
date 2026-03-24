@@ -14,6 +14,7 @@
     "node": ">=22.12.0"
   },
   "devDependencies": {
+    "@playwright/test": "catalog:",
     "syncpack": "catalog:",
     "vite-plus": "catalog:"
   },

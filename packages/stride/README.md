@@ -1,86 +1,49 @@
-# Stride
+# @gerstner/core
 
-The programmable layout engine powering Gerstner.
+First-pass CSS engine for Gerstner.
 
-## Installation
+What this package owns:
 
-```bash
-npm install stride
-```
+- layout tokens
+- `@property` registrations
+- shell and raw grid primitives
+- breakout and zone utilities
+- nested grid helpers
+- type and rhythm roles
 
-## Usage
+What this package does not own:
 
-### Import the full system
+- overlays
+- live inspectors
+- keyboard toggles
+- canvas sync
+- scaffolding or file generation
 
-```css
-@import "tailwindcss";
-@import "stride";
-```
+## Public API in this pass
 
-### Import only what you need
+Canonical classes:
 
-```css
-@import "stride/layout";
-@import "stride/rhythm";
-```
+- `g-shell`
+- `g`
+- `g-content`
+- `g-full`
+- `g-breakout-l`
+- `g-breakout-r`
+- `g-sub`
+- `g-view-{2|3|4|6|8|12}`
+- `g-fit`
+- `g-fill`
+- `g-span-{1..12}`
+- `g-start-{1..12}`
+- `g-type-body`
+- `g-type-prose`
+- `g-type-display`
+- `g-stack`, `g-dense`, `g-relaxed`
 
-## CSS Custom Properties
+Legacy aliases are included for now with the `gc-` prefix.
 
-Gerstner uses CSS custom properties for configuration:
+## Current limits
 
-```css
-:root {
-  --g-cols: 12;
-  --g-gutter: clamp(0.875rem, 2.2vw, 1.5rem);
-  --g-frame: clamp(1rem, 5dvw, 5rem);
-  --g-max-width: 90rem;
-  --g-min: 16rem;
-  --g-type-base: 1rem;
-  --g-baseline: 0.5rem;
-  --g-leading-steps: 3;
-  --g-scale-ratio: 1.25;
-  --g-measure: 70ch;
-}
-```
+This is a first implementation slice, not the final engine.
 
-## Utilities
-
-### Layout
-
-- `.g-shell` - Main grid container
-- `.g-content` - Content area
-- `.g-breakout-l` - Left breakout
-- `.g-breakout-r` - Right breakout
-- `.g-breakout-full` - Full breakout
-- `.g-sub` - Subgrid for exact inheritance
-
-### Typography
-
-- `.g-display` - Display text
-- `.g-headline` - Headline text
-- `.g-title` - Title text
-- `.g-body` - Body text
-- `.g-caption` - Caption text
-- `.g-prose` - Prose styling with measure
-
-### Rhythm
-
-- `.g-rhythm` - Standard vertical rhythm
-- `.g-rhythm-tight` - Tight vertical rhythm
-- `.g-rhythm-loose` - Loose vertical rhythm
-- `.g-stack` - Stack children with rhythm spacing
-- `.g-space` - Space children horizontally
-
-## Example
-
-```html
-<section class="g-shell">
-  <div class="g-content">
-    <h1 class="g-display g-rhythm-bottom">Designing programmes, not margins</h1>
-    <p class="g-prose g-rhythm">
-      The layout derives from type. The columns derive from stride. The browser resolves the rest.
-    </p>
-  </div>
-  <figure class="g-breakout-r">Image that pushes out to the right</figure>
-</section>
-```
+The big intentional limit is aligned local views: the API is stable now, but the fully generalized hidden 24-lattice mapping is not fully compiled yet. Nested reinterpretation is present and useful, but it is not pretending to be the final compiler-grade alignment model.

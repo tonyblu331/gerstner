@@ -1,11 +1,18 @@
 {
-  "name": "gerstner",
+  "name": "@gerstner/core",
   "version": "0.1.0",
+  "private": true,
   "type": "module",
-  "files": ["index.css", "layout.css", "rhythm.css", "README.md"],
+  "sideEffects": [
+    "*.css"
+  ],
   "exports": {
-    ".": "./index.css",
-    "./layout": "./layout.css",
-    "./rhythm": "./rhythm.css"
+    ".": {
+      "default": "./index.css"
+    },
+    "./index.css": "./index.css"
+  },
+  "peerDependencies": {
+    "tailwindcss": "^4.0.0"
   }
 }

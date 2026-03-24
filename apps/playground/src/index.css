@@ -1,0 +1,100 @@
+@import "tailwindcss";
+@import "../../../packages/core/index.css";
+
+@theme {
+  --color-gerstner-ink: oklch(0.26 0.02 264);
+  --color-gerstner-paper: oklch(0.98 0.01 95);
+  --color-gerstner-accent: oklch(0.69 0.15 249);
+  --color-gerstner-mint: oklch(0.88 0.07 177);
+  --font-display: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  color: var(--color-gerstner-ink);
+  background: linear-gradient(180deg, white 0%, color-mix(in oklab, white 92%, var(--color-gerstner-paper)) 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-display);
+  color: var(--color-gerstner-ink);
+}
+
+main {
+  padding-block: 2rem 5rem;
+}
+
+.playground-shell {
+  --g-content-max: 74rem;
+  row-gap: 2rem;
+}
+
+.hero-copy {
+  align-content: end;
+}
+
+.hero-media {
+  background:
+    radial-gradient(circle at 20% 20%, color-mix(in oklab, var(--color-gerstner-accent) 34%, white), transparent 38%),
+    radial-gradient(circle at 78% 30%, color-mix(in oklab, var(--color-gerstner-mint) 42%, white), transparent 28%),
+    linear-gradient(135deg, color-mix(in oklab, var(--color-gerstner-accent) 10%, white), color-mix(in oklab, var(--color-gerstner-mint) 14%, white));
+}
+
+.scene {
+  display: grid;
+  gap: 1rem;
+}
+
+.scene h2,
+.scene p {
+  margin: 0;
+}
+
+.scene-label {
+  font-size: 0.825rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.62;
+}
+
+.block {
+  min-height: 4rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid color-mix(in oklab, var(--color-gerstner-ink) 12%, transparent);
+  background: color-mix(in oklab, var(--color-gerstner-accent) 5%, white);
+}
+
+.block.alt {
+  background: color-mix(in oklab, var(--color-gerstner-mint) 12%, white);
+}
+
+.block.neutral {
+  background: color-mix(in oklab, var(--color-gerstner-ink) 3%, white);
+}
+
+.metrics {
+  --g-fit-min: 13rem;
+}
+
+.metrics .block {
+  min-height: 8rem;
+}
+
+.specimen-grid {
+  --g-cols: 12;
+}
+
+.specimen-grid > .block {
+  min-height: 5rem;
+}
