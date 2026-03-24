@@ -8,7 +8,7 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'vp build --filter ./apps/playground && vp run preview:playground',
+    command: 'cd apps/playground && vp build && npx vite preview --port 4173',
     url: 'http://127.0.0.1:4173',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
