@@ -13,10 +13,13 @@
     "test": "vp test"
   },
   "dependencies": {
+    "@gerstner/cli": "workspace:*",
     "@gerstner/debug": "workspace:*",
-    "@gerstner/cli": "workspace:*"
+    "@tailwindcss/vite": "catalog:",
+    "tailwindcss": "catalog:"
   },
   "devDependencies": {
+    "vite": "catalog:",
     "vite-plus": "catalog:"
   }
 }

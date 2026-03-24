@@ -1,0 +1,59 @@
+/*!
+ * Stride Layout Engine
+ * Core grid and layout utilities for Gerstner
+ */
+
+/* Base shell container */
+.g-shell {
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns:
+    [frame-start]
+    minmax(var(--g-frame, 1rem), 1fr)
+    [content-start]
+    repeat(var(--g-cols, 12), minmax(0, 1fr))
+    [content-end]
+    minmax(var(--g-frame, 1rem), 1fr)
+    [frame-end];
+  gap: var(--g-gutter, 1rem);
+  max-width: var(--g-max-width, 90rem);
+  margin-inline: auto;
+}
+
+/* Content area */
+.g-content {
+  grid-column: content;
+}
+
+/* Breakout utilities */
+.g-breakout-l {
+  grid-column: frame-start / content-end;
+}
+
+.g-breakout-r {
+  grid-column: content-start / frame-end;
+}
+
+.g-breakout-full {
+  grid-column: frame;
+}
+
+/* Subgrid for exact inheritance */
+.g-sub {
+  display: grid;
+  grid-template-columns: inherit;
+  gap: inherit;
+}
+
+/* Type scale utilities */
+.g-display { font-size: var(--g-display, 3.5rem); }
+.g-headline { font-size: var(--g-headline, 2.5rem); }
+.g-title { font-size: var(--g-title, 2rem); }
+.g-body { font-size: var(--g-body, 1.125rem); }
+.g-caption { font-size: var(--g-caption, 0.875rem); }
+
+/* Prose utilities */
+.g-prose {
+  max-width: var(--g-measure, 70ch);
+  line-height: var(--g-leading-body, 1.6);
+}

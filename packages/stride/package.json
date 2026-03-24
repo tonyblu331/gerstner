@@ -1,0 +1,11 @@
+{
+  "name": "gerstner",
+  "version": "0.1.0",
+  "type": "module",
+  "files": ["index.css", "layout.css", "rhythm.css", "README.md"],
+  "exports": {
+    ".": "./index.css",
+    "./layout": "./layout.css",
+    "./rhythm": "./rhythm.css"
+  }
+}
