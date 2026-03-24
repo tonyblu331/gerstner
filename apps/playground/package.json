@@ -1,0 +1,22 @@
+{
+  "name": "playground",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vp dev",
+    "build": "vp build",
+    "preview": "vp preview",
+    "check": "vp check",
+    "lint": "vp lint",
+    "fmt": "vp fmt",
+    "test": "vp test"
+  },
+  "dependencies": {
+    "@gerstner/debug": "workspace:*",
+    "@gerstner/cli": "workspace:*"
+  },
+  "devDependencies": {
+    "vite-plus": "catalog:"
+  }
+}
