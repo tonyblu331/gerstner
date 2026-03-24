@@ -24,8 +24,8 @@
     "access": "public"
   },
   "scripts": {
-    "build": "vp pack",
-    "dev": "vp pack --watch",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "test": "vp test",
     "check": "vp check",
     "prepublishOnly": "vp run build"
@@ -34,6 +34,7 @@
     "@types/node": "25.5.0",
     "@typescript/native-preview": "7.0.0-dev.20260316.1",
     "bumpp": "11.0.1",
+    "tsdown": "catalog:",
     "typescript": "6.0.2",
     "vite-plus": "catalog:"
   }
