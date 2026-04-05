@@ -10,14 +10,15 @@ This document is for contributors, maintainers, and tooling authors. The public 
 
 **Product:** Gerstner  
 **Engine:** Stride  
-**Public core package:** `gerstner`  
-**Optional packages:** `@gerstner/debug`, `@gerstner/cli`
+**Public package:** `gerstner` (single package with subpath exports)  
+**Surfaces:** `gerstner/css`, `gerstner/tw4`, `gerstner/debug`, `gerstner/text`
 
 Naming rule:
 
 - say **Gerstner** when referring to the product, repo, or install surface
 - say **Stride** when referring to the layout engine and derivation math
-- use **`packages/core`** for the folder name, not `packages/stride`
+- use **`packages/gerstner`** for the publishable library folder
+- use **`packages/gerstner/src/stride/`** for the internal engine
 
 Why:
 
@@ -33,44 +34,20 @@ Why:
 gerstner/
 │
 ├── apps/
-│   └── playground/                   local playground app
+│   └── playground/                   local playground / reference app
 │
 ├── packages/
-│   ├── core/                         published as "gerstner"
-│   │   ├── index.css                 full system: layout + rhythm
-│   │   ├── layout.css                Stride engine only
-│   │   ├── rhythm.css                rhythm + type roles only
-│   │   ├── package.json
-│   │   └── README.md
-│   │
-│   ├── debug/                        @gerstner/debug
-│   │   ├── src/
-│   │   │   ├── index.ts              initDebug() entry
-│   │   │   ├── panels/
-│   │   │   │   ├── leva.ts           React inspector panel
-│   │   │   │   └── vanilla.ts        non-React inspector panel
-│   │   │   ├── labels.ts             human-readable token labels
-│   │   │   ├── keyboard.ts           keyboard shortcuts
-│   │   │   ├── resizeObserver.ts     dev resize bridge
-│   │   │   └── export.ts             export current contract values
-│   │   ├── debug.css                 overlay styles only
-│   │   ├── package.json
-│   │   └── README.md
-│   │
-│   └── cli/                          @gerstner/cli
+│   └── gerstner/                     published as "gerstner"
 │       ├── src/
-│       │   ├── index.ts              main prompt flow
-│       │   ├── paths/
-│       │   │   ├── direct.ts         raw values path
-│       │   │   ├── fluid.ts          clamp generation path
-│       │   │   └── derive.ts         type-first derivation path
-│       │   ├── generate.ts           contract and preset generation
-│       │   ├── reference.ts          dev reference page generation
-│       │   ├── detect.ts             framework and CSS entry detection
-│       │   ├── write.ts              file output and import injection
-│       │   └── presets.ts            built-in presets
-│       ├── templates/
+│       │   ├── css/                  CSS surface (tokens, layout, rhythm, presets)
+│       │   ├── tw4/                  Tailwind v4 surface (@theme, @utility)
+│       │   ├── cli/                  CLI scaffolding (npx gerstner init)
+│       │   ├── debug/                Optional dev tooling
+│       │   ├── text/                 Text utilities (future)
+│       │   ├── stride/               Internal math engine (not exposed)
+│       │   └── internal/             Shared internal utilities
 │       ├── package.json
+│       ├── vite.config.ts            VP pack config
 │       ├── tsconfig.json
 │       └── README.md
 │
