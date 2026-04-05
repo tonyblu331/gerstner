@@ -93,44 +93,46 @@ cd apps/playground && vp build
 
 ```text
 packages/
-  stride/  → published as "gerstner"
-  debug/   → published as "@gerstner/debug"
-  cli/     → published as "@gerstner/cli"
-  utils/   → published as "@gerstner/utils"
+  gerstner/  → published as "gerstner" with subpath exports
+    - gerstner/css   → vanilla CSS surface
+    - gerstner/tw4   → Tailwind v4 integration
+    - gerstner/debug → optional dev tools
+    - gerstner/text  → text utilities (future)
 ```
 
 ### `gerstner`
 
-Core CSS powered by Stride engine.
+Single package with multiple entry points:
+- `gerstner/css` — Vanilla CSS surface (tokens, layout, rhythm, presets)
+- `gerstner/tw4` — Tailwind v4 integration (@theme, @utility)
+- `gerstner/debug` — Optional developer tooling
+- `gerstner/text` — Text utilities (future)
 
-### `@gerstner/debug`
-
-Optional developer tooling for debugging layout systems.
-
-### `@gerstner/cli`
-
-Scaffolder for Gerstner projects and contract generation.
-
-### `@gerstner/utils`
-
-Utility functions for common operations.
+CLI: `npx gerstner init` scaffolds projects with css/tw4 target selection.
 
 ---
 
 ## Usage
 
-### Import the full system
+### Import the CSS surface
 
 ```css
 @import 'tailwindcss';
-@import 'gerstner';
+@import 'gerstner/css';
+```
+
+### Import the TW4 surface
+
+```css
+@import 'tailwindcss';
+@import 'gerstner/tw4';
+@source '../node_modules/gerstner';
 ```
 
 ### Import only what you need
 
 ```css
-@import 'gerstner/layout';
-@import 'gerstner/rhythm';
+@import 'gerstner/css';        /* Full CSS surface */
 ```
 
 ### Example HTML
