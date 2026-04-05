@@ -1,9 +1,0 @@
-/* Gerstner v0.1 - Phase 1 Core Implementation */
-/* This is the temporary Phase 1 core, not the final public package architecture */
-
-@layer gerstner.tokens, gerstner.layout, gerstner.rhythm, gerstner.presets;
-
-@import './tokens.css';
-@import './layout.css';
-@import './rhythm.css';
-@import './presets.css';
