@@ -26,7 +26,9 @@ test.describe('reference scenes', () => {
   test('local scope overrides do not mutate the root contract', async ({ page }) => {
     const values = await page.evaluate(() => {
       const root = getComputedStyle(document.documentElement).getPropertyValue('--g-cols').trim()
-      const local = getComputedStyle(document.querySelector('[data-testid="override-scope"]') as Element)
+      const local = getComputedStyle(
+        document.querySelector('[data-testid="override-scope"]') as Element,
+      )
         .getPropertyValue('--g-cols')
         .trim()
       return { root, local }

@@ -1,22 +1,5 @@
-/*
-  Gerstner v0.1
-  CSS-only layout system with canonical g-* utilities
-
-  This package provides:
-  - CSS-native layout math
-  - Canonical g-* utilities
-  - Zero JS at runtime
-  - Modular architecture with tokens, layout, rhythm, and presets
-
-  Public contract:
-  - Canonical prefix: g-
-  - No gc-* compatibility aliases
-  - g-shell vs g semantic distinction
-  - --g-prose unitless line-height
-  - g-sub = exact inheritance
-  - g-view-* = approximate reinterpretation
-  - g-align-independent = explicit independence
-*/
+/* Gerstner v0.1 - Phase 1 Core Implementation */
+/* This is the temporary Phase 1 core, not the final public package architecture */
 
 @layer gerstner.tokens, gerstner.layout, gerstner.rhythm, gerstner.presets;
 

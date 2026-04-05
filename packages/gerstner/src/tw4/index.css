@@ -1,0 +1,6 @@
+/* Gerstner TW4 Surface */
+/* CSS-first Tailwind v4 integration */
+
+@import './theme.css';
+@import './utilities.css';
+@import './aliases.css';

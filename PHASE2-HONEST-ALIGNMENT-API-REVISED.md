@@ -1,4 +1,5 @@
 # Phase 2 — Honest alignment API
+
 ## Revised execution spec
 
 ## Goal
@@ -8,16 +9,19 @@ Ship the alignment model without pretending reinterpretation is exact.
 ## Canonical alignment modes
 
 ### 1. Exact inheritance
+
 Use:
 
 - `g-sub`
 
 Meaning:
+
 - inherits parent tracks exactly
 - zero drift
 - the only exact cross-section alignment path in v1.0
 
 ### 2. Approximate reinterpretation
+
 Use:
 
 - `g-view-2`
@@ -28,15 +32,18 @@ Use:
 - `g-view-12`
 
 Meaning:
+
 - reinterpret the current content zone as an N-column local field
 - does **not** promise pixel-perfect alignment to the parent grid lines
 
 ### 3. Explicit independence
+
 Use:
 
 - `g-align-independent`
 
 Meaning:
+
 - this section is not trying to preserve harmonic alignment with the page field
 - allowed for product grids, pricing blocks, dashboards, and dense utility layouts
 
@@ -54,13 +61,26 @@ Do not reintroduce the hidden 24-lattice as a silent default.
 ## Implementation surface
 
 ### Core utilities
+
 ```css
-@utility g-view-2  { --g-cols: 2; }
-@utility g-view-3  { --g-cols: 3; }
-@utility g-view-4  { --g-cols: 4; }
-@utility g-view-6  { --g-cols: 6; }
-@utility g-view-8  { --g-cols: 8; }
-@utility g-view-12 { --g-cols: 12; }
+@utility g-view-2 {
+  --g-cols: 2;
+}
+@utility g-view-3 {
+  --g-cols: 3;
+}
+@utility g-view-4 {
+  --g-cols: 4;
+}
+@utility g-view-6 {
+  --g-cols: 6;
+}
+@utility g-view-8 {
+  --g-cols: 8;
+}
+@utility g-view-12 {
+  --g-cols: 12;
+}
 
 @utility g-align-independent {
   /* semantic marker class */
@@ -84,14 +104,17 @@ Each scene should include a short label that states which mode the user is seein
 ## Tests required
 
 ### `subgrid.spec.ts`
+
 - prove `g-sub` drift is zero
 
 ### `alignment.spec.ts`
+
 - prove `g-view-*` resolves as local reinterpretation
 - prove docs labels say approximate, not exact
 - prove `g-align-independent` remains independent
 
 ### `reference.spec.ts`
+
 - prove required scenes render and labels are present
 
 ## Acceptance checklist

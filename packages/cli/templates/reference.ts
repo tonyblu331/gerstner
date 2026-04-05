@@ -163,7 +163,11 @@ export function renderReferenceHtml(options: ReferenceTemplateOptions): string {
 `
 }
 
-export function renderReferenceCss(options: { contractPath: string; presetsPath: string; debugPath?: string | null }): string {
+export function renderReferenceCss(options: {
+  contractPath: string
+  presetsPath: string
+  debugPath?: string | null
+}): string {
   const debugImport = options.debugPath ? `@import "${options.debugPath}";\n` : ''
 
   return `@import "gerstner";

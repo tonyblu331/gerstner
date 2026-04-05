@@ -1,0 +1,47 @@
+/* Gerstner TW4 Theme */
+/* Theme variables mapped to Gerstner contract */
+
+@theme {
+  /* Grid contract */
+  --g-cols: 12;
+  --g-gutter: clamp(0.875rem, 2.2vw, 1.5rem);
+  --g-frame: clamp(1rem, 5dvw, 5rem);
+  --g-max-width: 90rem;
+  --g-min: 16rem;
+
+  /* Typography contract */
+  --g-type-base: 1rem;
+  --g-baseline: 0.5rem;
+  --g-leading-steps: 3;
+  --g-scale-ratio: 1.25;
+  --g-measure: 70ch;
+
+  /* Derived */
+  --g-rhythm: calc(var(--g-baseline) * var(--g-leading-steps));
+  --g-prose: calc(var(--g-rhythm) / var(--g-type-base));
+
+  /* Scale */
+  --font-size-g--2: calc(var(--g-type-base) / (var(--g-scale-ratio) * var(--g-scale-ratio)));
+  --font-size-g--1: calc(var(--g-type-base) / var(--g-scale-ratio));
+  --font-size-g-0: var(--g-type-base);
+  --font-size-g-1: calc(var(--g-type-base) * var(--g-scale-ratio));
+  --font-size-g-2: calc(var(--g-type-base) * var(--g-scale-ratio) * var(--g-scale-ratio));
+  --font-size-g-3: calc(
+    var(--g-type-base) * var(--g-scale-ratio) * var(--g-scale-ratio) * var(--g-scale-ratio)
+  );
+  --font-size-g-4: calc(
+    var(--g-type-base) * var(--g-scale-ratio) * var(--g-scale-ratio) * var(--g-scale-ratio) *
+      var(--g-scale-ratio)
+  );
+  --font-size-g-5: calc(
+    var(--g-type-base) * var(--g-scale-ratio) * var(--g-scale-ratio) * var(--g-scale-ratio) *
+      var(--g-scale-ratio) * var(--g-scale-ratio)
+  );
+
+  /* Spacing */
+  --spacing-g-rhythm: var(--g-rhythm);
+  --spacing-g-baseline: var(--g-baseline);
+  --spacing-g-stride: calc(var(--g-col-unit-raw) + var(--g-gutter));
+  --spacing-g-gutter: var(--g-gutter);
+  --spacing-g-frame: var(--g-frame);
+}

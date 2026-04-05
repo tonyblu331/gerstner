@@ -25,7 +25,7 @@ async function main() {
     installDebug: asBooleanFlag(flags['install-debug'], false),
     generateReference: asBooleanFlag(flags['generate-reference'], false),
     writePresets: asBooleanFlag(flags['with-presets'], true),
-    yes: Boolean(flags.yes)
+    yes: Boolean(flags.yes),
   })
 
   console.log('\n[gerstner] init complete')
@@ -62,7 +62,9 @@ function asBooleanFlag(value: unknown, fallback: boolean): boolean {
 }
 
 function printHelp() {
-  console.log(`Gerstner CLI\n\nUsage:\n  gerstner init [options]\n\nOptions:\n  --css-entry <path>         CSS entry to inject into\n  --app-type <react|vanilla> Project flavor hint\n  --inject-imports           Inject CSS imports into the entry file\n  --no-inject-imports        Skip CSS injection\n  --install-debug            Generate debug bridge files\n  --generate-reference       Generate the dev-only reference page\n  --with-presets             Generate project preset helpers\n  --no-with-presets          Skip preset generation\n  --yes                      Accept sensible defaults\n  --help                     Show this help\n`)
+  console.log(
+    `Gerstner CLI\n\nUsage:\n  gerstner init [options]\n\nOptions:\n  --css-entry <path>         CSS entry to inject into\n  --app-type <react|vanilla> Project flavor hint\n  --inject-imports           Inject CSS imports into the entry file\n  --no-inject-imports        Skip CSS injection\n  --install-debug            Generate debug bridge files\n  --generate-reference       Generate the dev-only reference page\n  --with-presets             Generate project preset helpers\n  --no-with-presets          Skip preset generation\n  --yes                      Accept sensible defaults\n  --help                     Show this help\n`,
+  )
 }
 
 main().catch((error) => {

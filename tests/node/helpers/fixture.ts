@@ -13,6 +13,10 @@ export async function readFixtureFile(cwd: string, relativePath: string): Promis
   return readFile(path.join(cwd, relativePath), 'utf8')
 }
 
-export async function writeFixtureFile(cwd: string, relativePath: string, content: string): Promise<void> {
+export async function writeFixtureFile(
+  cwd: string,
+  relativePath: string,
+  content: string,
+): Promise<void> {
   await writeFile(path.join(cwd, relativePath), content, 'utf8')
 }

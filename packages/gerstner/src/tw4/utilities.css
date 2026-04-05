@@ -1,0 +1,206 @@
+/* Gerstner TW4 Utilities */
+/* @utility definitions for Gerstner classes */
+
+@utility g-shell {
+  display: grid;
+  gap: var(--g-gutter);
+  align-content: start;
+  container-type: inline-size;
+  inline-size: 100%;
+  --g-gap-total: calc(var(--g-gutter) * (var(--g-cols) - 1));
+  --g-content-inline: min(var(--g-max-width), calc(100cqi - var(--g-frame) * 2));
+  --g-col-unit-raw: calc((var(--g-content-inline) - var(--g-gap-total)) / var(--g-cols));
+  --g-stride: calc(var(--g-col-unit-raw) + var(--g-gutter));
+  --g-align-mode: shell;
+  grid-template-columns:
+    [full-start] minmax(calc(var(--g-frame) - var(--g-gutter)), 1fr)
+    [content-start col-1] minmax(0, var(--g-col-unit-raw))
+    [gutter-1] var(--g-gutter)
+    [col-2] minmax(0, var(--g-col-unit-raw))
+    [gutter-2] var(--g-gutter)
+    [col-3] minmax(0, var(--g-col-unit-raw))
+    [gutter-3] var(--g-gutter)
+    [col-4] minmax(0, var(--g-col-unit-raw))
+    [gutter-4] var(--g-gutter)
+    [col-5] minmax(0, var(--g-col-unit-raw))
+    [gutter-5] var(--g-gutter)
+    [col-6] minmax(0, var(--g-col-unit-raw))
+    [gutter-6] var(--g-gutter)
+    [col-7] minmax(0, var(--g-col-unit-raw))
+    [gutter-7] var(--g-gutter)
+    [col-8] minmax(0, var(--g-col-unit-raw))
+    [gutter-8] var(--g-gutter)
+    [col-9] minmax(0, var(--g-col-unit-raw))
+    [gutter-9] var(--g-gutter)
+    [col-10] minmax(0, var(--g-col-unit-raw))
+    [gutter-10] var(--g-gutter)
+    [col-11] minmax(0, var(--g-col-unit-raw))
+    [gutter-11] var(--g-gutter)
+    [col-12] minmax(0, var(--g-col-unit-raw))
+    [content-end] minmax(calc(var(--g-frame) - var(--g-gutter)), 1fr)
+    [full-end];
+}
+
+@utility g {
+  display: grid;
+  gap: var(--g-gutter);
+  align-content: start;
+  container-type: inline-size;
+  inline-size: 100%;
+  --g-gap-total: calc(var(--g-gutter) * (var(--g-cols) - 1));
+  --g-grid-inline: 100cqi;
+  --g-col-unit-raw: calc((var(--g-grid-inline) - var(--g-gap-total)) / var(--g-cols));
+  --g-stride: calc(var(--g-col-unit-raw) + var(--g-gutter));
+  --g-align-mode: raw;
+  grid-template-columns: repeat(var(--g-cols), minmax(0, 1fr));
+}
+
+@utility g-sub {
+  display: grid;
+  gap: var(--g-gutter);
+  align-content: start;
+  --g-align-mode: exact;
+  grid-template-columns: subgrid;
+}
+
+@utility g-content {
+  grid-column: content-start / content-end;
+}
+
+@utility g-full {
+  grid-column: 1 / -1;
+}
+
+@utility g-breakout-l {
+  grid-column: full-start / content-end;
+}
+
+@utility g-breakout-r {
+  grid-column: content-start / full-end;
+}
+
+@utility g-fit {
+  display: grid;
+  gap: var(--g-gutter);
+  align-content: start;
+  container-type: inline-size;
+  inline-size: 100%;
+  --g-gap-total: calc(var(--g-gutter) * (var(--g-cols) - 1));
+  --g-grid-inline: 100cqi;
+  --g-col-unit-raw: calc((var(--g-grid-inline) - var(--g-gap-total)) / var(--g-cols));
+  --g-stride: calc(var(--g-col-unit-raw) + var(--g-gutter));
+  --g-align-mode: adaptive;
+  grid-template-columns: repeat(auto-fit, minmax(max(var(--g-min), var(--g-col-unit-raw)), 1fr));
+}
+
+@utility g-fill {
+  display: grid;
+  gap: var(--g-gutter);
+  align-content: start;
+  container-type: inline-size;
+  inline-size: 100%;
+  --g-gap-total: calc(var(--g-gutter) * (var(--g-cols) - 1));
+  --g-grid-inline: 100cqi;
+  --g-col-unit-raw: calc((var(--g-grid-inline) - var(--g-gap-total)) / var(--g-cols));
+  --g-stride: calc(var(--g-col-unit-raw) + var(--g-gutter));
+  --g-align-mode: adaptive;
+  grid-template-columns: repeat(auto-fill, minmax(max(var(--g-min), var(--g-col-unit-raw)), 1fr));
+}
+
+@utility g-view-2 {
+  --g-cols: 2;
+  --g-align-mode: approximate;
+}
+@utility g-view-3 {
+  --g-cols: 3;
+  --g-align-mode: approximate;
+}
+@utility g-view-4 {
+  --g-cols: 4;
+  --g-align-mode: approximate;
+}
+@utility g-view-6 {
+  --g-cols: 6;
+  --g-align-mode: approximate;
+}
+@utility g-view-8 {
+  --g-cols: 8;
+  --g-align-mode: approximate;
+}
+@utility g-view-12 {
+  --g-cols: 12;
+  --g-align-mode: approximate;
+}
+
+@utility g-align-independent {
+  --g-align-mode: independent;
+}
+
+@utility g-prose {
+  font-size: var(--g-scale-0);
+  line-height: var(--g-prose);
+  max-inline-size: var(--g-measure-body);
+  text-wrap: pretty;
+}
+
+@utility g-display {
+  font-size: var(--g-scale-5);
+  line-height: round(up, var(--g-scale-5), var(--g-baseline));
+  max-inline-size: var(--g-measure-tight);
+  text-wrap: balance;
+}
+
+@utility g-heading {
+  font-size: var(--g-scale-3);
+  line-height: round(up, var(--g-scale-3), var(--g-baseline));
+  max-inline-size: var(--g-measure-tight);
+  text-wrap: balance;
+}
+
+@utility g-ui {
+  font-size: var(--g-scale--1);
+  line-height: 1;
+  max-inline-size: var(--g-measure-ui);
+  text-wrap: wrap;
+}
+
+@utility col-full {
+  grid-column: 1 / -1;
+}
+
+@utility col-1 {
+  grid-column: span 1 / span 1;
+}
+@utility col-2 {
+  grid-column: span 2 / span 2;
+}
+@utility col-3 {
+  grid-column: span 3 / span 3;
+}
+@utility col-4 {
+  grid-column: span 4 / span 4;
+}
+@utility col-5 {
+  grid-column: span 5 / span 5;
+}
+@utility col-6 {
+  grid-column: span 6 / span 6;
+}
+@utility col-7 {
+  grid-column: span 7 / span 7;
+}
+@utility col-8 {
+  grid-column: span 8 / span 8;
+}
+@utility col-9 {
+  grid-column: span 9 / span 9;
+}
+@utility col-10 {
+  grid-column: span 10 / span 10;
+}
+@utility col-11 {
+  grid-column: span 11 / span 11;
+}
+@utility col-12 {
+  grid-column: span 12 / span 12;
+}

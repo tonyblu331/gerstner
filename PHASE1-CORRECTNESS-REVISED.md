@@ -1,4 +1,5 @@
 # Phase 1 — Correctness
+
 ## Revised execution spec
 
 ## Goal
@@ -8,6 +9,7 @@ Close the correctness gap in the core package so the public contract is truthful
 ## Canonical token and utility surface
 
 ### Utilities
+
 - `g-shell`
 - `g`
 - `g-sub`
@@ -32,6 +34,7 @@ Close the correctness gap in the core package so the public contract is truthful
 - `col-from-{N}`
 
 ### Tokens
+
 - `--g-cols`
 - `--g-gutter`
 - `--g-frame`
@@ -48,26 +51,32 @@ Close the correctness gap in the core package so the public contract is truthful
 ## Locked rules
 
 ### 1. No legacy `gc-*`
+
 Release-facing core must contain zero `gc-*` or `--gc-*`.
 
 ### 2. No `minmax()` in custom properties
+
 Grid track functions stay inline in track declarations.
 
 ### 3. Prose line-height must be unitless
+
 Use:
 
 ```css
 --g-rhythm: calc(var(--g-baseline) * var(--g-leading-steps));
---g-prose:  calc(var(--g-rhythm) / var(--g-type-base));
+--g-prose: calc(var(--g-rhythm) / var(--g-type-base));
 ```
 
 Never:
 
 ```css
-.g-prose { line-height: var(--g-rhythm); }
+.g-prose {
+  line-height: var(--g-rhythm);
+}
 ```
 
 ### 4. Display and heading line-height must self-heal
+
 Use:
 
 ```css
@@ -76,23 +85,27 @@ line-height: round(up, var(--g-scale-3), var(--g-baseline));
 ```
 
 ### 5. Core must use the layer contract
+
 ```css
 @layer gerstner.tokens, gerstner.layout, gerstner.rhythm, gerstner.presets;
 ```
 
 ### 6. No bare `vh`
+
 - `svh` for safe hero heights
 - `dvh` for overlays only
 - `lvh` for immersive post-scroll surfaces
 - `cqi` inside containers where applicable
 
 ### 7. `g-shell` and `g` must stay distinct
+
 - `g-shell` = editorial shell with frame and content boundaries
 - `g` = raw equal-column grid
 
 ## Files to revise
 
 ### `packages/stride/index.css`
+
 - canonical token registrations
 - formula chain
 - shell and raw grid utilities
@@ -101,22 +114,26 @@ line-height: round(up, var(--g-scale-3), var(--g-baseline));
 - typography roles
 
 ### `packages/stride/layout.css`
+
 - shell, raw grid, subgrid, adaptive tracks
 - zones and column utilities
 
 ### `packages/stride/rhythm.css`
+
 - `--g-rhythm`
 - `--g-prose`
 - density tokens
 - prose/display/heading/UI roles
 
 ### `apps/playground`
+
 - shell vs raw grid scene
 - typography correctness scene
 - viewport correctness scene
 - asymmetric `col-from-*` scene
 
 ### `tests`
+
 - `layout.spec.ts`
 - `zones.spec.ts`
 - `adaptive.spec.ts`

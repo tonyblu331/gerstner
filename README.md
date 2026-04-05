@@ -38,6 +38,7 @@ cd ../../apps/playground && vp build
 Vite+ officially recommends the Vite Plus Extension Pack for VS Code, with OXC as the formatter and fix provider.
 
 **`.vscode/extensions.json`**
+
 ```json
 {
   "recommendations": ["VoidZero.vite-plus-extension-pack"]
@@ -45,6 +46,7 @@ Vite+ officially recommends the Vite Plus Extension Pack for VS Code, with OXC a
 ```
 
 **`.vscode/settings.json`**
+
 ```json
 {
   "editor.defaultFormatter": "oxc.oxc-vscode",
@@ -98,15 +100,19 @@ packages/
 ```
 
 ### `gerstner`
+
 Core CSS powered by Stride engine.
 
 ### `@gerstner/debug`
+
 Optional developer tooling for debugging layout systems.
 
 ### `@gerstner/cli`
+
 Scaffolder for Gerstner projects and contract generation.
 
 ### `@gerstner/utils`
+
 Utility functions for common operations.
 
 ---
@@ -116,15 +122,15 @@ Utility functions for common operations.
 ### Import the full system
 
 ```css
-@import "tailwindcss";
-@import "gerstner";
+@import 'tailwindcss';
+@import 'gerstner';
 ```
 
 ### Import only what you need
 
 ```css
-@import "gerstner/layout";
-@import "gerstner/rhythm";
+@import 'gerstner/layout';
+@import 'gerstner/rhythm';
 ```
 
 ### Example HTML

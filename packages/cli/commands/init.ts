@@ -52,7 +52,7 @@ export async function runInit(options: InitOptions): Promise<InitResult> {
   const written = {
     styles: [] as string[],
     scripts: [] as string[],
-    dev: [] as string[]
+    dev: [] as string[],
   }
 
   await writeTracked(
@@ -68,9 +68,9 @@ export async function runInit(options: InitOptions): Promise<InitResult> {
       baseline: '0.5rem',
       leadingSteps: 3,
       scaleRatio: 1.25,
-      measure: '70ch'
+      measure: '70ch',
     }),
-    contractFile
+    contractFile,
   )
 
   if (options.writePresets ?? true) {
@@ -79,14 +79,23 @@ export async function runInit(options: InitOptions): Promise<InitResult> {
 
   if (options.installDebug ?? false) {
     await writeTracked(written.styles, path.join(cwd, debugCssFile), renderDebugCss(), debugCssFile)
-    await writeTracked(written.scripts, path.join(cwd, debugScriptFile), renderDebugScript(), debugScriptFile)
+    await writeTracked(
+      written.scripts,
+      path.join(cwd, debugScriptFile),
+      renderDebugScript(),
+      debugScriptFile,
+    )
   }
 
   if (options.generateReference ?? true) {
     const contractFromDev = relativeImport(referenceCssFile, contractFile)
     const presetsFromDev = relativeImport(referenceCssFile, presetsFile)
-    const debugCssFromDev = options.installDebug ? relativeImport(referenceCssFile, debugCssFile) : null
-    const debugScriptFromDev = options.installDebug ? relativeImport(referenceJsFile, debugScriptFile) : null
+    const debugCssFromDev = options.installDebug
+      ? relativeImport(referenceCssFile, debugCssFile)
+      : null
+    const debugScriptFromDev = options.installDebug
+      ? relativeImport(referenceJsFile, debugScriptFile)
+      : null
 
     await writeTracked(
       written.dev,
@@ -94,9 +103,9 @@ export async function runInit(options: InitOptions): Promise<InitResult> {
       renderReferenceHtml({
         title: 'Gerstner reference',
         cssHref: './gerstner.reference.css',
-        jsSrc: './gerstner.reference.js'
+        jsSrc: './gerstner.reference.js',
       }),
-      referenceHtmlFile
+      referenceHtmlFile,
     )
 
     await writeTracked(
@@ -105,18 +114,18 @@ export async function runInit(options: InitOptions): Promise<InitResult> {
       renderReferenceCss({
         contractPath: contractFromDev,
         presetsPath: presetsFromDev,
-        debugPath: debugCssFromDev
+        debugPath: debugCssFromDev,
       }),
-      referenceCssFile
+      referenceCssFile,
     )
 
     await writeTracked(
       written.dev,
       path.join(cwd, referenceJsFile),
       renderReferenceJs({
-        debugScriptPath: debugScriptFromDev
+        debugScriptPath: debugScriptFromDev,
       }),
-      referenceJsFile
+      referenceJsFile,
     )
   }
 
@@ -125,7 +134,7 @@ export async function runInit(options: InitOptions): Promise<InitResult> {
     const cssEntryText = (await readTextIfExists(cssEntryPath)) ?? ''
     const cssImports = [
       '@import "gerstner";',
-      `@import "${relativeImport(cssEntry, contractFile)}";`
+      `@import "${relativeImport(cssEntry, contractFile)}";`,
     ]
 
     if (options.writePresets ?? true) {
@@ -145,17 +154,23 @@ export async function runInit(options: InitOptions): Promise<InitResult> {
         const debugImport = `import '${relativeImport(jsEntry, debugScriptFile)}'`
         await writeIfChanged(jsEntryPath, ensureImports(jsEntryText, [debugImport]))
       } else {
-        notes.push('Debug files were generated, but no JS entry was detected for automatic bootstrap injection.')
+        notes.push(
+          'Debug files were generated, but no JS entry was detected for automatic bootstrap injection.',
+        )
       }
     }
   }
 
   if (!(options.installDebug ?? false)) {
-    notes.push('Debug generation was skipped. Run init again with --install-debug when you want the observer layer.')
+    notes.push(
+      'Debug generation was skipped. Run init again with --install-debug when you want the observer layer.',
+    )
   }
 
   if (appType === 'react') {
-    notes.push('The reference page is generated as plain HTML on purpose. React-specific dev UIs belong on top, not inside the contract layer.')
+    notes.push(
+      'The reference page is generated as plain HTML on purpose. React-specific dev UIs belong on top, not inside the contract layer.',
+    )
   }
 
   return {
@@ -163,7 +178,7 @@ export async function runInit(options: InitOptions): Promise<InitResult> {
     cssEntry,
     appType,
     written,
-    notes
+    notes,
   }
 }
 
@@ -187,7 +202,12 @@ async function resolveCssEntry(options: InitOptions): Promise<string> {
   throw new Error('No CSS entry could be detected. Pass --css-entry explicitly.')
 }
 
-async function writeTracked(bucket: string[], absolutePath: string, content: string, displayPath: string) {
+async function writeTracked(
+  bucket: string[],
+  absolutePath: string,
+  content: string,
+  displayPath: string,
+) {
   const status = await writeIfChanged(absolutePath, content)
   bucket.push(`${displayPath} (${status})`)
 }
@@ -203,7 +223,9 @@ function ensureImports(source: string, imports: string[]): string {
   const missing = imports.filter((entry) => !source.includes(entry))
   if (missing.length === 0) return source
 
-  const insertionPoint = lines.findIndex((line) => !line.trim().startsWith('@import') && line.trim().length > 0)
+  const insertionPoint = lines.findIndex(
+    (line) => !line.trim().startsWith('@import') && line.trim().length > 0,
+  )
   if (insertionPoint === -1) return `${missing.join('\n')}\n${source}`.trimEnd() + '\n'
 
   lines.splice(insertionPoint, 0, ...missing)

@@ -13,9 +13,8 @@
     "test": "vp test"
   },
   "dependencies": {
-    "@gerstner/cli": "workspace:*",
-    "@gerstner/debug": "workspace:*",
     "@tailwindcss/vite": "catalog:",
+    "gerstner": "workspace:*",
     "tailwindcss": "catalog:"
   },
   "devDependencies": {

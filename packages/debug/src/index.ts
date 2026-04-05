@@ -56,7 +56,7 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
       setScope() {},
       exportContract() {
         return ''
-      }
+      },
     }
   }
 
@@ -213,7 +213,7 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
     },
     refresh,
     setScope,
-    exportContract
+    exportContract,
   }
 }
 
@@ -296,7 +296,7 @@ function loadState(options: GerstnerDebugOptions): DebugState {
     overlay: options.initial?.overlay ?? true,
     badge: options.initial?.badge ?? true,
     ruler: options.initial?.ruler ?? false,
-    pinned: false
+    pinned: false,
   }
 
   try {
@@ -304,7 +304,7 @@ function loadState(options: GerstnerDebugOptions): DebugState {
     if (!raw) return fallback
     return {
       ...fallback,
-      ...(JSON.parse(raw) as Partial<DebugState>)
+      ...(JSON.parse(raw) as Partial<DebugState>),
     }
   } catch {
     return fallback
@@ -333,7 +333,9 @@ function syncState(root: HTMLElement, state: DebugState) {
     if (action === 'pin') button.setAttribute('aria-pressed', String(state.pinned))
   })
 
-  root.querySelector<HTMLButtonElement>('[data-testid="gerstner-debug-launcher"]')?.setAttribute('aria-pressed', String(state.panel))
+  root
+    .querySelector<HTMLButtonElement>('[data-testid="gerstner-debug-launcher"]')
+    ?.setAttribute('aria-pressed', String(state.panel))
 }
 
 function resolveExplicitScope(scope: string | HTMLElement | undefined): HTMLElement | null {
@@ -349,15 +351,20 @@ function resolveScopeFromTarget(target: HTMLElement | null): HTMLElement | null 
 
 function readMetrics(scope: HTMLElement): GerstnerDebugMetrics {
   const style = getComputedStyle(scope)
-  const rect = scope === document.documentElement
-    ? new DOMRect(0, 0, window.innerWidth, window.innerHeight)
-    : scope.getBoundingClientRect()
+  const rect =
+    scope === document.documentElement
+      ? new DOMRect(0, 0, window.innerWidth, window.innerHeight)
+      : scope.getBoundingClientRect()
 
   const cols = parseNumber(style.getPropertyValue('--g-cols'), 12)
   const gutter = measureLength(style.getPropertyValue('--g-gutter'))
   const frame = measureLength(style.getPropertyValue('--g-frame'))
-  const contentWidth = measureLength(style.getPropertyValue('--g-content-inline')) || Math.max(0, rect.width - frame * 2)
-  const columnWidth = measureLength(style.getPropertyValue('--g-col-unit-raw')) || (cols > 0 ? Math.max(0, (contentWidth - gutter * (cols - 1)) / cols) : 0)
+  const contentWidth =
+    measureLength(style.getPropertyValue('--g-content-inline')) ||
+    Math.max(0, rect.width - frame * 2)
+  const columnWidth =
+    measureLength(style.getPropertyValue('--g-col-unit-raw')) ||
+    (cols > 0 ? Math.max(0, (contentWidth - gutter * (cols - 1)) / cols) : 0)
   const stride = measureLength(style.getPropertyValue('--g-stride')) || columnWidth + gutter
   const rhythm = measureLength(style.getPropertyValue('--g-rhythm'))
   const prose = parseNumber(style.getPropertyValue('--g-prose'), 0)
@@ -366,9 +373,13 @@ function readMetrics(scope: HTMLElement): GerstnerDebugMetrics {
   const maxWidth = measureLength(style.getPropertyValue('--g-max-width'))
   const measure = style.getPropertyValue('--g-measure').trim() || '70ch'
   const scaleRatio = parseNumber(style.getPropertyValue('--g-scale-ratio'), 1.25)
-  const mode = (style.getPropertyValue('--g-align-mode').trim() || inferMode(scope))
+  const mode = style.getPropertyValue('--g-align-mode').trim() || inferMode(scope)
   const label = scope.dataset.gDebugLabel?.trim() || inferLabel(scope)
-  const preset = scope.dataset.gPreset?.trim() || scope.dataset.gProjectPreset?.trim() || document.documentElement.dataset.gPreset?.trim() || 'default'
+  const preset =
+    scope.dataset.gPreset?.trim() ||
+    scope.dataset.gProjectPreset?.trim() ||
+    document.documentElement.dataset.gPreset?.trim() ||
+    'default'
 
   return {
     label,
@@ -388,14 +399,16 @@ function readMetrics(scope: HTMLElement): GerstnerDebugMetrics {
     maxWidth,
     measure,
     scaleRatio,
-    trimSupport: detectTrimSupport()
+    trimSupport: detectTrimSupport(),
   }
 }
 
 function inferLabel(scope: HTMLElement): string {
   if (scope === document.documentElement) return 'Document root'
   const tag = scope.tagName.toLowerCase()
-  const tokens = Array.from(scope.classList).filter((name) => name.startsWith('g')).slice(0, 2)
+  const tokens = Array.from(scope.classList)
+    .filter((name) => name.startsWith('g'))
+    .slice(0, 2)
   return tokens.length ? `${tag}.${tokens.join('.')}` : tag
 }
 
@@ -449,16 +462,24 @@ function writePanel(panel: HTMLElement, metrics: GerstnerDebugMetrics, state: De
   setText(panel, 'fit-min', formatPx(metrics.fitMin))
   setText(panel, 'measure', metrics.measure)
   setText(panel, 'trim', metrics.trimSupport)
-  panel.querySelector<HTMLButtonElement>('[data-g-debug-action="pin"]')?.setAttribute('aria-pressed', String(state.pinned))
+  panel
+    .querySelector<HTMLButtonElement>('[data-g-debug-action="pin"]')
+    ?.setAttribute('aria-pressed', String(state.pinned))
 }
 
 function writeBadge(badge: HTMLElement, metrics: GerstnerDebugMetrics) {
   badge.querySelector<HTMLElement>('[data-g-debug-badge="label"]')!.textContent = metrics.label
   badge.querySelector<HTMLElement>('[data-g-debug-badge="mode"]')!.textContent = metrics.modeLabel
   badge.querySelector<HTMLElement>('[data-g-debug-badge="preset"]')!.textContent = metrics.preset
-  badge.querySelector<HTMLElement>('[data-g-debug-badge="cols"]')!.textContent = String(metrics.cols)
-  badge.querySelector<HTMLElement>('[data-g-debug-badge="stride"]')!.textContent = formatPx(metrics.stride)
-  badge.querySelector<HTMLElement>('[data-g-debug-badge="content"]')!.textContent = formatPx(metrics.contentWidth)
+  badge.querySelector<HTMLElement>('[data-g-debug-badge="cols"]')!.textContent = String(
+    metrics.cols,
+  )
+  badge.querySelector<HTMLElement>('[data-g-debug-badge="stride"]')!.textContent = formatPx(
+    metrics.stride,
+  )
+  badge.querySelector<HTMLElement>('[data-g-debug-badge="content"]')!.textContent = formatPx(
+    metrics.contentWidth,
+  )
 }
 
 function renderContractFromMetrics(scope: HTMLElement): string {

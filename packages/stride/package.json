@@ -1,8 +1,8 @@
 {
   "name": "gerstner",
   "version": "0.1.0",
-  "description": "CSS-only layout system with canonical g-* utilities",
   "private": true,
+  "description": "Phase 1 CSS core implementation - temporary internal package",
   "type": "module",
   "sideEffects": [
     "*.css"

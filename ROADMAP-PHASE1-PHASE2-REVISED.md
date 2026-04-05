@@ -1,4 +1,5 @@
 # Revised roadmap — Phase 1 and Phase 2
+
 ## With shortened prose token
 
 ## Naming decision
@@ -13,18 +14,23 @@ Do not merge both into one token.
 ## Current status
 
 ### Bootstrap
+
 Done enough to support the remaining work.
 
 ### Phase 1 — Correctness
+
 In progress.
 
 ### Phase 2 — Honest alignment API
+
 Mostly open.
 
 ### Phase 3 — CLI and debug
+
 Already started, but should be revised after Phases 1 and 2 freeze.
 
 ### Phase 4 — Optional modern CSS follow-up
+
 Not started, correctly deferred.
 
 ## Recommended next order

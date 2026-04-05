@@ -23,8 +23,8 @@ if (import.meta.env.DEV) {
     initial: {
       overlay: true,
       badge: true,
-      ruler: false
-    }
+      ruler: false,
+    },
   })
 }
 ```
@@ -32,9 +32,7 @@ if (import.meta.env.DEV) {
 Mark interesting scopes with:
 
 ```html
-<section data-g-debug-scope data-g-debug-label="Scene E · breakout">
-  ...
-</section>
+<section data-g-debug-scope data-g-debug-label="Scene E · breakout">...</section>
 ```
 
 Hover a marked scope to inspect it. Hold Alt and click to pin it.

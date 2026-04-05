@@ -1,4 +1,5 @@
 # Token naming decision
+
 ## Revised prose line-height token
 
 ## Decision
@@ -32,7 +33,7 @@ Using `--g-rhythm` directly for prose line-height would collapse two different t
 
 ```css
 --g-rhythm: calc(var(--g-baseline) * var(--g-leading-steps));
---g-prose:  calc(var(--g-rhythm) / var(--g-type-base));
+--g-prose: calc(var(--g-rhythm) / var(--g-type-base));
 ```
 
 ```css

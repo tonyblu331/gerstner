@@ -2,7 +2,7 @@ import { defineConfig } from 'vite-plus'
 
 export default defineConfig({
   staged: {
-    "*": "vp check --fix"
+    '*': 'vp check --fix',
   },
   fmt: {
     singleQuote: true,
@@ -29,21 +29,9 @@ export default defineConfig({
         command: 'vp check',
         env: ['CI'],
       },
-      'pack:debug': {
-        command: 'cd packages/debug && tsdown',
+      'pack:gerstner': {
+        command: 'cd packages/gerstner && vp pack',
         dependsOn: ['verify'],
-      },
-      'pack:cli': {
-        command: 'cd packages/cli && tsdown',
-        dependsOn: ['verify'],
-      },
-      'pack:utils': {
-        command: 'cd packages/utils && tsdown',
-        dependsOn: ['verify'],
-      },
-      'test:cli': {
-        command: 'cd packages/cli && vp test',
-        dependsOn: ['pack:cli'],
       },
       'build:playground': {
         command: 'cd apps/playground && vp build',

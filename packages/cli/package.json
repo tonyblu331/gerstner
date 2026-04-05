@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Scaffolder for Gerstner layout system projects",
   "license": "MIT",
+  "bin": {
+    "gerstner": "./dist/cli.mjs"
+  },
   "files": [
     "dist",
     "cli.ts",
@@ -15,9 +18,6 @@
   "exports": {
     ".": "./dist/index.mjs",
     "./package.json": "./package.json"
-  },
-  "bin": {
-    "gerstner": "./dist/cli.mjs"
   },
   "publishConfig": {
     "access": "public"

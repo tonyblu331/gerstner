@@ -1,6 +1,6 @@
-@import "tailwindcss";
-@import "../../../packages/stride/index.css";
-@import "@gerstner/debug/debug.css";
+@import 'tailwindcss';
+@import 'gerstner/css';
+@import 'gerstner/debug/debug.css';
 
 :root {
   color-scheme: light;
@@ -11,7 +11,11 @@
   --muted: oklch(0.54 0.02 258);
   --accent: oklch(0.69 0.15 249);
   --mint: oklch(0.87 0.07 177);
-  background: linear-gradient(180deg, white 0%, color-mix(in oklab, white 94%, var(--surface-2)) 100%);
+  background: linear-gradient(
+    180deg,
+    white 0%,
+    color-mix(in oklab, white 94%, var(--surface-2)) 100%
+  );
 }
 
 * {
@@ -74,9 +78,21 @@ code {
 .hero-art {
   min-block-size: 24rem;
   background:
-    radial-gradient(circle at 20% 20%, color-mix(in oklab, var(--accent) 36%, white), transparent 35%),
-    radial-gradient(circle at 75% 30%, color-mix(in oklab, var(--mint) 52%, white), transparent 28%),
-    linear-gradient(135deg, color-mix(in oklab, var(--accent) 12%, white), color-mix(in oklab, var(--mint) 18%, white));
+    radial-gradient(
+      circle at 20% 20%,
+      color-mix(in oklab, var(--accent) 36%, white),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 75% 30%,
+      color-mix(in oklab, var(--mint) 52%, white),
+      transparent 28%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--accent) 12%, white),
+      color-mix(in oklab, var(--mint) 18%, white)
+    );
 }
 
 .card,
@@ -85,7 +101,6 @@ code {
   border: 1px solid var(--line);
   border-radius: 1rem;
   background: color-mix(in oklab, white 88%, var(--surface));
-  box-shadow: 0 0.65rem 2rem color-mix(in oklab, black 8%, transparent);
 }
 
 .card {
@@ -155,8 +170,11 @@ code {
   min-block-size: 72svh;
   display: grid;
   place-content: end start;
-  background:
-    linear-gradient(180deg, color-mix(in oklab, white 98%, var(--surface-2)), color-mix(in oklab, white 88%, var(--accent)));
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, white 98%, var(--surface-2)),
+    color-mix(in oklab, white 88%, var(--accent))
+  );
 }
 
 .from-band {
@@ -217,6 +235,347 @@ code {
   margin-block-start: 0.5rem;
 }
 
+/* Phase 2 reference scenes */
+.honesty-parent {
+  position: relative;
+  gap: calc(var(--g-rhythm) * 2);
+}
+
+.exact-demo,
+.approx-demo,
+.independent-demo {
+  padding: calc(var(--g-rhythm) * 1);
+  border: 1px dashed var(--line);
+  border-radius: 0.5rem;
+}
+
+.exact-demo {
+  background: color-mix(in oklab, var(--mint) 8%, white);
+}
+
+.approx-demo {
+  background: color-mix(in oklab, var(--accent) 8%, white);
+}
+
+.independent-demo {
+  background: color-mix(in oklab, var(--muted) 8%, white);
+}
+
+/* Token grid in overlay */
+.token-grid-mini {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.token-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem 0.625rem;
+  background: color-mix(in oklab, var(--surface) 70%, white);
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+}
+
+.token-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.token-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8125rem;
+  color: var(--ink);
+  background: transparent;
+  padding: 0;
+}
+
+.placement-parent {
+  gap: calc(var(--g-rhythm) * 1);
+}
+
+.placement-numeric,
+.placement-gutter,
+.placement-breakout {
+  min-block-size: 4rem;
+  display: grid;
+  place-content: center;
+}
+
+.placement-breakout {
+  background: color-mix(in oklab, var(--accent) 12%, white);
+}
+
+/* Image cards - editorial style */
+.image-card {
+  min-block-size: 12rem;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.image-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.image-card:hover img {
+  transform: scale(1.02);
+}
+
+.image-card-overlay {
+  position: absolute;
+  inset: 0;
+  padding: 1rem;
+  background: linear-gradient(180deg, transparent 30%, rgba(0, 0, 0, 0.7) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: white;
+}
+
+.image-card-overlay .g-ui {
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.photo-credit {
+  font-size: 0.6875rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0.25rem 0 0;
+}
+
+.hero-art-overlay {
+  padding: 1.5rem;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.6) 100%);
+  color: white;
+  min-block-size: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.hero-art-overlay .scene-kicker {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.hero-art-overlay code {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.photo-credit {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 0.5rem;
+}
+
+/* Grid toggle controls */
+.grid-controls {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.grid-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow:
+    0 2px 8px color-mix(in oklab, black 12%, transparent),
+    0 1px 3px color-mix(in oklab, black 8%, transparent);
+  transition: all 0.15s ease;
+}
+
+.grid-toggle:hover {
+  background: white;
+  border-color: color-mix(in oklab, var(--line) 80%, var(--accent));
+  transform: translateY(-1px);
+  box-shadow:
+    0 4px 12px color-mix(in oklab, black 10%, transparent),
+    0 2px 4px color-mix(in oklab, black 5%, transparent);
+}
+
+.grid-toggle:focus {
+  outline: none;
+  box-shadow:
+    0 0 0 2px color-mix(in oklab, var(--ink) 15%, transparent),
+    0 4px 12px color-mix(in oklab, black 10%, transparent);
+}
+
+.grid-toggle:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--accent),
+    0 0 0 4px color-mix(in oklab, var(--accent) 20%, transparent);
+}
+
+.grid-toggle:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px color-mix(in oklab, black 8%, transparent);
+}
+
+.grid-toggle.active {
+  background: color-mix(in oklab, var(--mint) 15%, white);
+  border-color: color-mix(in oklab, var(--mint) 60%, var(--line));
+  color: color-mix(in oklab, var(--ink) 85%, var(--mint));
+}
+
+.grid-toggle.active:hover {
+  background: color-mix(in oklab, var(--mint) 20%, white);
+}
+
+.key-hint {
+  padding: 0.125rem 0.375rem;
+  background: color-mix(in oklab, var(--surface) 90%, var(--line));
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+.grid-toggle:hover .key-hint {
+  background: color-mix(in oklab, var(--surface-2) 90%, var(--line));
+  color: var(--ink);
+}
+
+/* Grid overlay panel */
+.grid-overlay-panel {
+  position: fixed;
+  top: 4.5rem;
+  right: 1.5rem;
+  padding: 1rem;
+  background: color-mix(in oklab, white 96%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  box-shadow:
+    0 8px 24px color-mix(in oklab, black 15%, transparent),
+    0 2px 8px color-mix(in oklab, black 8%, transparent);
+  z-index: 9998;
+  min-width: 220px;
+}
+
+.grid-overlay-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.grid-overlay-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+}
+
+.grid-status {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.grid-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--line);
+  transition: background 0.2s ease;
+}
+
+.grid-status-dot.active {
+  background: var(--mint);
+}
+
+.grid-overlay-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.grid-overlay-hint {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.grid-overlay-hint code {
+  background: color-mix(in oklab, var(--surface) 80%, var(--line));
+  padding: 0.0625rem 0.25rem;
+  border-radius: 0.25rem;
+  font-family: ui-monospace, monospace;
+  font-size: 0.6875rem;
+}
+
+/* Grid overlay for sections */
+.show-grids section {
+  outline: 2px dashed color-mix(in oklab, var(--accent) 50%, transparent);
+  outline-offset: -2px;
+}
+
+.grid-lines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent calc(var(--g-stride) - 1px),
+    color-mix(in oklab, var(--accent) 40%, transparent) calc(var(--g-stride) - 1px),
+    color-mix(in oklab, var(--accent) 40%, transparent) var(--g-stride)
+  );
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.grid-label {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  background: color-mix(in oklab, var(--accent) 90%, black);
+  color: white;
+  font-size: 0.6875rem;
+  font-family: ui-monospace, monospace;
+  font-weight: 500;
+  border-radius: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  pointer-events: none;
+}
+
 @media (max-width: 920px) {
   .site-shell {
     padding-block-end: calc(var(--g-rhythm) * 4);
@@ -224,5 +583,15 @@ code {
 
   .hero-art {
     min-block-size: 18rem;
+  }
+
+  .grid-controls {
+    top: auto;
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  .token-grid-mini {
+    grid-template-columns: 1fr;
   }
 }

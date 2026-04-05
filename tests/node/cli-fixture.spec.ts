@@ -10,10 +10,17 @@ describe('gerstner cli fixture tests', () => {
 
     // Setup basic project structure
     await mkdir(path.join(cwd, 'apps/playground/src'), { recursive: true })
-    await writeFile(path.join(cwd, 'package.json'), JSON.stringify({
-      name: 'test-project',
-      dependencies: { tailwindcss: '^4.0.0' }
-    }, null, 2))
+    await writeFile(
+      path.join(cwd, 'package.json'),
+      JSON.stringify(
+        {
+          name: 'test-project',
+          dependencies: { tailwindcss: '^4.0.0' },
+        },
+        null,
+        2,
+      ),
+    )
     await writeFile(path.join(cwd, 'apps/playground/src/index.css'), '.app { display: block; }\n')
     await writeFile(path.join(cwd, 'apps/playground/src/main.ts'), "console.log('boot')\n")
 
@@ -24,15 +31,30 @@ describe('gerstner cli fixture tests', () => {
       generateReference: true,
       injectImports: true,
       writePresets: true,
-      yes: true
+      yes: true,
     })
 
     // Read generated files
-    const contract = await readFile(path.join(cwd, 'apps/playground/src/styles/gerstner.contract.css'), 'utf8')
-    const presets = await readFile(path.join(cwd, 'apps/playground/src/styles/gerstner.project-presets.css'), 'utf8')
-    const debug = await readFile(path.join(cwd, 'apps/playground/src/styles/gerstner.debug.css'), 'utf8')
-    const debugJs = await readFile(path.join(cwd, 'apps/playground/src/scripts/gerstner.debug.js'), 'utf8')
-    const reference = await readFile(path.join(cwd, 'apps/playground/dev/gerstner.reference.html'), 'utf8')
+    const contract = await readFile(
+      path.join(cwd, 'apps/playground/src/styles/gerstner.contract.css'),
+      'utf8',
+    )
+    const presets = await readFile(
+      path.join(cwd, 'apps/playground/src/styles/gerstner.project-presets.css'),
+      'utf8',
+    )
+    const debug = await readFile(
+      path.join(cwd, 'apps/playground/src/styles/gerstner.debug.css'),
+      'utf8',
+    )
+    const debugJs = await readFile(
+      path.join(cwd, 'apps/playground/src/scripts/gerstner.debug.js'),
+      'utf8',
+    )
+    const reference = await readFile(
+      path.join(cwd, 'apps/playground/dev/gerstner.reference.html'),
+      'utf8',
+    )
 
     // Snapshot tests for exact content matching
     expect(contract).toMatchInlineSnapshot(`
@@ -70,14 +92,21 @@ describe('gerstner cli fixture tests', () => {
     const cwd = await mkdtemp(path.join(os.tmpdir(), 'gerstner-fixture-'))
 
     await mkdir(path.join(cwd, 'apps/playground/src'), { recursive: true })
-    await writeFile(path.join(cwd, 'package.json'), JSON.stringify({
-      name: 'test-project',
-      dependencies: { tailwindcss: '^4.0.0' }
-    }, null, 2))
-    
+    await writeFile(
+      path.join(cwd, 'package.json'),
+      JSON.stringify(
+        {
+          name: 'test-project',
+          dependencies: { tailwindcss: '^4.0.0' },
+        },
+        null,
+        2,
+      ),
+    )
+
     const originalCss = '@import "tailwindcss";\n.app { display: block; }\n'
     const originalJs = "console.log('boot')\n"
-    
+
     await writeFile(path.join(cwd, 'apps/playground/src/index.css'), originalCss)
     await writeFile(path.join(cwd, 'apps/playground/src/main.ts'), originalJs)
 
@@ -88,7 +117,7 @@ describe('gerstner cli fixture tests', () => {
       generateReference: false,
       injectImports: true,
       writePresets: false,
-      yes: true
+      yes: true,
     })
 
     const updatedCss = await readFile(path.join(cwd, 'apps/playground/src/index.css'), 'utf8')
@@ -104,10 +133,17 @@ describe('gerstner cli fixture tests', () => {
     const cwd = await mkdtemp(path.join(os.tmpdir(), 'gerstner-fixture-'))
 
     await mkdir(path.join(cwd, 'apps/playground/src'), { recursive: true })
-    await writeFile(path.join(cwd, 'package.json'), JSON.stringify({
-      name: 'test-project',
-      dependencies: { tailwindcss: '^4.0.0' }
-    }, null, 2))
+    await writeFile(
+      path.join(cwd, 'package.json'),
+      JSON.stringify(
+        {
+          name: 'test-project',
+          dependencies: { tailwindcss: '^4.0.0' },
+        },
+        null,
+        2,
+      ),
+    )
     await writeFile(path.join(cwd, 'apps/playground/src/index.css'), '.app { display: block; }\n')
     await writeFile(path.join(cwd, 'apps/playground/src/main.ts'), "console.log('boot')\n")
 
@@ -119,7 +155,7 @@ describe('gerstner cli fixture tests', () => {
       generateReference: false,
       injectImports: true,
       writePresets: true,
-      yes: true
+      yes: true,
     })
 
     await runInit({
@@ -129,7 +165,7 @@ describe('gerstner cli fixture tests', () => {
       generateReference: false,
       injectImports: true,
       writePresets: true,
-      yes: true
+      yes: true,
     })
 
     const css = await readFile(path.join(cwd, 'apps/playground/src/index.css'), 'utf8')

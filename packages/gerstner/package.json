@@ -1,0 +1,58 @@
+{
+  "name": "gerstner",
+  "version": "0.2.0",
+  "description": "Gerstner layout system - one package, multiple surfaces",
+  "license": "MIT",
+  "bin": {
+    "gerstner": "./dist/cli/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "default": "./dist/css/index.css"
+    },
+    "./css": {
+      "default": "./dist/css/index.css"
+    },
+    "./tw4": {
+      "default": "./dist/tw4/index.css"
+    },
+    "./debug": {
+      "default": "./dist/debug/index.js"
+    },
+    "./text": {
+      "default": "./dist/text/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vp pack && npm run copy-css",
+    "copy-css": "node -e \"require('fs').cpSync('src/css', 'dist/css', {recursive:true}); require('fs').cpSync('src/tw4', 'dist/tw4', {recursive:true}); require('fs').cpSync('src/debug/debug.css', 'dist/debug/debug.css')\"",
+    "dev": "vp pack --watch",
+    "test": "vp test",
+    "check": "vp check",
+    "prepublishOnly": "vp run build"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vite-plus": "catalog:"
+  },
+  "peerDependencies": {
+    "tailwindcss": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "tailwindcss": {
+      "optional": true
+    }
+  }
+}

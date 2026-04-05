@@ -6,7 +6,7 @@ export async function prompt(label: string, fallback?: string): Promise<string> 
   try {
     const suffix = fallback ? ` (${fallback})` : ''
     const answer = (await rl.question(`${label}${suffix}: `)).trim()
-    return answer.length > 0 ? answer : fallback ?? ''
+    return answer.length > 0 ? answer : (fallback ?? '')
   } finally {
     rl.close()
   }

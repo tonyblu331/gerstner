@@ -115,20 +115,20 @@ gerstner/
 
 ## Package responsibility matrix
 
-| Responsibility | core | debug | cli | Why |
-|---|---|---|---|---|
-| Stride math | owns | no | no | Layout belongs to CSS |
-| `@property` registration | owns | no | no | Part of the runtime contract |
-| named zones and utilities | owns | no | no | Public CSS API |
-| rhythm and type roles | owns | no | no | Runtime CSS behavior |
-| human-readable labels | no | owns | no | Dev ergonomics only |
-| keyboard overlay | no | owns | no | Optional dev tool |
-| export current values | no | owns | no | Dev helper |
-| framework detection | no | no | owns | Scaffolding concern |
-| contract CSS generation | no | no | owns | Setup concern |
-| preset CSS generation | no | no | owns | Setup concern |
-| dev reference page | no | optional integration | owns | Setup and teaching |
-| production layout JS | forbidden | forbidden | forbidden | Breaks the system premise |
+| Responsibility            | core      | debug                | cli       | Why                          |
+| ------------------------- | --------- | -------------------- | --------- | ---------------------------- |
+| Stride math               | owns      | no                   | no        | Layout belongs to CSS        |
+| `@property` registration  | owns      | no                   | no        | Part of the runtime contract |
+| named zones and utilities | owns      | no                   | no        | Public CSS API               |
+| rhythm and type roles     | owns      | no                   | no        | Runtime CSS behavior         |
+| human-readable labels     | no        | owns                 | no        | Dev ergonomics only          |
+| keyboard overlay          | no        | owns                 | no        | Optional dev tool            |
+| export current values     | no        | owns                 | no        | Dev helper                   |
+| framework detection       | no        | no                   | owns      | Scaffolding concern          |
+| contract CSS generation   | no        | no                   | owns      | Setup concern                |
+| preset CSS generation     | no        | no                   | owns      | Setup concern                |
+| dev reference page        | no        | optional integration | owns      | Setup and teaching           |
+| production layout JS      | forbidden | forbidden            | forbidden | Breaks the system premise    |
 
 Hard rule:
 
@@ -176,6 +176,7 @@ Hard rule:
 ## Architectural boundaries
 
 ### 1. Core is CSS-native
+
 The Stride engine runs in the browser’s layout engine.
 Core must not depend on JavaScript to resolve columns, offsets, breakouts, shell tracks, or type rhythm.
 
@@ -199,12 +200,14 @@ Not allowed in core:
 - framework runtime dependencies
 
 ### 2. Debug observes public tokens only
+
 `@gerstner/debug` can read and set the public token contract.
 It must not introduce a second hidden layout model.
 
 If the debug panel can do something the CSS package cannot express, that is a design bug.
 
 ### 3. CLI writes files, not runtime behavior
+
 The CLI scaffolds files and injects imports.
 It should not create a permanent abstraction layer between teams and their CSS.
 
@@ -216,18 +219,22 @@ The package is a scaffolder, not a prison.
 ## Core principles
 
 ### Type first, grid second
+
 The grid derives from type.
 Do not start API design from “how many columns.” Start from reading size, measure, rhythm, and layout character.
 
 ### Zones before lines
+
 Default authoring should prefer named zones and composition utilities.
 Line placement exists as an escape hatch, not the primary surface.
 
 ### Exact alignment must be honest
+
 Use `g-sub` or the final subgrid utility for exact inherited tracks.
 Do not describe re-derived local grids as exact if they drift.
 
 ### Consumer CSS must always win
+
 Core utilities must be layered so unlayered project CSS can override them without `!important`.
 
 ---
@@ -237,6 +244,7 @@ Core utilities must be layered so unlayered project CSS can override them withou
 These are release-gating rules.
 
 ### No `minmax()` inside a CSS variable
+
 Reason: silent grid-track failure.
 
 Allowed:
@@ -253,6 +261,7 @@ grid-template-columns: repeat(var(--g-cols), var(--g-track));
 ```
 
 ### No `line-height: var(--g-rhythm)` on prose
+
 Reason: prose line-height must be a number, not a fixed length.
 
 Allowed:
@@ -268,13 +277,16 @@ line-height: var(--g-rhythm);
 ```
 
 ### No layout math in production JavaScript
+
 Reason: it duplicates browser work, adds drift risk, and weakens the system boundary.
 
 ### No bare `vh`
+
 Reason: mobile viewport bugs.
 Use `svh`, `dvh`, or logical viewport units as appropriate.
 
 ### `@layer` on all shipped utilities
+
 Reason: consumer CSS must override without `!important`.
 
 ---
@@ -309,6 +321,7 @@ Unlayered project CSS should always beat shipped package layers.
 Legacy `gc-` names are not allowed in new work.
 
 ### Human-readable labels
+
 Every Layer A token must have a matching human-readable label in `packages/debug/src/labels.ts`.
 
 If a token exists but the debug inspector cannot explain it in plain language, the DX is incomplete.
@@ -320,14 +333,17 @@ If a token exists but the debug inspector cannot explain it in plain language, t
 The CLI supports three conceptual setup paths:
 
 ### Direct
+
 The user enters raw values.
 Good for teams who already know their numbers.
 
 ### Fluid
+
 The CLI derives sensible `clamp()` values.
 Good for responsive projects that want fast setup.
 
 ### Derive
+
 The CLI starts from typography and layout character.
 Good for teams using the full Gerstner mental model.
 
@@ -375,18 +391,22 @@ The base contract has to work without them.
 ## Tooling
 
 ### Monorepo
+
 Use npm workspaces.
 The repo root owns task orchestration and common config.
 
 ### Vite+
+
 Use Vite+ for workspace tasks, checks, formatting, linting, and packaging.
 Do not mix in extra hook systems unless there is a real gap.
 
 ### Playground
+
 `apps/playground` exists to test the system as a real consumer app.
 It should stay lightweight and close to how external teams will actually use Gerstner.
 
 ### Browser proofs
+
 Playwright fixtures are not decorative. They are release evidence.
 If a behavior matters, it needs a fixture and an assertion.
 
@@ -397,6 +417,7 @@ If a behavior matters, it needs a fixture and an assertion.
 CI should prove correctness without burning minutes stupidly.
 
 ### Fast lane on PRs
+
 Run:
 
 - install
@@ -405,12 +426,15 @@ Run:
 - lightweight app build
 
 ### Browser lane on relevant changes
+
 Run Playwright only when core, debug, cli, tests, or playground files changed.
 
 ### Compatibility lane on schedule or release branches
+
 Use broader compatibility checks weekly or before release, not on every PR.
 
 ### Release lane on tags only
+
 Publishing should happen on tags, not on branch pushes.
 
 ---
@@ -420,12 +444,14 @@ Publishing should happen on tags, not on branch pushes.
 Semver is strict.
 
 ### Patch
+
 - bug fixes
 - annotation improvements
 - docs clarifications
 - no public API change
 
 ### Minor
+
 - new utilities
 - new setup-path options
 - new presets
@@ -433,6 +459,7 @@ Semver is strict.
 - no breakage
 
 ### Major
+
 - token renames
 - utility renames
 - removed exports
