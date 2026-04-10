@@ -67,6 +67,25 @@ export async function detectAppType(cwd: string): Promise<'react' | 'vanilla'> {
   }
 }
 
+export async function detectTargetFromCssEntry(
+  cwd: string,
+  cssEntry: string,
+): Promise<'css' | 'tw4'> {
+  const absolute = path.join(cwd, cssEntry)
+  try {
+    const content = await readFile(absolute, 'utf8')
+    if (
+      /@import\s+["']tailwindcss["']/u.test(content) ||
+      /@import\s+["']gerstner\/tw4["']/u.test(content)
+    ) {
+      return 'tw4'
+    }
+  } catch {
+    // file doesn't exist yet — fall through
+  }
+  return 'css'
+}
+
 export function inferAppRoot(cssEntry: string): string {
   const normalized = normalize(cssEntry)
   const srcSegment = '/src/'

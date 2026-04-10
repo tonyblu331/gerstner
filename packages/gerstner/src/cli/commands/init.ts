@@ -1,6 +1,12 @@
 import path from 'node:path'
 import { prompt, promptBoolean, promptChoice } from '../lib/prompt'
-import { detectAppType, detectCssEntry, detectJsEntry, inferAppRoot } from '../lib/project'
+import {
+  detectAppType,
+  detectCssEntry,
+  detectJsEntry,
+  detectTargetFromCssEntry,
+  inferAppRoot,
+} from '../lib/project'
 import { readTextIfExists, writeIfChanged } from '../lib/fs'
 import { renderContractCss } from '../templates/contract'
 import { renderPresetCss } from '../templates/presets'
@@ -36,7 +42,7 @@ export async function runInit(options: InitOptions): Promise<InitResult> {
   const cwd = options.cwd
   const cssEntry = await resolveCssEntry(options)
   const appType = options.appType ?? (await detectAppType(cwd))
-  const target = await resolveTarget(options)
+  const target = await resolveTarget(options, cssEntry)
   const appRoot = inferAppRoot(cssEntry)
   const jsEntry = await detectJsEntry(cwd, cssEntry)
   const stylesDir = normalizeAppPath(appRoot, 'src/styles')
@@ -139,7 +145,7 @@ export async function runInit(options: InitOptions): Promise<InitResult> {
 
     const cssImports = buildImports(target, cssEntry, contractFile, presetsFile, options)
 
-    await writeIfChanged(cssEntryPath, ensureImports(cssEntryText, cssImports))
+    await writeIfChanged(cssEntryPath, ensureImports(cssEntryText, cssImports, target))
 
     if (options.installDebug ?? false) {
       if (jsEntry) {
@@ -231,12 +237,21 @@ async function resolveCssEntry(options: InitOptions): Promise<string> {
   throw new Error('No CSS entry could be detected. Pass --css-entry explicitly.')
 }
 
-async function resolveTarget(options: InitOptions): Promise<'css' | 'tw4'> {
+async function resolveTarget(options: InitOptions, cssEntry?: string): Promise<'css' | 'tw4'> {
   if (options.target) return options.target
 
-  if (options.yes) return 'css'
+  // Non-interactive: detect from CSS entry instead of blindly defaulting to 'css'
+  if (options.yes) {
+    if (cssEntry) {
+      const detected = await detectTargetFromCssEntry(options.cwd, cssEntry)
+      return detected
+    }
+    return 'css'
+  }
 
-  return promptChoice('Target surface', ['css', 'tw4'], 'css')
+  // Interactive: offer detected target as default
+  const detectedDefault = cssEntry ? await detectTargetFromCssEntry(options.cwd, cssEntry) : 'css'
+  return promptChoice('Target surface', ['css', 'tw4'], detectedDefault)
 }
 
 async function writeTracked(
@@ -255,15 +270,33 @@ function relativeImport(fromFile: string, toFile: string): string {
   return relative.startsWith('.') ? relative : `./${relative}`
 }
 
-function ensureImports(source: string, imports: string[]): string {
-  const lines = source.split(/\r?\n/)
-  const missing = imports.filter((entry) => !source.includes(entry))
-  if (missing.length === 0) return source
+const SURFACE_IMPORT_RE = /@import\s+["']gerstner\/(?:css|tw4)["'];?/gu
+
+function ensureImports(source: string, imports: string[], target?: 'css' | 'tw4'): string {
+  let result = source
+
+  // Replace stale surface imports instead of stacking them
+  if (target) {
+    const canonicalSurface =
+      target === 'tw4' ? '@import "gerstner/tw4";' : '@import "gerstner/css";'
+    const hasStaleSurface = SURFACE_IMPORT_RE.test(result)
+    const hasCanonical = result.includes(canonicalSurface)
+
+    if (hasStaleSurface && !hasCanonical) {
+      result = result.replace(SURFACE_IMPORT_RE, canonicalSurface)
+    } else if (hasStaleSurface && hasCanonical) {
+      result = result.replace(SURFACE_IMPORT_RE, '')
+    }
+  }
+
+  const lines = result.split(/\r?\n/)
+  const missing = imports.filter((entry) => !result.includes(entry))
+  if (missing.length === 0) return `${result.trimEnd()}\n`
 
   const insertionPoint = lines.findIndex(
     (line) => !line.trim().startsWith('@import') && line.trim().length > 0,
   )
-  if (insertionPoint === -1) return `${missing.join('\n')}\n${source}`.trimEnd() + '\n'
+  if (insertionPoint === -1) return `${missing.join('\n')}\n${result}`.trimEnd() + '\n'
 
   lines.splice(insertionPoint, 0, ...missing)
   return `${lines.join('\n').trimEnd()}\n`

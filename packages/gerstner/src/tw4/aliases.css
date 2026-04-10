@@ -1,5 +1,76 @@
 /* Gerstner TW4 Aliases */
-/* Shorthand mappings and convenience classes */
+/* Classes that can't be expressed as @utility (child combinators, etc.) */
 
-/* No aliases needed - utilities are explicitly named */
-/* g-shell, g, g-sub, g-fit, g-fill are the canonical names */
+/* Stack spacing — uses > * + * which @utility doesn't support */
+.g-stack-1 > * + * {
+  margin-block-start: calc(var(--g-rhythm) * 1);
+}
+.g-stack-2 > * + * {
+  margin-block-start: calc(var(--g-rhythm) * 2);
+}
+.g-stack-3 > * + * {
+  margin-block-start: calc(var(--g-rhythm) * 3);
+}
+.g-stack-4 > * + * {
+  margin-block-start: calc(var(--g-rhythm) * 4);
+}
+.g-stack-5 > * + * {
+  margin-block-start: calc(var(--g-rhythm) * 5);
+}
+.g-stack-6 > * + * {
+  margin-block-start: calc(var(--g-rhythm) * 6);
+}
+
+/* Grid containers need position:relative for CSS-native debug overlays */
+.g-shell,
+.g,
+.g-sub,
+.g-fit,
+.g-fill {
+  position: relative;
+}
+
+/* Preset token overrides */
+.g-editorial {
+  --g-cols: 12;
+  --g-gutter: clamp(1rem, 2.4vw, 1.75rem);
+  --g-frame: clamp(1rem, 6dvw, 6rem);
+  --g-max-width: 90rem;
+  --g-min: 16rem;
+  --g-leading-steps: 3;
+  --g-scale-ratio: 1.25;
+  --g-measure-body: 70ch;
+}
+
+.g-case-study {
+  --g-cols: 12;
+  --g-gutter: clamp(1rem, 2.5vw, 2rem);
+  --g-frame: clamp(1rem, 8dvw, 8rem);
+  --g-max-width: 96rem;
+  --g-min: 18rem;
+  --g-leading-steps: 3;
+  --g-scale-ratio: 1.25;
+  --g-measure-body: 72ch;
+}
+
+.g-marketing {
+  --g-cols: 12;
+  --g-gutter: clamp(0.875rem, 2vw, 1.25rem);
+  --g-frame: clamp(1rem, 5dvw, 5rem);
+  --g-max-width: 86rem;
+  --g-min: 15rem;
+  --g-leading-steps: 3;
+  --g-scale-ratio: 1.333;
+  --g-measure-body: 62ch;
+}
+
+.g-gallery {
+  --g-cols: 12;
+  --g-gutter: clamp(0.875rem, 2vw, 1.25rem);
+  --g-frame: clamp(1rem, 4dvw, 4rem);
+  --g-max-width: 100rem;
+  --g-min: 14rem;
+  --g-leading-steps: 2.5;
+  --g-scale-ratio: 1.2;
+  --g-measure-body: 60ch;
+}

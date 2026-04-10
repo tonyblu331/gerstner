@@ -103,6 +103,7 @@ packages/
 ### `gerstner`
 
 Single package with multiple entry points:
+
 - `gerstner/css` — Vanilla CSS surface (tokens, layout, rhythm, presets)
 - `gerstner/tw4` — Tailwind v4 integration (@theme, @utility)
 - `gerstner/debug` — Optional developer tooling
@@ -114,14 +115,13 @@ CLI: `npx gerstner init` scaffolds projects with css/tw4 target selection.
 
 ## Usage
 
-### Import the CSS surface
+### Import the CSS surface (vanilla only)
 
 ```css
-@import 'tailwindcss';
 @import 'gerstner/css';
 ```
 
-### Import the TW4 surface
+### Import the TW4 surface (Tailwind v4)
 
 ```css
 @import 'tailwindcss';
@@ -132,7 +132,7 @@ CLI: `npx gerstner init` scaffolds projects with css/tw4 target selection.
 ### Import only what you need
 
 ```css
-@import 'gerstner/css';        /* Full CSS surface */
+@import 'gerstner/css'; /* Full CSS surface */
 ```
 
 ### Example HTML

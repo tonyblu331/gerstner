@@ -1,5 +1,6 @@
 /* Gerstner TW4 Surface */
 /* CSS-first Tailwind v4 integration */
+/* ⚠ Tailwind v4-only. Do NOT import this in a vanilla CSS entry. Use gerstner/css instead. */
 
 @import './theme.css';
 @import './utilities.css';

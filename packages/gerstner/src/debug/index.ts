@@ -1,3 +1,5 @@
+import { applyDriftDetection } from './drift.js'
+
 export interface GerstnerDebugMetrics {
   label: string
   mode: string
@@ -22,9 +24,8 @@ export interface GerstnerDebugMetrics {
 export interface GerstnerDebugOptions {
   defaultOpen?: boolean
   initial?: {
-    overlay?: boolean
-    badge?: boolean
-    ruler?: boolean
+    preset?: DebugPreset
+    layers?: Partial<Record<DebugLayer, boolean>>
   }
   scope?: string | HTMLElement
   root?: ParentNode
@@ -35,18 +36,30 @@ export interface GerstnerDebugController {
   destroy: () => void
   refresh: () => void
   setScope: (scope: HTMLElement | null) => void
+  setPreset: (preset: DebugPreset) => void
+  toggleLayer: (layer: DebugLayer) => void
   exportContract: () => string
 }
 
+export type DebugLayer = 'cols' | 'baseline' | 'rhythm' | 'zones' | 'drift'
+export type DebugPreset = 'grid' | 'rhythm' | 'full' | 'zones' | 'off'
+
 interface DebugState {
   panel: boolean
-  overlay: boolean
-  badge: boolean
-  ruler: boolean
+  preset: DebugPreset
+  layers: Record<DebugLayer, boolean>
   pinned: boolean
 }
 
-const STORAGE_KEY = 'gerstner:debug:v2'
+const STORAGE_KEY = 'gerstner:debug:v3'
+
+const PRESET_LAYERS: Record<DebugPreset, Record<DebugLayer, boolean>> = {
+  grid: { cols: true, baseline: true, rhythm: false, zones: false, drift: false },
+  rhythm: { cols: false, baseline: true, rhythm: true, zones: false, drift: false },
+  full: { cols: true, baseline: true, rhythm: true, zones: true, drift: true },
+  zones: { cols: true, baseline: false, rhythm: false, zones: true, drift: false },
+  off: { cols: false, baseline: false, rhythm: false, zones: false, drift: false },
+}
 
 export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerDebugController {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
@@ -54,6 +67,8 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
       destroy() {},
       refresh() {},
       setScope() {},
+      setPreset() {},
+      toggleLayer() {},
       exportContract() {
         return ''
       },
@@ -65,8 +80,6 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
   const mount = options.root ?? document.body
   mount.appendChild(root)
 
-  const overlay = root.querySelector<HTMLElement>('[data-testid="gerstner-debug-overlay"]')!
-  const ruler = root.querySelector<HTMLElement>('[data-testid="gerstner-debug-ruler"]')!
   const panel = root.querySelector<HTMLElement>('[data-testid="gerstner-debug-panel"]')!
   const badge = root.querySelector<HTMLElement>('[data-testid="gerstner-debug-badge"]')!
   const launcher = root.querySelector<HTMLButtonElement>('[data-testid="gerstner-debug-launcher"]')!
@@ -87,6 +100,7 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
   const sync = () => {
     persistState(state)
     syncState(root, state)
+    syncLayers(state)
   }
 
   const exportContract = () => renderContractFromMetrics(activeScope)
@@ -106,15 +120,22 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
     refresh()
   }
 
+  const setPreset = (preset: DebugPreset) => {
+    state.preset = preset
+    state.layers = { ...PRESET_LAYERS[preset] }
+    sync()
+  }
+
+  const toggleLayer = (layer: DebugLayer) => {
+    state.layers[layer] = !state.layers[layer]
+    state.preset = 'off'
+    sync()
+  }
+
   const refresh = () => {
     activeMetrics = readMetrics(activeScope)
-    writeOverlayVars(root, activeMetrics)
     writePanel(panel, activeMetrics, state)
     writeBadge(badge, activeMetrics)
-    root.style.setProperty('--g-debug-baseline', `${activeMetrics.baseline}px`)
-    overlay.setAttribute('aria-hidden', String(!state.overlay))
-    ruler.setAttribute('aria-hidden', String(!state.ruler))
-    badge.setAttribute('aria-hidden', String(!state.badge))
     options.onResize?.(activeMetrics)
   }
 
@@ -129,14 +150,20 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
   const onClick = async (event: MouseEvent) => {
     const target = event.target instanceof HTMLElement ? event.target : null
     const action = target?.closest<HTMLElement>('[data-g-debug-action]')?.dataset.gDebugAction
+    const layer = target?.closest<HTMLElement>('[data-g-debug-layer]')?.dataset.gDebugLayer as
+      | DebugLayer
+      | undefined
+    const preset = target?.closest<HTMLElement>('[data-g-debug-preset]')?.dataset.gDebugPreset as
+      | DebugPreset
+      | undefined
+    const theme = target?.closest<HTMLElement>('[data-g-debug-theme]')?.dataset.gDebugTheme as
+      | string
+      | undefined
 
     if (action) {
       event.preventDefault()
 
       if (action === 'panel') state.panel = !state.panel
-      if (action === 'overlay') state.overlay = !state.overlay
-      if (action === 'badge') state.badge = !state.badge
-      if (action === 'ruler') state.ruler = !state.ruler
       if (action === 'pin') {
         state.pinned = !state.pinned
         if (state.pinned && hoveredScope) setScope(hoveredScope)
@@ -160,6 +187,28 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
       return
     }
 
+    if (preset) {
+      event.preventDefault()
+      setPreset(preset)
+      return
+    }
+
+    if (theme) {
+      event.preventDefault()
+      document.documentElement.setAttribute('data-g-debug-theme', theme)
+      // Update button states
+      root.querySelectorAll<HTMLButtonElement>('[data-g-debug-theme]').forEach((btn) => {
+        btn.setAttribute('aria-pressed', String(btn.dataset.gDebugTheme === theme))
+      })
+      return
+    }
+
+    if (layer) {
+      event.preventDefault()
+      toggleLayer(layer)
+      return
+    }
+
     if (!event.altKey) return
 
     const scope = resolveScopeFromTarget(target)
@@ -175,14 +224,18 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
 
     const key = event.key.toLowerCase()
     if (key === 'g') state.panel = !state.panel
-    if (key === 'o') state.overlay = !state.overlay
-    if (key === 'b') state.badge = !state.badge
-    if (key === 'r') state.ruler = !state.ruler
-    if (!['g', 'o', 'b', 'r'].includes(key)) return
+    if (key === '0') setPreset('off')
+    if (key === '1') toggleLayer('cols')
+    if (key === '2') toggleLayer('baseline')
+    if (key === '3') toggleLayer('rhythm')
+    if (key === '4') toggleLayer('zones')
+    if (key === '5') toggleLayer('drift')
 
-    sync()
-    refresh()
-    event.preventDefault()
+    if (['g', '0', '1', '2', '3', '4', '5'].includes(key)) {
+      sync()
+      refresh()
+      event.preventDefault()
+    }
   }
 
   document.addEventListener('pointermove', onPointerMove, { passive: true })
@@ -213,6 +266,8 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
     },
     refresh,
     setScope,
+    setPreset,
+    toggleLayer,
     exportContract,
   }
 }
@@ -221,9 +276,6 @@ function createRoot(state: DebugState): HTMLElement {
   const root = document.createElement('div')
   root.className = 'g-debug-root'
   root.innerHTML = `
-    <div class="g-debug-overlay" data-testid="gerstner-debug-overlay" aria-hidden="false"></div>
-    <div class="g-debug-ruler" data-testid="gerstner-debug-ruler" aria-hidden="true"></div>
-
     <aside class="g-debug-panel" data-testid="gerstner-debug-panel">
       <div class="g-debug-toolbar">
         <div class="g-debug-title">
@@ -234,9 +286,29 @@ function createRoot(state: DebugState): HTMLElement {
       </div>
 
       <div class="g-debug-actions">
-        <button class="g-debug-button" data-g-debug-action="overlay" type="button" aria-pressed="${String(state.overlay)}">Overlay</button>
-        <button class="g-debug-button" data-g-debug-action="badge" type="button" aria-pressed="${String(state.badge)}">Badge</button>
-        <button class="g-debug-button" data-g-debug-action="ruler" type="button" aria-pressed="${String(state.ruler)}">Baseline</button>
+        <button class="g-debug-button" data-g-debug-preset="grid" type="button" aria-pressed="${String(state.preset === 'grid')}">Grid</button>
+        <button class="g-debug-button" data-g-debug-preset="rhythm" type="button" aria-pressed="${String(state.preset === 'rhythm')}">Rhythm</button>
+        <button class="g-debug-button" data-g-debug-preset="full" type="button" aria-pressed="${String(state.preset === 'full')}">Full</button>
+        <button class="g-debug-button" data-g-debug-preset="zones" type="button" aria-pressed="${String(state.preset === 'zones')}">Zones</button>
+        <button class="g-debug-button" data-g-debug-preset="off" type="button" aria-pressed="${String(state.preset === 'off')}">Off</button>
+      </div>
+
+      <div class="g-debug-actions">
+        <button class="g-debug-button" data-g-debug-theme="blue" type="button" aria-pressed="true">Blue</button>
+        <button class="g-debug-button" data-g-debug-theme="red" type="button" aria-pressed="false">Red</button>
+        <button class="g-debug-button" data-g-debug-theme="green" type="button" aria-pressed="false">Green</button>
+        <button class="g-debug-button" data-g-debug-theme="purple" type="button" aria-pressed="false">Purple</button>
+      </div>
+
+      <div class="g-debug-actions">
+        <button class="g-debug-button" data-g-debug-layer="cols" type="button" aria-pressed="${String(state.layers.cols)}">Columns</button>
+        <button class="g-debug-button" data-g-debug-layer="baseline" type="button" aria-pressed="${String(state.layers.baseline)}">Baseline</button>
+        <button class="g-debug-button" data-g-debug-layer="rhythm" type="button" aria-pressed="${String(state.layers.rhythm)}">Rhythm</button>
+        <button class="g-debug-button" data-g-debug-layer="zones" type="button" aria-pressed="${String(state.layers.zones)}">Zones</button>
+        <button class="g-debug-button" data-g-debug-layer="drift" type="button" aria-pressed="${String(state.layers.drift)}">Drift</button>
+      </div>
+
+      <div class="g-debug-actions">
         <button class="g-debug-button" data-g-debug-action="pin" type="button" aria-pressed="${String(state.pinned)}">Pin scope</button>
         <button class="g-debug-button" data-g-debug-action="reset" type="button">Root</button>
         <button class="g-debug-button" data-g-debug-action="export" type="button">Export CSS</button>
@@ -268,7 +340,7 @@ function createRoot(state: DebugState): HTMLElement {
         </dl>
 
         <textarea class="g-debug-export" data-g-debug-export spellcheck="false" aria-label="Exported contract CSS"></textarea>
-        <p class="g-debug-shortcuts"><span class="g-debug-muted">Shortcuts</span> Alt+G panel · Alt+O overlay · Alt+B badge · Alt+R baseline · hover a marked scope to inspect · Alt+click to pin</p>
+        <p class="g-debug-shortcuts"><span class="g-debug-muted">Shortcuts</span> Alt+G panel · Alt+0 off · Alt+1-5 layers · hover a marked scope to inspect · Alt+click to pin</p>
         <p class="g-debug-status-text" data-g-debug-status data-state="idle">Ready</p>
       </div>
     </aside>
@@ -290,12 +362,35 @@ function createRoot(state: DebugState): HTMLElement {
   return root
 }
 
+function syncLayers(state: DebugState) {
+  const grids = document.querySelectorAll<HTMLElement>('.g-shell, .g, .g-fit, .g-fill, .g-sub')
+  grids.forEach((grid) => {
+    grid.setAttribute('data-g-debug-cols', String(state.layers.cols))
+    grid.setAttribute('data-g-debug-baseline', String(state.layers.baseline))
+    grid.setAttribute('data-g-debug-rhythm', String(state.layers.rhythm))
+    grid.setAttribute('data-g-debug-zones', String(state.layers.zones))
+    grid.setAttribute('data-g-debug-drift', String(state.layers.drift))
+  })
+
+  if (state.layers.drift) {
+    applyDriftDetection()
+  }
+}
+
 function loadState(options: GerstnerDebugOptions): DebugState {
+  const initialPreset = options.initial?.preset ?? 'grid'
+  const initialLayers = options.initial?.layers ?? PRESET_LAYERS[initialPreset]
+
   const fallback: DebugState = {
     panel: options.defaultOpen ?? false,
-    overlay: options.initial?.overlay ?? true,
-    badge: options.initial?.badge ?? true,
-    ruler: options.initial?.ruler ?? false,
+    preset: initialPreset,
+    layers: {
+      cols: initialLayers.cols ?? false,
+      baseline: initialLayers.baseline ?? false,
+      rhythm: initialLayers.rhythm ?? false,
+      zones: initialLayers.zones ?? false,
+      drift: initialLayers.drift ?? false,
+    },
     pinned: false,
   }
 
@@ -319,18 +414,22 @@ function persistState(state: DebugState) {
 
 function syncState(root: HTMLElement, state: DebugState) {
   root.dataset.panel = String(state.panel)
-  root.dataset.overlay = String(state.overlay)
-  root.dataset.badge = String(state.badge)
-  root.dataset.ruler = String(state.ruler)
   root.dataset.pinned = String(state.pinned)
 
   root.querySelectorAll<HTMLButtonElement>('[data-g-debug-action]').forEach((button) => {
     const action = button.dataset.gDebugAction
     if (action === 'panel') button.setAttribute('aria-pressed', String(state.panel))
-    if (action === 'overlay') button.setAttribute('aria-pressed', String(state.overlay))
-    if (action === 'badge') button.setAttribute('aria-pressed', String(state.badge))
-    if (action === 'ruler') button.setAttribute('aria-pressed', String(state.ruler))
     if (action === 'pin') button.setAttribute('aria-pressed', String(state.pinned))
+  })
+
+  root.querySelectorAll<HTMLButtonElement>('[data-g-debug-preset]').forEach((button) => {
+    const preset = button.dataset.gDebugPreset as DebugPreset
+    button.setAttribute('aria-pressed', String(state.preset === preset))
+  })
+
+  root.querySelectorAll<HTMLButtonElement>('[data-g-debug-layer]').forEach((button) => {
+    const layer = button.dataset.gDebugLayer as DebugLayer
+    button.setAttribute('aria-pressed', String(state.layers[layer]))
   })
 
   root
@@ -438,18 +537,9 @@ function detectTrimSupport(): string {
   return CSS.supports('text-box: trim-both cap alphabetic') ? 'supported' : 'not yet'
 }
 
-function writeOverlayVars(root: HTMLElement, metrics: GerstnerDebugMetrics) {
-  const overlayWidth = Math.min(metrics.contentWidth, window.innerWidth)
-  const overlayLeft = Math.max(0, (window.innerWidth - overlayWidth) / 2)
-  root.style.setProperty('--g-debug-overlay-left', `${overlayLeft}px`)
-  root.style.setProperty('--g-debug-overlay-width', `${overlayWidth}px`)
-  root.style.setProperty('--g-debug-col-width', `${metrics.columnWidth}px`)
-  root.style.setProperty('--g-debug-overlay-gap', `${metrics.gutter}px`)
-}
-
 function writePanel(panel: HTMLElement, metrics: GerstnerDebugMetrics, state: DebugState) {
   setText(panel, 'scope-label', metrics.label)
-  setText(panel, 'scope-meta', `${metrics.modeLabel} · preset ${metrics.preset}`)
+  setText(panel, 'scope-meta', `${metrics.modeLabel} · preset ${state.preset}`)
   setText(panel, 'cols', String(metrics.cols))
   setText(panel, 'gutter', formatPx(metrics.gutter))
   setText(panel, 'frame', formatPx(metrics.frame))
