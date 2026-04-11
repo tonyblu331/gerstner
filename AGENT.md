@@ -68,7 +68,7 @@ When someone pushes back: engage with the reasoning, not the rule. "The ADR says
 | No layout math in production JS            | Browser C++ is faster and correct — ADR-001                     |
 | No bare `vh`                               | iOS address bar bug. Use `svh`/`dvh` — `docs/VIEWPORT-UNITS.md` |
 | `@layer` on all utilities                  | Consumer CSS must win without `!important` — ADR-011            |
-| Never hand-edit generated artifacts        | `contract.manifest.json`, generated helpers — regenerate only   |
+| Never hand-edit generated artifacts        | `contract.manifest.json`, `helpers.css`, `tw4/helpers.css`, `labels.json`, `metadata.json` — regenerate only |
 
 ADRs exist for the default case, not every case. If someone has a legitimate reason to deviate, engage with the reason. Document the deviation. Move forward.
 
@@ -95,13 +95,22 @@ Token prefix: `--g-`. Utility prefix: `g-`. Import: `@import "gerstner"`.
 - **Manifest**: `stride/contract.manifest.json` — generated artifact bridging math and consumers
 - **CSS parity**: `stride/index.css` — `:root` derived tokens matching `core.ts` formulas
 - **Generated helpers**: `css/helpers.css` — emitted from manifest via `pnpm emit:helpers`
+- **TW4 helpers**: `tw4/helpers.css` — `@utility` syntax, emitted via `pnpm emit:tw4`
+- **TW4 theme**: `tw4/theme.css` — authored tokens + TW4 namespace mappings (`--font-size-*`, `--spacing-*`) referencing stride via `var()`. No inline derived recalcs.
+- **Debug labels**: `debug/labels.json` — column/gutter/boundary/view/scale metadata, emitted via `pnpm emit:debug`
+- **Reference metadata**: `reference-fixtures/metadata.json` — fixture data for dev reference page, emitted via `pnpm emit:reference`
 - **Field overrides**: `.g-shell`, `.g`, `.g-fit/.g-fill` recompute derived tokens locally for cqi context — NOT duplicated derivations
 - **Authored tokens only** in `css/tokens.css` `:root` — no derived recalcs
-- **Layer order**: `stride → gerstner.tokens → gerstner.layout → gerstner.rhythm → gerstner.helpers`
+- **CSS layer order**: `stride → gerstner.tokens → gerstner.layout → gerstner.rhythm → gerstner.helpers`
+- **TW4 import order**: `stride/index.css → theme → utilities → helpers → aliases`
+- **Parity**: CSS and TW4 surfaces are semantically equivalent — no parallel engine. Validated by `pnpm test:parity`
 
 ### Regeneration commands
 
 - `pnpm emit:manifest` — regenerate `contract.manifest.json`
 - `pnpm emit:helpers` — regenerate `css/helpers.css`
+- `pnpm emit:tw4` — regenerate `tw4/helpers.css`
+- `pnpm emit:debug` — regenerate `debug/labels.json`
+- `pnpm emit:reference` — regenerate `reference-fixtures/metadata.json`
 
 _The best grid is the one that disappears._
