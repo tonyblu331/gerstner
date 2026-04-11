@@ -69,6 +69,7 @@ When someone pushes back: engage with the reasoning, not the rule. "The ADR says
 | No bare `vh`                               | iOS address bar bug. Use `svh`/`dvh` — `docs/VIEWPORT-UNITS.md` |
 | `@layer` on all utilities                  | Consumer CSS must win without `!important` — ADR-011            |
 | Never hand-edit generated artifacts        | `contract.manifest.json`, `helpers.css`, `tw4/helpers.css`, `labels.json`, `metadata.json` — regenerate only |
+| No heuristic track parsing in debug JS    | observer.ts reads stride tokens, never gridTemplateColumns — ADR-001 |
 
 ADRs exist for the default case, not every case. If someone has a legitimate reason to deviate, engage with the reason. Document the deviation. Move forward.
 
@@ -97,6 +98,7 @@ Token prefix: `--g-`. Utility prefix: `g-`. Import: `@import "gerstner"`.
 - **Generated helpers**: `css/helpers.css` — emitted from manifest via `pnpm emit:helpers`
 - **TW4 helpers**: `tw4/helpers.css` — `@utility` syntax, emitted via `pnpm emit:tw4`
 - **TW4 theme**: `tw4/theme.css` — authored tokens + TW4 namespace mappings (`--font-size-*`, `--spacing-*`) referencing stride via `var()`. No inline derived recalcs.
+- **Debug observer**: `debug/observer.ts` — manifest-aware metrics, reads stride tokens via computed style (no heuristic track parsing)
 - **Debug labels**: `debug/labels.json` — column/gutter/boundary/view/scale metadata, emitted via `pnpm emit:debug`
 - **Reference metadata**: `reference-fixtures/metadata.json` — fixture data for dev reference page, emitted via `pnpm emit:reference`
 - **Field overrides**: `.g-shell`, `.g`, `.g-fit/.g-fill` recompute derived tokens locally for cqi context — NOT duplicated derivations
