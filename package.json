@@ -12,7 +12,16 @@
     "cli:test": "cd packages/gerstner && vp test",
     "prepare": "vp config",
     "sync": "syncpack fix",
-    "sync:check": "syncpack lint"
+    "sync:check": "syncpack lint",
+    "test:stride": "cd packages/gerstner && vp test -- stride",
+    "test:generator": "cd packages/gerstner && vp test -- generator",
+    "test:manifest": "cd packages/gerstner && vp test -- manifest",
+    "test:parity": "cd packages/gerstner && vp test -- parity",
+    "test:cli": "cd packages/gerstner && vp test -- cli",
+    "test:reference": "cd packages/gerstner && vp test -- reference",
+    "test:visual": "vp test:e2e -- visual",
+    "test:e2e:layout": "vp test:e2e -- layout",
+    "test:e2e:debug": "vp test:e2e -- debug"
   },
   "devDependencies": {
     "@playwright/test": "catalog:",

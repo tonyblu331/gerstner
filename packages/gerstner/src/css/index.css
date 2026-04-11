@@ -1,10 +1,11 @@
 /* Gerstner v0.2 - CSS Surface */
 /* One package, multiple surfaces. This is the vanilla CSS entry point. */
-/* ⚠ Vanilla-only. Do NOT import this in a Tailwind v4 entry. Use gerstner/tw4 instead. */
+/* Vanilla-only. Do NOT import this in a Tailwind v4 entry. Use gerstner/tw4 instead. */
 
-@layer gerstner.tokens, gerstner.layout, gerstner.rhythm, gerstner.presets;
+@layer stride, gerstner.tokens, gerstner.layout, gerstner.rhythm, gerstner.helpers;
 
+@import '../stride/index.css';
 @import './tokens.css';
 @import './layout.css';
 @import './rhythm.css';
-@import './presets.css';
+@import './helpers.css';

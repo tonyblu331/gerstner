@@ -68,6 +68,7 @@ When someone pushes back: engage with the reasoning, not the rule. "The ADR says
 | No layout math in production JS            | Browser C++ is faster and correct — ADR-001                     |
 | No bare `vh`                               | iOS address bar bug. Use `svh`/`dvh` — `docs/VIEWPORT-UNITS.md` |
 | `@layer` on all utilities                  | Consumer CSS must win without `!important` — ADR-011            |
+| Never hand-edit generated artifacts        | `contract.manifest.json`, generated helpers — regenerate only   |
 
 ADRs exist for the default case, not every case. If someone has a legitimate reason to deviate, engage with the reason. Document the deviation. Move forward.
 
@@ -87,5 +88,20 @@ ADRs exist for the default case, not every case. If someone has a legitimate rea
 **Gerstner** — Tailwind v4 layout system, powered by Stride engine.
 Packages: `gerstner` · `@gerstner/debug` · `@gerstner/cli`.
 Token prefix: `--g-`. Utility prefix: `g-`. Import: `@import "gerstner"`.
+
+### Stride Architecture
+
+- **Canonical math**: `stride/core.ts` — single source of truth for all layout geometry
+- **Manifest**: `stride/contract.manifest.json` — generated artifact bridging math and consumers
+- **CSS parity**: `stride/index.css` — `:root` derived tokens matching `core.ts` formulas
+- **Generated helpers**: `css/helpers.css` — emitted from manifest via `pnpm emit:helpers`
+- **Field overrides**: `.g-shell`, `.g`, `.g-fit/.g-fill` recompute derived tokens locally for cqi context — NOT duplicated derivations
+- **Authored tokens only** in `css/tokens.css` `:root` — no derived recalcs
+- **Layer order**: `stride → gerstner.tokens → gerstner.layout → gerstner.rhythm → gerstner.helpers`
+
+### Regeneration commands
+
+- `pnpm emit:manifest` — regenerate `contract.manifest.json`
+- `pnpm emit:helpers` — regenerate `css/helpers.css`
 
 _The best grid is the one that disappears._

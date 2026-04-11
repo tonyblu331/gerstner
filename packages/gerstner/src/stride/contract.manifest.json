@@ -1,0 +1,415 @@
+{
+  "version": 1,
+  "generatedAt": "2026-04-11T18:16:35.229Z",
+  "contract": {
+    "cols": 12,
+    "gutter": 24,
+    "frame": 80,
+    "maxWidth": 1440,
+    "minAutoTrack": 256,
+    "typeBase": 16,
+    "baseline": 8,
+    "leadingSteps": 3,
+    "scaleRatio": 1.25,
+    "measureBody": 70,
+    "measureTight": 45,
+    "measureUi": 35
+  },
+  "tokens": [
+    {
+      "name": "cols",
+      "cssRef": "--g-cols",
+      "kind": "authored"
+    },
+    {
+      "name": "gutter",
+      "cssRef": "--g-gutter",
+      "kind": "authored"
+    },
+    {
+      "name": "frame",
+      "cssRef": "--g-frame",
+      "kind": "authored"
+    },
+    {
+      "name": "maxWidth",
+      "cssRef": "--g-max-width",
+      "kind": "authored"
+    },
+    {
+      "name": "minAutoTrack",
+      "cssRef": "--g-min",
+      "kind": "authored"
+    },
+    {
+      "name": "typeBase",
+      "cssRef": "--g-type-base",
+      "kind": "authored"
+    },
+    {
+      "name": "baseline",
+      "cssRef": "--g-baseline",
+      "kind": "authored"
+    },
+    {
+      "name": "leadingSteps",
+      "cssRef": "--g-leading-steps",
+      "kind": "authored"
+    },
+    {
+      "name": "scaleRatio",
+      "cssRef": "--g-scale-ratio",
+      "kind": "authored"
+    },
+    {
+      "name": "measureBody",
+      "cssRef": "--g-measure-body",
+      "kind": "authored"
+    },
+    {
+      "name": "measureTight",
+      "cssRef": "--g-measure-tight",
+      "kind": "authored"
+    },
+    {
+      "name": "measureUi",
+      "cssRef": "--g-measure-ui",
+      "kind": "authored"
+    },
+    {
+      "name": "rhythm",
+      "cssRef": "--g-rhythm",
+      "kind": "derived"
+    },
+    {
+      "name": "proseLineHeight",
+      "cssRef": "--g-prose",
+      "kind": "derived"
+    },
+    {
+      "name": "gapTotal",
+      "cssRef": "--g-gap-total",
+      "kind": "derived"
+    },
+    {
+      "name": "colUnitRaw",
+      "cssRef": "--g-col-unit-raw",
+      "kind": "derived"
+    },
+    {
+      "name": "stride",
+      "cssRef": "--g-stride",
+      "kind": "derived"
+    },
+    {
+      "name": "colUnit",
+      "cssRef": "--g-col-unit",
+      "kind": "derived"
+    },
+    {
+      "name": "contentInline",
+      "cssRef": "--g-content-inline",
+      "kind": "derived"
+    },
+    {
+      "name": "alignMode",
+      "cssRef": "--g-align-mode",
+      "kind": "derived"
+    }
+  ],
+  "typeMetrics": {
+    "rhythm": 24,
+    "proseLineHeight": 1.5,
+    "scaleNeg2": 10.24,
+    "scaleNeg1": 12.8,
+    "scale0": 16,
+    "scale1": 20,
+    "scale2": 25,
+    "scale3": 31.25,
+    "scale4": 39.0625,
+    "scale5": 48.828125,
+    "densityTight": 72,
+    "densityStandard": 144,
+    "densityLoose": 240
+  },
+  "rawFieldSample": {
+    "gapTotal": 264,
+    "unit": 98,
+    "stride": 122,
+    "fullStart": 0,
+    "contentStart": 0,
+    "contentEnd": 1440,
+    "fullEnd": 1440,
+    "linePositions": [0, 122, 244, 366, 488, 610, 732, 854, 976, 1098, 1220, 1342],
+    "gutterCenters": [110, 232, 354, 476, 598, 720, 842, 964, 1086, 1208, 1330]
+  },
+  "shellFieldSample": {
+    "gapTotal": 264,
+    "unit": 84.66666666666667,
+    "stride": 108.66666666666667,
+    "fullStart": 0,
+    "contentStart": 80,
+    "contentEnd": 1360,
+    "fullEnd": 1440,
+    "linePositions": [
+      80, 188.66666666666669, 297.33333333333337, 406, 514.6666666666667, 623.3333333333334, 732,
+      840.6666666666667, 949.3333333333334, 1058, 1166.6666666666667, 1275.3333333333335
+    ],
+    "gutterCenters": [
+      176.66666666666669, 285.33333333333337, 394, 502.6666666666667, 611.3333333333334, 720,
+      828.6666666666667, 937.3333333333334, 1046, 1154.6666666666667, 1263.3333333333335
+    ]
+  },
+  "helperRanges": [
+    {
+      "prefix": "col-",
+      "min": 1,
+      "max": 12,
+      "cssProperty": "grid-column",
+      "cssValueTemplate": "span {n} / span {n}"
+    },
+    {
+      "prefix": "col-start-",
+      "min": 1,
+      "max": 12,
+      "cssProperty": "grid-column-start",
+      "cssValueTemplate": "{n}"
+    },
+    {
+      "prefix": "col-end-",
+      "min": 1,
+      "max": 13,
+      "cssProperty": "grid-column-end",
+      "cssValueTemplate": "{n}"
+    },
+    {
+      "prefix": "col-from-",
+      "min": 1,
+      "max": 12,
+      "cssProperty": "grid-column-start",
+      "cssValueTemplate": "{n}"
+    },
+    {
+      "prefix": "col-to-",
+      "min": 1,
+      "max": 12,
+      "cssProperty": "grid-column-end",
+      "cssValueTemplate": "{n}"
+    },
+    {
+      "prefix": "col-from-gutter-",
+      "min": 1,
+      "max": 11,
+      "cssProperty": "grid-column-start",
+      "cssValueTemplate": "gutter-{n}"
+    },
+    {
+      "prefix": "col-to-gutter-",
+      "min": 1,
+      "max": 11,
+      "cssProperty": "grid-column-end",
+      "cssValueTemplate": "gutter-{n}"
+    },
+    {
+      "prefix": "g-stack-",
+      "min": 1,
+      "max": 6,
+      "cssProperty": "margin-block-start",
+      "cssValueTemplate": "calc(var(--g-rhythm) * {n})"
+    }
+  ],
+  "gutterAnchors": [
+    {
+      "name": "gutter-1",
+      "index": 1,
+      "valid": true
+    },
+    {
+      "name": "gutter-2",
+      "index": 2,
+      "valid": true
+    },
+    {
+      "name": "gutter-3",
+      "index": 3,
+      "valid": true
+    },
+    {
+      "name": "gutter-4",
+      "index": 4,
+      "valid": true
+    },
+    {
+      "name": "gutter-5",
+      "index": 5,
+      "valid": true
+    },
+    {
+      "name": "gutter-6",
+      "index": 6,
+      "valid": true
+    },
+    {
+      "name": "gutter-7",
+      "index": 7,
+      "valid": true
+    },
+    {
+      "name": "gutter-8",
+      "index": 8,
+      "valid": true
+    },
+    {
+      "name": "gutter-9",
+      "index": 9,
+      "valid": true
+    },
+    {
+      "name": "gutter-10",
+      "index": 10,
+      "valid": true
+    },
+    {
+      "name": "gutter-11",
+      "index": 11,
+      "valid": true
+    }
+  ],
+  "alignModes": [
+    {
+      "name": "g-sub",
+      "mode": "exact",
+      "label": "exact"
+    },
+    {
+      "name": "g-shell",
+      "mode": "shell",
+      "label": "shell"
+    },
+    {
+      "name": "g",
+      "mode": "raw",
+      "label": "raw"
+    },
+    {
+      "name": "g-view-*",
+      "mode": "approximate",
+      "label": "approximate"
+    },
+    {
+      "name": "g-align-independent",
+      "mode": "independent",
+      "label": "independent"
+    },
+    {
+      "name": "g-fit / g-fill",
+      "mode": "adaptive",
+      "label": "adaptive"
+    }
+  ],
+  "boundaries": [
+    {
+      "name": "full-start",
+      "cssLineName": "full-start",
+      "description": "Left edge of the full grid area (including frame)"
+    },
+    {
+      "name": "content-start",
+      "cssLineName": "content-start",
+      "description": "Left edge of the content area (inside frame)"
+    },
+    {
+      "name": "content-end",
+      "cssLineName": "content-end",
+      "description": "Right edge of the content area (inside frame)"
+    },
+    {
+      "name": "full-end",
+      "cssLineName": "full-end",
+      "description": "Right edge of the full grid area (including frame)"
+    }
+  ],
+  "views": [
+    {
+      "viewCols": 2,
+      "alignMode": "approximate",
+      "divisorGrouping": [
+        [1, 2, 3, 4, 5, 6],
+        [7, 8, 9, 10, 11, 12]
+      ]
+    },
+    {
+      "viewCols": 3,
+      "alignMode": "approximate",
+      "divisorGrouping": [
+        [1, 2, 3, 4],
+        [5, 6, 7, 8],
+        [9, 10, 11, 12]
+      ]
+    },
+    {
+      "viewCols": 4,
+      "alignMode": "approximate",
+      "divisorGrouping": [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9],
+        [10, 11, 12]
+      ]
+    },
+    {
+      "viewCols": 6,
+      "alignMode": "approximate",
+      "divisorGrouping": [
+        [1, 2],
+        [3, 4],
+        [5, 6],
+        [7, 8],
+        [9, 10],
+        [11, 12]
+      ]
+    },
+    {
+      "viewCols": 12,
+      "alignMode": "approximate",
+      "divisorGrouping": [[1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12]]
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "raw-grid",
+      "name": "Raw Grid Reference",
+      "path": "reference-fixtures/raw-grid/"
+    },
+    {
+      "id": "shell",
+      "name": "Shell Reference",
+      "path": "reference-fixtures/shell/"
+    },
+    {
+      "id": "exact-inheritance",
+      "name": "Exact Inheritance (g-sub)",
+      "path": "reference-fixtures/exact-inheritance/"
+    },
+    {
+      "id": "approximate-reinterpretation",
+      "name": "Approximate Reinterpretation (g-view-*)",
+      "path": "reference-fixtures/approximate-reinterpretation/"
+    },
+    {
+      "id": "independent-local-field",
+      "name": "Independent Local Field (g-align-independent)",
+      "path": "reference-fixtures/independent-local-field/"
+    },
+    {
+      "id": "asymmetry-breakout",
+      "name": "Asymmetry/Breakout Reference",
+      "path": "reference-fixtures/asymmetry-breakout/"
+    },
+    {
+      "id": "type-and-stress",
+      "name": "Type and Stress Reference",
+      "path": "reference-fixtures/type-and-stress/"
+    }
+  ]
+}

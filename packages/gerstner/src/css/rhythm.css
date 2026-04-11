@@ -27,31 +27,7 @@
     text-wrap: wrap;
   }
 
-  .g-wrap-balance {
-    text-wrap: balance;
-  }
-  .g-wrap-pretty {
-    text-wrap: pretty;
-  }
-  .g-wrap-normal {
-    text-wrap: wrap;
-  }
-  .g-wrap-nowrap {
-    text-wrap: nowrap;
-  }
-
-  .g-tight {
-    --g-density: var(--g-density-tight);
-  }
-
-  .g-standard {
-    --g-density: var(--g-density-standard);
-  }
-
-  .g-loose {
-    --g-density: var(--g-density-loose);
-  }
-
+  /* Stack spacing — uses > * + * which can't be emitted as a simple helper class */
   .g-stack-1 > * + * {
     margin-block-start: calc(var(--g-rhythm) * 1);
   }

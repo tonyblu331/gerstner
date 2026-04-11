@@ -30,6 +30,9 @@
     },
     "./debug/debug.css": {
       "default": "./dist/debug/debug.css"
+    },
+    "./stride": {
+      "default": "./dist/stride/index.css"
     }
   },
   "publishConfig": {
@@ -37,21 +40,23 @@
   },
   "scripts": {
     "build": "vp pack && npm run copy-css",
-    "copy-css": "node -e \"require('fs').cpSync('src/css', 'dist/css', {recursive:true}); require('fs').cpSync('src/tw4', 'dist/tw4', {recursive:true}); require('fs').cpSync('src/debug/debug.css', 'dist/debug/debug.css')\"",
+    "copy-css": "node -e \"require('fs').cpSync('src/css', 'dist/css', {recursive:true}); require('fs').cpSync('src/tw4', 'dist/tw4', {recursive:true}); require('fs').cpSync('src/debug/debug.css', 'dist/debug/debug.css'); require('fs').cpSync('src/stride/index.css', 'dist/stride/index.css')\"",
     "dev": "vp pack --watch",
     "test": "vp test",
     "check": "vp check",
+    "emit:manifest": "pnpm dlx tsx src/stride/emit-manifest.ts > src/stride/contract.manifest.json",
+    "emit:helpers": "pnpm dlx tsx src/cli/lib/emit-helpers.ts > src/css/helpers.css",
     "prepublishOnly": "vp run build"
   },
   "dependencies": {
-    "dialkit": "1.2.0"
+    "dialkit": "1.2.0",
+    "react": "19.2.5",
+    "react-dom": "19.2.5"
   },
   "devDependencies": {
     "@types/node": "catalog:",
     "@types/react": "19.2.3",
     "@types/react-dom": "19.2.3",
-    "react": "19.2.5",
-    "react-dom": "19.2.5",
     "typescript": "catalog:",
     "vite-plus": "catalog:"
   },

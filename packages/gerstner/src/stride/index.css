@@ -1,0 +1,145 @@
+/**
+ * Stride CSS Runtime — Hand-authored, parity-validated against core.ts and manifest truth.
+ *
+ * This file defines @property registrations for authored tokens only,
+ * and derived CSS custom properties that mirror the canonical TS formulas.
+ *
+ * When CSS and TS disagree, TS + manifest truth wins and the phase stops.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+/* ---------------------------------------------------------------------------
+ * Authored Token Registrations
+ * Only authored inputs get @property registration.
+ * Derived values are computed by the runtime from authored inputs.
+ * Never register @property for derived tokens.
+ * --------------------------------------------------------------------------- */
+
+@property --g-cols {
+  syntax: '<integer>';
+  inherits: true;
+  initial-value: 12;
+}
+
+@property --g-gutter {
+  syntax: '<length-percentage>';
+  inherits: true;
+  initial-value: 1rem;
+}
+
+@property --g-frame {
+  syntax: '<length-percentage>';
+  inherits: true;
+  initial-value: 1rem;
+}
+
+@property --g-max-width {
+  syntax: '<length-percentage>';
+  inherits: true;
+  initial-value: 90rem;
+}
+
+@property --g-min {
+  syntax: '<length-percentage>';
+  inherits: true;
+  initial-value: 16rem;
+}
+
+@property --g-type-base {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 1rem;
+}
+
+@property --g-baseline {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0.5rem;
+}
+
+@property --g-leading-steps {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 3;
+}
+
+@property --g-scale-ratio {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1.25;
+}
+
+@property --g-measure-body {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 70ch;
+}
+
+@property --g-measure-tight {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 45ch;
+}
+
+@property --g-measure-ui {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 35ch;
+}
+
+/* ---------------------------------------------------------------------------
+ * Derived Tokens — Root Defaults
+ * These formulas must match core.ts exactly.
+ * stride/ owns these formulas. css/ and tw4/ consume, never recompute.
+ * --------------------------------------------------------------------------- */
+
+@layer stride {
+  :root {
+    /* Authored defaults */
+    --g-cols: 12;
+    --g-gutter: clamp(0.875rem, 2.2vw, 1.5rem);
+    --g-frame: clamp(1rem, 5dvw, 5rem);
+    --g-max-width: 90rem;
+    --g-min: 16rem;
+    --g-type-base: 1rem;
+    --g-baseline: 0.5rem;
+    --g-leading-steps: 3;
+    --g-scale-ratio: 1.25;
+    --g-measure-body: 70ch;
+    --g-measure-tight: 45ch;
+    --g-measure-ui: 35ch;
+
+    /* Derived: type metrics — parity with computeTypeMetrics() */
+    --g-rhythm: calc(var(--g-baseline) * var(--g-leading-steps));
+    --g-prose: calc(var(--g-rhythm) / var(--g-type-base));
+
+    /* Derived: type scale — parity with scaleNeg2..scale5 */
+    --g-scale--2: calc(var(--g-type-base) / (var(--g-scale-ratio) * var(--g-scale-ratio)));
+    --g-scale--1: calc(var(--g-type-base) / var(--g-scale-ratio));
+    --g-scale-0: var(--g-type-base);
+    --g-scale-1: calc(var(--g-scale-0) * var(--g-scale-ratio));
+    --g-scale-2: calc(var(--g-scale-1) * var(--g-scale-ratio));
+    --g-scale-3: calc(var(--g-scale-2) * var(--g-scale-ratio));
+    --g-scale-4: calc(var(--g-scale-3) * var(--g-scale-ratio));
+    --g-scale-5: calc(var(--g-scale-4) * var(--g-scale-ratio));
+
+    /* Derived: density — parity with densityTight/Standard/Loose */
+    --g-density-tight: calc(var(--g-rhythm) * 3);
+    --g-density-standard: calc(var(--g-rhythm) * 6);
+    --g-density-loose: calc(var(--g-rhythm) * 10);
+
+    /* Derived: shell field — parity with computeShellField() */
+    --g-gap-total: calc(var(--g-gutter) * (var(--g-cols) - 1));
+    --g-content-inline: min(var(--g-max-width), calc(100% - var(--g-frame) * 2));
+    --g-col-unit-raw: calc((var(--g-content-inline) - var(--g-gap-total)) / var(--g-cols));
+    --g-stride: calc(var(--g-col-unit-raw) + var(--g-gutter));
+    --g-col-unit: round(nearest, var(--g-col-unit-raw), 1px);
+
+    /* Alignment mode default */
+    --g-align-mode: exact;
+
+    /* Invalid state flag — parity with Invalid-State Rules */
+    --g-state: valid;
+  }
+}
