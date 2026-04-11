@@ -104,7 +104,7 @@ packages/
 
 Single package with multiple entry points:
 
-- `gerstner/css` — Vanilla CSS surface (tokens, layout, rhythm, presets)
+- `gerstner/css` — Vanilla CSS surface (tokens, layout, rhythm)
 - `gerstner/tw4` — Tailwind v4 integration (@theme, @utility)
 - `gerstner/debug` — Optional developer tooling
 - `gerstner/text` — Text utilities (future)

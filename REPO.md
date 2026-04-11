@@ -39,7 +39,7 @@ gerstner/
 ├── packages/
 │   └── gerstner/                     published as "gerstner"
 │       ├── src/
-│       │   ├── css/                  CSS surface (tokens, layout, rhythm, presets)
+│       │   ├── css/                  CSS surface (tokens, layout, rhythm)
 │       │   ├── tw4/                  Tailwind v4 surface (@theme, @utility)
 │       │   ├── cli/                  CLI scaffolding (npx gerstner init)
 │       │   ├── debug/                Optional dev tooling
@@ -103,7 +103,6 @@ gerstner/
 | export current values     | no        | owns                 | no        | Dev helper                   |
 | framework detection       | no        | no                   | owns      | Scaffolding concern          |
 | contract CSS generation   | no        | no                   | owns      | Setup concern                |
-| preset CSS generation     | no        | no                   | owns      | Setup concern                |
 | dev reference page        | no        | optional integration | owns      | Setup and teaching           |
 | production layout JS      | forbidden | forbidden            | forbidden | Breaks the system premise    |
 
@@ -273,7 +272,7 @@ Reason: consumer CSS must override without `!important`.
 Core CSS must declare the full layer order.
 
 ```css
-@layer gerstner.tokens, gerstner.layout, gerstner.rhythm, gerstner.presets;
+@layer gerstner.tokens, gerstner.layout, gerstner.rhythm;
 ```
 
 Priority from low to high:
@@ -281,8 +280,7 @@ Priority from low to high:
 1. `gerstner.tokens`
 2. `gerstner.layout`
 3. `gerstner.rhythm`
-4. `gerstner.presets`
-5. unlayered consumer CSS
+4. unlayered consumer CSS
 
 Unlayered project CSS should always beat shipped package layers.
 
@@ -334,7 +332,6 @@ The CLI may generate files like these inside consumer projects:
 
 ```text
 src/styles/gerstner.contract.css
-src/styles/gerstner.presets.css
 src/styles/gerstner.debug.css
 src/scripts/gerstner.debug.js
 dev/gerstner.reference.html
@@ -431,7 +428,6 @@ Semver is strict.
 
 - new utilities
 - new setup-path options
-- new presets
 - additive exports
 - no breakage
 

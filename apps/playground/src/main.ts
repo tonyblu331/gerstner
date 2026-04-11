@@ -203,7 +203,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 
 // Initialize debug overlay after DOM is populated so syncLayers finds grid elements
 initGerstnerDebug({
-  defaultOpen: false,
+  defaultOpen: true,
   initial: {
     layers: {
       cols: true,

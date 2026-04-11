@@ -46,6 +46,9 @@
     "check": "vp check",
     "emit:manifest": "pnpm dlx tsx src/stride/emit-manifest.ts > src/stride/contract.manifest.json",
     "emit:helpers": "pnpm dlx tsx src/cli/lib/emit-helpers.ts > src/css/helpers.css",
+    "emit:tw4": "pnpm dlx tsx src/cli/lib/emit-tw4.ts > src/tw4/helpers.css",
+    "emit:debug": "pnpm dlx tsx src/cli/lib/emit-debug.ts > src/debug/labels.json",
+    "emit:reference": "pnpm dlx tsx src/cli/lib/emit-reference.ts > src/reference-fixtures/metadata.json",
     "prepublishOnly": "vp run build"
   },
   "dependencies": {

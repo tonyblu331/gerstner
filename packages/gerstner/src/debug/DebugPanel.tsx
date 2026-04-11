@@ -29,6 +29,7 @@ function readScopeValues(scope: HTMLElement) {
 
 export function DebugPanel() {
   const [scopeId, setScopeId] = useState(0) // bump to force re-render + DialKit re-init
+  const [panelOpen, setPanelOpen] = useState(true)
   const scopeRef = useRef<HTMLElement>(document.documentElement)
   const pinnedRef = useRef(false)
 
@@ -99,5 +100,40 @@ export function DebugPanel() {
     return () => document.removeEventListener('click', onClick)
   }, [])
 
-  return <DialRoot position="top-right" />
+  // Alt+D to toggle panel visibility (D for Debug)
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.altKey && e.key.toLowerCase() === 'd') {
+        setPanelOpen((v) => !v)
+        e.preventDefault()
+      }
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [])
+
+  return (
+    <>
+      <button
+        onClick={() => setPanelOpen((v) => !v)}
+        style={{
+          position: 'fixed',
+          top: '1rem',
+          right: '1rem',
+          zIndex: 10000,
+          padding: '0.5rem 1rem',
+          background: '#000',
+          color: 'white',
+          border: 'none',
+          borderRadius: '0.5rem',
+          cursor: 'pointer',
+          fontSize: '0.875rem',
+          fontWeight: '500',
+        }}
+      >
+        {panelOpen ? 'Hide Panel' : 'Show Panel'}
+      </button>
+      {panelOpen && <DialRoot position="top-right" />}
+    </>
+  )
 }

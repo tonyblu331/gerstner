@@ -30,17 +30,12 @@ describe('gerstner cli fixture tests', () => {
       installDebug: true,
       generateReference: true,
       injectImports: true,
-      writePresets: true,
       yes: true,
     })
 
     // Read generated files
     const contract = await readFile(
       path.join(cwd, 'apps/playground/src/styles/gerstner.contract.css'),
-      'utf8',
-    )
-    const presets = await readFile(
-      path.join(cwd, 'apps/playground/src/styles/gerstner.project-presets.css'),
       'utf8',
     )
     const debug = await readFile(
@@ -69,16 +64,6 @@ describe('gerstner cli fixture tests', () => {
         --g-leading-steps: 3;
         --g-scale-ratio: 1.25;
         --g-measure: 70ch;
-      }"
-    `)
-
-    expect(presets).toMatchInlineSnapshot(`
-      ":root {
-        --g-project-accent: #3b82f6;
-        --g-project-neutral: #6b7280;
-        --g-project-success: #10b981;
-        --g-project-warning: #f59e0b;
-        --g-project-error: #ef4444;
       }"
     `)
 
@@ -116,7 +101,6 @@ describe('gerstner cli fixture tests', () => {
       installDebug: true,
       generateReference: false,
       injectImports: true,
-      writePresets: false,
       yes: true,
     })
 
@@ -154,7 +138,6 @@ describe('gerstner cli fixture tests', () => {
       installDebug: true,
       generateReference: false,
       injectImports: true,
-      writePresets: true,
       yes: true,
     })
 
@@ -164,7 +147,6 @@ describe('gerstner cli fixture tests', () => {
       installDebug: true,
       generateReference: false,
       injectImports: true,
-      writePresets: true,
       yes: true,
     })
 

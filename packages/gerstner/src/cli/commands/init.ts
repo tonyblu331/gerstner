@@ -9,7 +9,6 @@ import {
 } from '../lib/project'
 import { readTextIfExists, writeIfChanged } from '../lib/fs'
 import { renderContractCss } from '../templates/contract'
-import { renderPresetCss } from '../templates/presets'
 import { renderDebugCss, renderDebugScript } from '../templates/debug'
 import { renderReferenceCss, renderReferenceHtml, renderReferenceJs } from '../templates/reference'
 
@@ -21,7 +20,6 @@ export interface InitOptions {
   injectImports?: boolean
   installDebug?: boolean
   generateReference?: boolean
-  writePresets?: boolean
   yes?: boolean
 }
 
@@ -51,7 +49,6 @@ export async function runInit(options: InitOptions): Promise<InitResult> {
   const notes: string[] = []
 
   const contractFile = normalizeAppPath(stylesDir, 'gerstner.contract.css')
-  const presetsFile = normalizeAppPath(stylesDir, 'gerstner.project-presets.css')
   const debugCssFile = normalizeAppPath(stylesDir, 'gerstner.debug.css')
   const debugScriptFile = normalizeAppPath(scriptsDir, 'gerstner.debug.js')
   const referenceHtmlFile = normalizeAppPath(devDir, 'gerstner.reference.html')
@@ -82,10 +79,6 @@ export async function runInit(options: InitOptions): Promise<InitResult> {
     contractFile,
   )
 
-  if (options.writePresets ?? true) {
-    await writeTracked(written.styles, path.join(cwd, presetsFile), renderPresetCss(), presetsFile)
-  }
-
   if (options.installDebug ?? false) {
     await writeTracked(written.styles, path.join(cwd, debugCssFile), renderDebugCss(), debugCssFile)
     await writeTracked(
@@ -98,7 +91,6 @@ export async function runInit(options: InitOptions): Promise<InitResult> {
 
   if (options.generateReference ?? true) {
     const contractFromDev = relativeImport(referenceCssFile, contractFile)
-    const presetsFromDev = relativeImport(referenceCssFile, presetsFile)
     const debugCssFromDev = options.installDebug
       ? relativeImport(referenceCssFile, debugCssFile)
       : null
@@ -123,7 +115,6 @@ export async function runInit(options: InitOptions): Promise<InitResult> {
       renderReferenceCss({
         target,
         contractPath: contractFromDev,
-        presetsPath: presetsFromDev,
         debugPath: debugCssFromDev,
       }),
       referenceCssFile,
@@ -143,7 +134,7 @@ export async function runInit(options: InitOptions): Promise<InitResult> {
     const cssEntryPath = path.join(cwd, cssEntry)
     const cssEntryText = (await readTextIfExists(cssEntryPath)) ?? ''
 
-    const cssImports = buildImports(target, cssEntry, contractFile, presetsFile, options)
+    const cssImports = buildImports(target, cssEntry, contractFile, options)
 
     await writeIfChanged(cssEntryPath, ensureImports(cssEntryText, cssImports, target))
 
@@ -187,7 +178,6 @@ function buildImports(
   target: 'css' | 'tw4',
   cssEntry: string,
   contractFile: string,
-  presetsFile: string,
   options: InitOptions,
 ): string[] {
   const cssImports: string[] = []
@@ -201,10 +191,6 @@ function buildImports(
   }
 
   cssImports.push(`@import "${relativeImport(cssEntry, contractFile)}";`)
-
-  if (options.writePresets ?? true) {
-    cssImports.push(`@import "${relativeImport(cssEntry, presetsFile)}";`)
-  }
 
   if (options.installDebug ?? false) {
     const debugCssFile = normalizeAppPath(

@@ -1,0 +1,513 @@
+[
+  {
+    "id": "raw-grid",
+    "name": "Raw Grid Reference",
+    "path": "reference-fixtures/raw-grid/",
+    "contractCols": 12,
+    "viewModes": [
+      {
+        "viewCols": 2,
+        "grouping": [
+          [1, 2, 3, 4, 5, 6],
+          [7, 8, 9, 10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 3,
+        "grouping": [
+          [1, 2, 3, 4],
+          [5, 6, 7, 8],
+          [9, 10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 4,
+        "grouping": [
+          [1, 2, 3],
+          [4, 5, 6],
+          [7, 8, 9],
+          [10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 6,
+        "grouping": [
+          [1, 2],
+          [3, 4],
+          [5, 6],
+          [7, 8],
+          [9, 10],
+          [11, 12]
+        ]
+      },
+      {
+        "viewCols": 12,
+        "grouping": [[1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12]]
+      }
+    ],
+    "alignModes": [
+      {
+        "name": "g-sub",
+        "mode": "exact"
+      },
+      {
+        "name": "g-shell",
+        "mode": "shell"
+      },
+      {
+        "name": "g",
+        "mode": "raw"
+      },
+      {
+        "name": "g-view-*",
+        "mode": "approximate"
+      },
+      {
+        "name": "g-align-independent",
+        "mode": "independent"
+      },
+      {
+        "name": "g-fit / g-fill",
+        "mode": "adaptive"
+      }
+    ]
+  },
+  {
+    "id": "shell",
+    "name": "Shell Reference",
+    "path": "reference-fixtures/shell/",
+    "contractCols": 12,
+    "viewModes": [
+      {
+        "viewCols": 2,
+        "grouping": [
+          [1, 2, 3, 4, 5, 6],
+          [7, 8, 9, 10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 3,
+        "grouping": [
+          [1, 2, 3, 4],
+          [5, 6, 7, 8],
+          [9, 10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 4,
+        "grouping": [
+          [1, 2, 3],
+          [4, 5, 6],
+          [7, 8, 9],
+          [10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 6,
+        "grouping": [
+          [1, 2],
+          [3, 4],
+          [5, 6],
+          [7, 8],
+          [9, 10],
+          [11, 12]
+        ]
+      },
+      {
+        "viewCols": 12,
+        "grouping": [[1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12]]
+      }
+    ],
+    "alignModes": [
+      {
+        "name": "g-sub",
+        "mode": "exact"
+      },
+      {
+        "name": "g-shell",
+        "mode": "shell"
+      },
+      {
+        "name": "g",
+        "mode": "raw"
+      },
+      {
+        "name": "g-view-*",
+        "mode": "approximate"
+      },
+      {
+        "name": "g-align-independent",
+        "mode": "independent"
+      },
+      {
+        "name": "g-fit / g-fill",
+        "mode": "adaptive"
+      }
+    ]
+  },
+  {
+    "id": "exact-inheritance",
+    "name": "Exact Inheritance (g-sub)",
+    "path": "reference-fixtures/exact-inheritance/",
+    "contractCols": 12,
+    "viewModes": [
+      {
+        "viewCols": 2,
+        "grouping": [
+          [1, 2, 3, 4, 5, 6],
+          [7, 8, 9, 10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 3,
+        "grouping": [
+          [1, 2, 3, 4],
+          [5, 6, 7, 8],
+          [9, 10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 4,
+        "grouping": [
+          [1, 2, 3],
+          [4, 5, 6],
+          [7, 8, 9],
+          [10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 6,
+        "grouping": [
+          [1, 2],
+          [3, 4],
+          [5, 6],
+          [7, 8],
+          [9, 10],
+          [11, 12]
+        ]
+      },
+      {
+        "viewCols": 12,
+        "grouping": [[1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12]]
+      }
+    ],
+    "alignModes": [
+      {
+        "name": "g-sub",
+        "mode": "exact"
+      },
+      {
+        "name": "g-shell",
+        "mode": "shell"
+      },
+      {
+        "name": "g",
+        "mode": "raw"
+      },
+      {
+        "name": "g-view-*",
+        "mode": "approximate"
+      },
+      {
+        "name": "g-align-independent",
+        "mode": "independent"
+      },
+      {
+        "name": "g-fit / g-fill",
+        "mode": "adaptive"
+      }
+    ]
+  },
+  {
+    "id": "approximate-reinterpretation",
+    "name": "Approximate Reinterpretation (g-view-*)",
+    "path": "reference-fixtures/approximate-reinterpretation/",
+    "contractCols": 12,
+    "viewModes": [
+      {
+        "viewCols": 2,
+        "grouping": [
+          [1, 2, 3, 4, 5, 6],
+          [7, 8, 9, 10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 3,
+        "grouping": [
+          [1, 2, 3, 4],
+          [5, 6, 7, 8],
+          [9, 10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 4,
+        "grouping": [
+          [1, 2, 3],
+          [4, 5, 6],
+          [7, 8, 9],
+          [10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 6,
+        "grouping": [
+          [1, 2],
+          [3, 4],
+          [5, 6],
+          [7, 8],
+          [9, 10],
+          [11, 12]
+        ]
+      },
+      {
+        "viewCols": 12,
+        "grouping": [[1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12]]
+      }
+    ],
+    "alignModes": [
+      {
+        "name": "g-sub",
+        "mode": "exact"
+      },
+      {
+        "name": "g-shell",
+        "mode": "shell"
+      },
+      {
+        "name": "g",
+        "mode": "raw"
+      },
+      {
+        "name": "g-view-*",
+        "mode": "approximate"
+      },
+      {
+        "name": "g-align-independent",
+        "mode": "independent"
+      },
+      {
+        "name": "g-fit / g-fill",
+        "mode": "adaptive"
+      }
+    ]
+  },
+  {
+    "id": "independent-local-field",
+    "name": "Independent Local Field (g-align-independent)",
+    "path": "reference-fixtures/independent-local-field/",
+    "contractCols": 12,
+    "viewModes": [
+      {
+        "viewCols": 2,
+        "grouping": [
+          [1, 2, 3, 4, 5, 6],
+          [7, 8, 9, 10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 3,
+        "grouping": [
+          [1, 2, 3, 4],
+          [5, 6, 7, 8],
+          [9, 10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 4,
+        "grouping": [
+          [1, 2, 3],
+          [4, 5, 6],
+          [7, 8, 9],
+          [10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 6,
+        "grouping": [
+          [1, 2],
+          [3, 4],
+          [5, 6],
+          [7, 8],
+          [9, 10],
+          [11, 12]
+        ]
+      },
+      {
+        "viewCols": 12,
+        "grouping": [[1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12]]
+      }
+    ],
+    "alignModes": [
+      {
+        "name": "g-sub",
+        "mode": "exact"
+      },
+      {
+        "name": "g-shell",
+        "mode": "shell"
+      },
+      {
+        "name": "g",
+        "mode": "raw"
+      },
+      {
+        "name": "g-view-*",
+        "mode": "approximate"
+      },
+      {
+        "name": "g-align-independent",
+        "mode": "independent"
+      },
+      {
+        "name": "g-fit / g-fill",
+        "mode": "adaptive"
+      }
+    ]
+  },
+  {
+    "id": "asymmetry-breakout",
+    "name": "Asymmetry/Breakout Reference",
+    "path": "reference-fixtures/asymmetry-breakout/",
+    "contractCols": 12,
+    "viewModes": [
+      {
+        "viewCols": 2,
+        "grouping": [
+          [1, 2, 3, 4, 5, 6],
+          [7, 8, 9, 10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 3,
+        "grouping": [
+          [1, 2, 3, 4],
+          [5, 6, 7, 8],
+          [9, 10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 4,
+        "grouping": [
+          [1, 2, 3],
+          [4, 5, 6],
+          [7, 8, 9],
+          [10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 6,
+        "grouping": [
+          [1, 2],
+          [3, 4],
+          [5, 6],
+          [7, 8],
+          [9, 10],
+          [11, 12]
+        ]
+      },
+      {
+        "viewCols": 12,
+        "grouping": [[1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12]]
+      }
+    ],
+    "alignModes": [
+      {
+        "name": "g-sub",
+        "mode": "exact"
+      },
+      {
+        "name": "g-shell",
+        "mode": "shell"
+      },
+      {
+        "name": "g",
+        "mode": "raw"
+      },
+      {
+        "name": "g-view-*",
+        "mode": "approximate"
+      },
+      {
+        "name": "g-align-independent",
+        "mode": "independent"
+      },
+      {
+        "name": "g-fit / g-fill",
+        "mode": "adaptive"
+      }
+    ]
+  },
+  {
+    "id": "type-and-stress",
+    "name": "Type and Stress Reference",
+    "path": "reference-fixtures/type-and-stress/",
+    "contractCols": 12,
+    "viewModes": [
+      {
+        "viewCols": 2,
+        "grouping": [
+          [1, 2, 3, 4, 5, 6],
+          [7, 8, 9, 10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 3,
+        "grouping": [
+          [1, 2, 3, 4],
+          [5, 6, 7, 8],
+          [9, 10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 4,
+        "grouping": [
+          [1, 2, 3],
+          [4, 5, 6],
+          [7, 8, 9],
+          [10, 11, 12]
+        ]
+      },
+      {
+        "viewCols": 6,
+        "grouping": [
+          [1, 2],
+          [3, 4],
+          [5, 6],
+          [7, 8],
+          [9, 10],
+          [11, 12]
+        ]
+      },
+      {
+        "viewCols": 12,
+        "grouping": [[1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12]]
+      }
+    ],
+    "alignModes": [
+      {
+        "name": "g-sub",
+        "mode": "exact"
+      },
+      {
+        "name": "g-shell",
+        "mode": "shell"
+      },
+      {
+        "name": "g",
+        "mode": "raw"
+      },
+      {
+        "name": "g-view-*",
+        "mode": "approximate"
+      },
+      {
+        "name": "g-align-independent",
+        "mode": "independent"
+      },
+      {
+        "name": "g-fit / g-fill",
+        "mode": "adaptive"
+      }
+    ]
+  }
+]

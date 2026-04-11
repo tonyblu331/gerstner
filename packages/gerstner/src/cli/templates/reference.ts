@@ -7,7 +7,6 @@ export interface ReferenceTemplateOptions {
 export interface ReferenceCssOptions {
   target: 'css' | 'tw4'
   contractPath: string
-  presetsPath: string
   debugPath?: string | null
 }
 
@@ -179,7 +178,6 @@ export function renderReferenceCss(options: ReferenceCssOptions): string {
 
   return `${gerstnerImport}
 @import "${options.contractPath}";
-@import "${options.presetsPath}";
 ${debugImport}
 :root {
   color-scheme: dark;

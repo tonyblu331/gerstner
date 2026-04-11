@@ -25,7 +25,6 @@ async function main() {
     injectImports: asBooleanFlag(flags['inject-imports'], true),
     installDebug: asBooleanFlag(flags['install-debug'], false),
     generateReference: asBooleanFlag(flags['generate-reference'], false),
-    writePresets: asBooleanFlag(flags['with-presets'], true),
     yes: Boolean(flags.yes),
   })
 
@@ -81,8 +80,6 @@ Options:
   --no-inject-imports        Skip CSS injection
   --install-debug            Generate debug bridge files
   --generate-reference       Generate the dev-only reference page
-  --with-presets             Generate project preset helpers
-  --no-with-presets          Skip preset generation
   --yes                      Accept sensible defaults
   --help                     Show this help
 `)
