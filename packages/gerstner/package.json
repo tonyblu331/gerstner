@@ -25,10 +25,11 @@
       "default": "./dist/tw4/index.css"
     },
     "./debug": {
-      "default": "./dist/debug/index.js"
+      "default": "./dist/debug/index.mjs",
+      "types": "./dist/debug/index.d.mts"
     },
-    "./text": {
-      "default": "./dist/text/index.js"
+    "./debug/debug.css": {
+      "default": "./dist/debug/debug.css"
     }
   },
   "publishConfig": {
@@ -42,8 +43,15 @@
     "check": "vp check",
     "prepublishOnly": "vp run build"
   },
+  "dependencies": {
+    "dialkit": "1.2.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
   "devDependencies": {
     "@types/node": "catalog:",
+    "@types/react": "19.1.0",
+    "@types/react-dom": "19.1.0",
     "typescript": "catalog:",
     "vite-plus": "catalog:"
   },

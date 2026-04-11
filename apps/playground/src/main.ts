@@ -1,4 +1,5 @@
 import './index.css'
+import 'dialkit/styles.css'
 import 'gerstner/debug/debug.css'
 import { initGerstnerDebug } from 'gerstner/debug'
 
@@ -240,6 +241,12 @@ for (const node of Array.from(document.querySelectorAll<HTMLElement>('[data-toke
 initGerstnerDebug({
   defaultOpen: false,
   initial: {
-    preset: 'grid',
+    layers: {
+      cols: true,
+      baseline: true,
+      rhythm: false,
+      zones: false,
+      drift: false,
+    },
   },
 })

@@ -1,256 +1,303 @@
+/* ── Debug overlay colors and tokens ── */
 :root {
   --g-debug-z: 2147483000;
   --g-debug-panel-width: min(26rem, calc(100vw - 2rem));
   --g-debug-ink: oklch(0.24 0.02 262);
   --g-debug-paper: color-mix(in oklab, white 88%, oklch(0.98 0 0));
   --g-debug-line: color-mix(in oklab, var(--g-debug-ink) 10%, transparent);
-  --g-debug-accent: oklch(0.65 0.18 254);
-  --g-debug-col-tint: color-mix(in oklab, var(--g-debug-accent) 18%, transparent);
-  --g-debug-baseline-tint: color-mix(in oklab, var(--g-debug-accent) 24%, transparent);
+
+  /* Color themes - default is blue, can be overridden */
+  --g-debug-hue: 254;
+  --g-debug-accent: oklch(0.65 0.18 var(--g-debug-hue));
+
+  /* Layer 1: Column stripes - HIGH VISIBILITY */
+  --g-debug-col-tint: oklch(0.7 0.2 var(--g-debug-hue) / 0.4);
+  --g-debug-gutter-tint: oklch(0.7 0.2 var(--g-debug-hue) / 0.15);
+
+  /* Layer 2: Baseline grid */
+  --g-debug-baseline-line: oklch(0.55 0.18 var(--g-debug-hue) / 0.7);
+  --g-debug-baseline-subtle: oklch(0.65 0.18 var(--g-debug-hue) / 0.35);
+
+  /* Layer 3: Rhythm rows */
+  --g-debug-rhythm-line: oklch(0.65 0.15 var(--g-debug-hue) / 0.2);
+
+  /* Layer 4: Zone markers */
+  --g-debug-zone-line: oklch(0.65 0.2 var(--g-debug-hue) / 0.8);
+  --g-debug-zone-label-bg: oklch(0.65 0.2 var(--g-debug-hue) / 0.95);
+  --g-debug-zone-label-text: oklch(0.15 0.02 260);
+
+  /* Layer 5: Subgrid drift - red for warning */
+  --g-debug-drift-indicator: oklch(0.65 0.22 25 / 0.9);
+
   --g-debug-shadow:
     0 0.25rem 1rem color-mix(in oklab, black 12%, transparent),
     0 1rem 2rem color-mix(in oklab, black 8%, transparent);
 }
 
+/* Alternative color themes */
+[data-g-debug-theme='red'] {
+  --g-debug-hue: 25;
+}
+
+[data-g-debug-theme='green'] {
+  --g-debug-hue: 145;
+}
+
+[data-g-debug-theme='purple'] {
+  --g-debug-hue: 280;
+}
+
+[data-g-debug-theme='orange'] {
+  --g-debug-hue: 55;
+}
+
+/* ── CSS-NATIVE OVERLAY LAYERS ── */
+/* Each grid instance renders its own overlays via ::before/::after.
+   JS only toggles data-g-debug-* attributes. Zero JS positioning. */
+
+/* Layer 1: Column stripes (data-g-debug-cols="true") */
+[data-g-debug-cols='true'].g-shell::before,
+[data-g-debug-cols='true'].g::before,
+[data-g-debug-cols='true'].g-fit::before,
+[data-g-debug-cols='true'].g-fill::before,
+[data-g-debug-cols='true'].g-sub::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  transition: opacity 180ms ease;
+
+  /* Two-color stripe: column fill + gutter fill */
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--g-debug-col-tint) 0,
+    var(--g-debug-col-tint) var(--g-col-unit),
+    var(--g-debug-gutter-tint) var(--g-col-unit),
+    var(--g-debug-gutter-tint) var(--g-stride)
+  );
+  background-size: calc(var(--g-stride) * var(--g-cols)) 100%;
+  background-repeat: repeat-x;
+
+  /* For .g (not g-shell), offset by frame */
+  background-position: var(--g-frame) 0;
+
+  /* Entry animation */
+  @supports (transition-behavior: allow-discrete) {
+    @starting-style {
+      opacity: 0;
+    }
+  }
+}
+
+/* Layer 2: Baseline grid (data-g-debug-baseline="true") */
+[data-g-debug-baseline='true'].g-shell::after,
+[data-g-debug-baseline='true'].g::after,
+[data-g-debug-baseline='true'].g-fit::after,
+[data-g-debug-baseline='true'].g-fill::after,
+[data-g-debug-baseline='true'].g-sub::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9997;
+  transition: opacity 180ms ease;
+
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(var(--g-baseline) - 1px),
+    var(--g-debug-baseline-line) calc(var(--g-baseline) - 1px),
+    var(--g-debug-baseline-line) var(--g-baseline)
+  );
+
+  @supports (transition-behavior: allow-discrete) {
+    @starting-style {
+      opacity: 0;
+    }
+  }
+}
+
+/* Layer 3: Rhythm rows (data-g-debug-rhythm="true") */
+[data-g-debug-rhythm='true'].g-shell::before,
+[data-g-debug-rhythm='true'].g::before,
+[data-g-debug-rhythm='true'].g-fit::before,
+[data-g-debug-rhythm='true'].g-fill::before,
+[data-g-debug-rhythm='true'].g-sub::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  transition: opacity 180ms ease;
+
+  /* Add rhythm bands on top of column stripes */
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(var(--g-rhythm) - 1px),
+      var(--g-debug-rhythm-line) calc(var(--g-rhythm) - 1px),
+      var(--g-debug-rhythm-line) var(--g-rhythm)
+    ),
+    repeating-linear-gradient(
+      to right,
+      var(--g-debug-col-tint) 0,
+      var(--g-debug-col-tint) var(--g-col-unit),
+      var(--g-debug-gutter-tint) var(--g-col-unit),
+      var(--g-debug-gutter-tint) var(--g-stride)
+    );
+  background-size:
+    100% calc(var(--g-rhythm) * 2),
+    calc(var(--g-stride) * var(--g-cols)) 100%;
+  background-repeat: repeat-y, repeat-x;
+}
+
+/* Subtle baseline lines under rhythm */
+[data-g-debug-rhythm='true'].g-shell::after,
+[data-g-debug-rhythm='true'].g::after,
+[data-g-debug-rhythm='true'].g-fit::after,
+[data-g-debug-rhythm='true'].g-fill::after,
+[data-g-debug-rhythm='true'].g-sub::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9997;
+  transition: opacity 180ms ease;
+
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(var(--g-baseline) - 1px),
+    var(--g-debug-baseline-subtle) calc(var(--g-baseline) - 1px),
+    var(--g-debug-baseline-subtle) var(--g-baseline)
+  );
+}
+
+/* Layer 4: Zone markers (data-g-debug-zones="true") — g-shell only */
+[data-g-debug-zones='true'].g-shell {
+  outline: 2px solid var(--g-debug-zone-line);
+  outline-offset: -1px;
+}
+
+[data-g-debug-zones='true'].g-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9996;
+  transition: opacity 180ms ease;
+
+  /* Zone boundary lines using background gradients */
+  background-image:
+    /* Full-start line */
+    linear-gradient(to bottom, var(--g-debug-zone-line) 0, var(--g-debug-zone-line) 100%),
+    /* Content-start line (offset by frame - gutter) */
+    linear-gradient(to bottom, var(--g-debug-zone-line) 0, var(--g-debug-zone-line) 100%),
+    /* Content-end line (offset by content width + frame - gutter) */
+    linear-gradient(to bottom, var(--g-debug-zone-line) 0, var(--g-debug-zone-line) 100%),
+    /* Full-end line */
+    linear-gradient(to bottom, var(--g-debug-zone-line) 0, var(--g-debug-zone-line) 100%);
+
+  background-size:
+    1px 100%,
+    1px 100%,
+    1px 100%,
+    1px 100%;
+
+  background-position:
+    0 0,
+    calc(var(--g-frame) - var(--g-gutter)) 0,
+    calc(100% - (var(--g-frame) - var(--g-gutter))) 0,
+    100% 0;
+
+  background-repeat: no-repeat;
+
+  @supports (transition-behavior: allow-discrete) {
+    @starting-style {
+      opacity: 0;
+    }
+  }
+}
+
+/* Layer 5: Subgrid drift (data-g-debug-drift="true") — JS-assisted */
+/* JS sets --g-debug-drift-px on drifted children */
+[data-g-debug-drift='true'][data-g-debug-drift-px] {
+  outline: 2px solid var(--g-debug-drift-indicator);
+  outline-offset: -1px;
+}
+
+[data-g-debug-drift='true'][data-g-debug-drift-px]::before {
+  content: attr(data-g-debug-drift-label) ' drift: ' attr(data-g-debug-drift-px);
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background: var(--g-debug-drift-indicator);
+  color: white;
+  font-family: ui-monospace, monospace;
+  font-size: 0.6875rem;
+  border-radius: 0.25rem;
+  z-index: 9999;
+}
+
+/* ── DIALKIT MOUNT CONTAINER ── */
 .g-debug-root {
   position: fixed;
   inset: 0;
   z-index: var(--g-debug-z);
   pointer-events: none;
-  color: var(--g-debug-ink);
-  font:
-    500 12px/1.45 Inter,
-    ui-sans-serif,
-    system-ui,
-    sans-serif;
-  letter-spacing: 0.01em;
 }
 
-.g-debug-root[data-panel='false'] .g-debug-panel {
-  opacity: 0;
-  translate: 0 -0.5rem;
-  pointer-events: none;
-}
-
-.g-debug-root[data-badge='false'] .g-debug-badge,
-.g-debug-root[data-overlay='false'] .g-debug-overlay,
-.g-debug-root[data-ruler='false'] .g-debug-ruler {
-  opacity: 0;
-}
-
-.g-debug-overlay,
-.g-debug-ruler {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  transition: opacity 160ms ease;
-}
-
-.g-debug-overlay::before {
-  content: '';
-  position: absolute;
-  inset-block: 0;
-  left: var(--g-debug-overlay-left, 0px);
-  width: var(--g-debug-overlay-width, 0px);
-  background: repeating-linear-gradient(
-    to right,
-    var(--g-debug-col-tint) 0,
-    var(--g-debug-col-tint) var(--g-debug-col-width, 0px),
-    transparent var(--g-debug-col-width, 0px),
-    transparent calc(var(--g-debug-col-width, 0px) + var(--g-debug-overlay-gap, 0px))
-  );
-  outline: 1px solid color-mix(in oklab, var(--g-debug-accent) 16%, transparent);
-}
-
-.g-debug-ruler {
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent calc(var(--g-debug-baseline, 0px) - 1px),
-    var(--g-debug-baseline-tint) calc(var(--g-debug-baseline, 0px) - 1px),
-    var(--g-debug-baseline-tint) var(--g-debug-baseline, 0px)
-  );
-}
-
-.g-debug-panel,
-.g-debug-badge,
-.g-debug-launcher {
-  position: fixed;
+/* DialKit panel needs pointer events */
+.g-debug-root > * {
   pointer-events: auto;
-  border: 1px solid var(--g-debug-line);
-  border-radius: 1rem;
-  background: color-mix(in oklab, var(--g-debug-paper) 90%, white);
-  box-shadow: var(--g-debug-shadow);
-  backdrop-filter: blur(12px);
 }
 
-.g-debug-panel {
-  top: 1rem;
-  right: 1rem;
-  width: var(--g-debug-panel-width);
-  padding: 1rem;
-  transition:
-    opacity 160ms ease,
-    translate 160ms ease;
-}
-
-.g-debug-badge {
-  right: 1rem;
-  bottom: 1rem;
-  width: min(24rem, calc(100vw - 2rem));
-  padding: 0.75rem 0.875rem;
-  transition: opacity 160ms ease;
-}
-
-.g-debug-launcher {
-  left: 1rem;
-  bottom: 1rem;
-  padding: 0.6rem 0.8rem;
-}
-
-.g-debug-toolbar,
-.g-debug-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.g-debug-toolbar {
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 0.9rem;
-}
-
-.g-debug-title {
-  display: grid;
-  gap: 0.15rem;
-}
-
-.g-debug-title strong {
-  font-size: 0.92rem;
-  font-weight: 700;
-}
-
-.g-debug-title span,
-.g-debug-meta,
-.g-debug-shortcuts,
-.g-debug-status-text {
-  color: color-mix(in oklab, var(--g-debug-ink) 62%, white);
-}
-
-.g-debug-actions {
-  margin-bottom: 0.9rem;
-}
-
-.g-debug-button {
-  appearance: none;
-  border: 1px solid var(--g-debug-line);
-  background: white;
-  color: var(--g-debug-ink);
-  border-radius: 999px;
-  padding: 0.42rem 0.72rem;
-  font: inherit;
-  cursor: pointer;
-}
-
-.g-debug-button[aria-pressed='true'] {
-  border-color: color-mix(in oklab, var(--g-debug-accent) 36%, white);
-  background: color-mix(in oklab, var(--g-debug-accent) 12%, white);
-}
-
-.g-debug-section {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.g-debug-stat-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.6rem 0.8rem;
-}
-
-.g-debug-stat {
-  border: 1px solid var(--g-debug-line);
-  border-radius: 0.85rem;
-  padding: 0.65rem 0.75rem;
-  background: color-mix(in oklab, white 78%, var(--g-debug-paper));
-}
-
-.g-debug-stat dt,
-.g-debug-badge-label,
-.g-debug-caption {
-  margin: 0 0 0.2rem;
-  color: color-mix(in oklab, var(--g-debug-ink) 58%, white);
-  font-size: 0.74rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.g-debug-stat dd,
-.g-debug-badge-value {
-  margin: 0;
-  font-size: 0.9rem;
-  font-weight: 650;
-}
-
-.g-debug-badge-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.55rem;
-}
-
-.g-debug-status-row {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.g-debug-dot {
-  width: 0.55rem;
-  height: 0.55rem;
-  border-radius: 999px;
-  background: var(--g-debug-accent);
-}
-
-.g-debug-export {
-  appearance: none;
-  min-height: 9rem;
-  width: 100%;
-  resize: vertical;
-  border: 1px solid var(--g-debug-line);
-  border-radius: 0.85rem;
-  padding: 0.8rem;
-  font:
-    500 11px/1.5 ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    monospace;
-  color: var(--g-debug-ink);
-  background: color-mix(in oklab, white 82%, var(--g-debug-paper));
-}
-
-.g-debug-shortcuts,
-.g-debug-status-text {
-  margin: 0;
-  font-size: 0.74rem;
-}
-
-.g-debug-status-text[data-state='visible'] {
-  color: color-mix(in oklab, var(--g-debug-accent) 72%, black);
-}
-
-.g-debug-muted {
-  color: color-mix(in oklab, var(--g-debug-ink) 56%, white);
-}
-
-@media (width < 48rem) {
-  .g-debug-panel {
-    left: 1rem;
-    width: auto;
-  }
-
-  .g-debug-badge-grid,
-  .g-debug-stat-grid {
-    grid-template-columns: 1fr;
+@media (prefers-reduced-motion: reduce) {
+  :has([data-g-debug-cols]) .g-shell::before,
+  :has([data-g-debug-cols]) .g::before,
+  :has([data-g-debug-cols]) .g-fit::before,
+  :has([data-g-debug-cols]) .g-fill::before,
+  :has([data-g-debug-cols]) .g-sub::before,
+  [data-g-debug-cols].g-shell::before,
+  [data-g-debug-cols].g::before,
+  [data-g-debug-cols].g-fit::before,
+  [data-g-debug-cols].g-fill::before,
+  [data-g-debug-cols].g-sub::before,
+  :has([data-g-debug-baseline]) .g-shell::after,
+  :has([data-g-debug-baseline]) .g::after,
+  :has([data-g-debug-baseline]) .g-fit::after,
+  :has([data-g-debug-baseline]) .g-fill::after,
+  :has([data-g-debug-baseline]) .g-sub::after,
+  [data-g-debug-baseline].g-shell::after,
+  [data-g-debug-baseline].g::after,
+  [data-g-debug-baseline].g-fit::after,
+  [data-g-debug-baseline].g-fill::after,
+  [data-g-debug-baseline].g-sub::after,
+  :has([data-g-debug-rhythm]) .g-shell::before,
+  :has([data-g-debug-rhythm]) .g::before,
+  :has([data-g-debug-rhythm]) .g-fit::before,
+  :has([data-g-debug-rhythm]) .g-fill::before,
+  :has([data-g-debug-rhythm]) .g-sub::before,
+  [data-g-debug-rhythm].g-shell::before,
+  [data-g-debug-rhythm].g::before,
+  [data-g-debug-rhythm].g-fit::before,
+  [data-g-debug-rhythm].g-fill::before,
+  [data-g-debug-rhythm].g-sub::before,
+  :has([data-g-debug-rhythm]) .g-shell::after,
+  :has([data-g-debug-rhythm]) .g::after,
+  :has([data-g-debug-rhythm]) .g-fit::after,
+  :has([data-g-debug-rhythm]) .g-fill::after,
+  :has([data-g-debug-rhythm]) .g-sub::after,
+  [data-g-debug-rhythm].g-shell::after,
+  [data-g-debug-rhythm].g::after,
+  [data-g-debug-rhythm].g-fit::after,
+  [data-g-debug-rhythm].g-fill::after,
+  [data-g-debug-rhythm].g-sub::after,
+  :has([data-g-debug-zones]) .g-shell::before,
+  [data-g-debug-zones].g-shell::before {
+    transition: none;
   }
 }

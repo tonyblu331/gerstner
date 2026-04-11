@@ -5,6 +5,6 @@ export default defineConfig({
     dts: true,
     format: ['esm'],
     sourcemap: true,
-    entry: ['src/cli/cli.ts', 'src/debug/index.ts', 'src/text/index.ts'],
+    entry: ['src/cli/cli.ts', 'src/debug/index.tsx'],
   },
 })
