@@ -44,14 +44,14 @@
     "prepublishOnly": "vp run build"
   },
   "dependencies": {
-    "dialkit": "1.2.0",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "dialkit": "1.2.0"
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "@types/react": "19.1.0",
-    "@types/react-dom": "19.1.0",
+    "@types/react": "19.2.3",
+    "@types/react-dom": "19.2.3",
+    "react": "19.2.5",
+    "react-dom": "19.2.5",
     "typescript": "catalog:",
     "vite-plus": "catalog:"
   },
@@ -62,5 +62,9 @@
     "tailwindcss": {
       "optional": true
     }
-  }
+  },
+  "bundledDependencies": [
+    "react",
+    "react-dom"
+  ]
 }
