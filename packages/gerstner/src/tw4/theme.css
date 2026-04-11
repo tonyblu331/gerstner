@@ -1,55 +1,39 @@
 /* Gerstner TW4 Theme */
-/* Theme variables mapped to Gerstner contract */
+/* Authored tokens registered as TW4 design tokens. */
+/* Derived tokens come from stride/index.css :root — not recomputed here. */
+/* Only TW4-namespace mappings (--font-size-*, --spacing-*) reference stride tokens. */
 
 @theme {
-  /* Grid contract */
+  /* Grid contract — authored only */
   --g-cols: 12;
   --g-gutter: clamp(0.875rem, 2.2vw, 1.5rem);
   --g-frame: clamp(1rem, 5dvw, 5rem);
   --g-max-width: 90rem;
   --g-min: 16rem;
 
-  /* Typography contract */
+  /* Typography contract — authored only */
   --g-type-base: 1rem;
   --g-baseline: 0.5rem;
   --g-leading-steps: 3;
   --g-scale-ratio: 1.25;
-  --g-measure: 70ch;
   --g-measure-body: 70ch;
   --g-measure-tight: 45ch;
   --g-measure-ui: 35ch;
 
-  /* Derived */
-  --g-rhythm: calc(var(--g-baseline) * var(--g-leading-steps));
-  --g-prose: calc(var(--g-rhythm) / var(--g-type-base));
+  /* Scale — TW4 font-size-* tokens referencing stride scale */
+  --font-size-g--2: var(--g-scale--2);
+  --font-size-g--1: var(--g-scale--1);
+  --font-size-g-0: var(--g-scale-0);
+  --font-size-g-1: var(--g-scale-1);
+  --font-size-g-2: var(--g-scale-2);
+  --font-size-g-3: var(--g-scale-3);
+  --font-size-g-4: var(--g-scale-4);
+  --font-size-g-5: var(--g-scale-5);
 
-  /* Density */
-  --g-density-tight: calc(var(--g-rhythm) * 3);
-  --g-density-standard: calc(var(--g-rhythm) * 6);
-  --g-density-loose: calc(var(--g-rhythm) * 10);
-
-  /* Scale */
-  --font-size-g--2: calc(var(--g-type-base) / (var(--g-scale-ratio) * var(--g-scale-ratio)));
-  --font-size-g--1: calc(var(--g-type-base) / var(--g-scale-ratio));
-  --font-size-g-0: var(--g-type-base);
-  --font-size-g-1: calc(var(--g-type-base) * var(--g-scale-ratio));
-  --font-size-g-2: calc(var(--g-type-base) * var(--g-scale-ratio) * var(--g-scale-ratio));
-  --font-size-g-3: calc(
-    var(--g-type-base) * var(--g-scale-ratio) * var(--g-scale-ratio) * var(--g-scale-ratio)
-  );
-  --font-size-g-4: calc(
-    var(--g-type-base) * var(--g-scale-ratio) * var(--g-scale-ratio) * var(--g-scale-ratio) *
-      var(--g-scale-ratio)
-  );
-  --font-size-g-5: calc(
-    var(--g-type-base) * var(--g-scale-ratio) * var(--g-scale-ratio) * var(--g-scale-ratio) *
-      var(--g-scale-ratio) * var(--g-scale-ratio)
-  );
-
-  /* Spacing */
+  /* Spacing — TW4 spacing-* tokens referencing stride tokens */
   --spacing-g-rhythm: var(--g-rhythm);
   --spacing-g-baseline: var(--g-baseline);
-  --spacing-g-stride: calc(var(--g-col-unit-raw) + var(--g-gutter));
+  --spacing-g-stride: var(--g-stride);
   --spacing-g-gutter: var(--g-gutter);
   --spacing-g-frame: var(--g-frame);
 }

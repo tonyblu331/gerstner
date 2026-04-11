@@ -1,5 +1,6 @@
 /* Gerstner TW4 Utilities */
 /* @utility definitions for Gerstner classes */
+/* Grid containers recompute derived tokens locally for cqi context — field overrides, not duplicated derivations */
 
 @utility g-shell {
   display: grid;

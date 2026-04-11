@@ -2,6 +2,7 @@
 /* CSS-first Tailwind v4 integration */
 /* ⚠ Tailwind v4-only. Do NOT import this in a vanilla CSS entry. Use gerstner/css instead. */
 
+@import '../stride/index.css';
 @import './theme.css';
 @import './utilities.css';
 @import './helpers.css';
