@@ -1,5 +1,5 @@
 import './index.css'
-import 'dialkit/dist/styles.css'
+import 'dialkit/styles.css'
 import 'gerstner/debug/debug.css'
 import { initGerstnerDebug } from 'gerstner/debug'
 
