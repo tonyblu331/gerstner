@@ -69,8 +69,14 @@ describe('debug/index.tsx parity', () => {
     expect(index).not.toContain('matchAll')
   })
 
-  it('does not export --g-measure in contract export', () => {
-    expect(index).not.toContain('--g-measure')
+  it('does not export --g-measure (singular, demoted) in contract export', () => {
+    expect(index).not.toMatch(/--g-measure:\s/)
+  })
+
+  it('exports --g-measure-body/tight/ui in contract export', () => {
+    expect(index).toContain('--g-measure-body')
+    expect(index).toContain('--g-measure-tight')
+    expect(index).toContain('--g-measure-ui')
   })
 
   it('calls applyDriftDetection on resize', () => {
@@ -102,8 +108,8 @@ describe('debug/debug.css parity', () => {
     expect(css).toContain('var(--g-debug-stride-px)')
   })
 
-  it('does not contain --g-measure', () => {
-    expect(css).not.toContain('--g-measure')
+  it('does not contain --g-measure (singular, demoted)', () => {
+    expect(css).not.toMatch(/--g-measure:\s/)
   })
 })
 
@@ -146,15 +152,23 @@ describe('debug/labels.json parity', () => {
 })
 
 // ---------------------------------------------------------------------------
-// CLI contract template — no --g-measure
+// CLI contract template — authored measure tokens
 // ---------------------------------------------------------------------------
 
 describe('cli/templates/contract.ts parity', () => {
   const template = readSrcFile('cli/templates/contract.ts')
 
-  it('does not contain --g-measure', () => {
-    expect(template).not.toContain('--g-measure')
-    expect(template).not.toContain('measure')
+  it('does not contain --g-measure (singular, demoted)', () => {
+    expect(template).not.toMatch(/--g-measure:\s/)
+  })
+
+  it('contains authored --g-measure-body/tight/ui', () => {
+    expect(template).toContain('measureBody')
+    expect(template).toContain('measureTight')
+    expect(template).toContain('measureUi')
+    expect(template).toContain('--g-measure-body')
+    expect(template).toContain('--g-measure-tight')
+    expect(template).toContain('--g-measure-ui')
   })
 })
 

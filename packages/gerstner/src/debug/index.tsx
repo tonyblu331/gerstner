@@ -123,6 +123,9 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
   --g-baseline: ${style.getPropertyValue('--g-baseline').trim() || '0.5rem'};
   --g-leading-steps: ${style.getPropertyValue('--g-leading-steps').trim() || '3'};
   --g-scale-ratio: ${style.getPropertyValue('--g-scale-ratio').trim() || '1.25'};
+  --g-measure-body: ${style.getPropertyValue('--g-measure-body').trim() || '70ch'};
+  --g-measure-tight: ${style.getPropertyValue('--g-measure-tight').trim() || '45ch'};
+  --g-measure-ui: ${style.getPropertyValue('--g-measure-ui').trim() || '35ch'};
 }`
     navigator.clipboard.writeText(css).catch(() => {})
     return css

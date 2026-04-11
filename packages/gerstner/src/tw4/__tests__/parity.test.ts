@@ -60,8 +60,15 @@ describe('tw4/theme.css parity', () => {
     expect(theme).toContain('var(--g-stride)')
   })
 
-  it('does not contain --g-measure (demoted)', () => {
-    expect(theme).not.toContain('--g-measure:')
+  it('does not contain --g-measure (singular, demoted)', () => {
+    // --g-measure (singular) was demoted; --g-measure-body/tight/ui are authored
+    expect(theme).not.toMatch(/--g-measure:\s/)
+  })
+
+  it('contains authored --g-measure-body/tight/ui', () => {
+    expect(theme).toContain('--g-measure-body:')
+    expect(theme).toContain('--g-measure-tight:')
+    expect(theme).toContain('--g-measure-ui:')
   })
 })
 
