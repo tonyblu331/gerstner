@@ -9,119 +9,21 @@ Gerstner is not a grid plugin, not a token dump, and not a JavaScript layout eng
 
 ---
 
-## Development
-
-### Daily Commands
-
-Vite+'s normal flow is simple and canonical:
-
-```bash
-# Install dependencies
-vp install
-
-# Run the playground
-cd apps/playground && vp dev
-
-# Check whole repo
-cd ../.. && vp check
-
-# Package the TS packages
-cd packages/debug && vp pack
-cd ../cli && vp pack
-
-# Build the playground app
-cd ../../apps/playground && vp build
-```
-
-### VS Code / OXC Setup
-
-Vite+ officially recommends the Vite Plus Extension Pack for VS Code, with OXC as the formatter and fix provider.
-
-**`.vscode/extensions.json`**
-
-```json
-{
-  "recommendations": ["VoidZero.vite-plus-extension-pack"]
-}
-```
-
-**`.vscode/settings.json`**
-
-```json
-{
-  "editor.defaultFormatter": "oxc.oxc-vscode",
-  "oxc.fmt.configPath": "./vite.config.ts",
-  "editor.formatOnSave": true,
-  "editor.formatOnSaveMode": "file",
-  "editor.codeActionsOnSave": {
-    "source.fixAll.oxc": "explicit"
-  }
-}
-```
-
----
-
 ## Quick Start
 
-### Install Dependencies
+### Install
 
 ```bash
-vp install
+npm install gerstner
 ```
 
-### Run Development Server
-
-```bash
-cd apps/playground && vp dev
-```
-
-### Check Code Quality
-
-```bash
-vp check
-```
-
-### Build for Production
-
-```bash
-cd apps/playground && vp build
-```
-
----
-
-## Packages
-
-```text
-packages/
-  gerstner/  → published as "gerstner" with subpath exports
-    - gerstner/css   → vanilla CSS surface
-    - gerstner/tw4   → Tailwind v4 integration
-    - gerstner/debug → optional dev tools
-    - gerstner/text  → text utilities (future)
-```
-
-### `gerstner`
-
-Single package with multiple entry points:
-
-- `gerstner/css` — Vanilla CSS surface (tokens, layout, rhythm)
-- `gerstner/tw4` — Tailwind v4 integration (@theme, @utility)
-- `gerstner/debug` — Optional developer tooling
-- `gerstner/text` — Text utilities (future)
-
-CLI: `npx gerstner init` scaffolds projects with css/tw4 target selection.
-
----
-
-## Usage
-
-### Import the CSS surface (vanilla only)
+### Vanilla CSS
 
 ```css
 @import 'gerstner/css';
 ```
 
-### Import the TW4 surface (Tailwind v4)
+### Tailwind v4
 
 ```css
 @import 'tailwindcss';
@@ -129,35 +31,108 @@ CLI: `npx gerstner init` scaffolds projects with css/tw4 target selection.
 @source '../node_modules/gerstner';
 ```
 
-### Import only what you need
+### CLI Scaffolding
 
-```css
-@import 'gerstner/css'; /* Full CSS surface */
+```bash
+npx gerstner init
 ```
 
-### Example HTML
+---
 
-```html
-<section class="g-shell">
-  <div class="g-content">
-    <h1 class="g-display g-rhythm-bottom">Designing programmes, not margins</h1>
-    <p class="g-prose g-rhythm">
-      The layout derives from type. The columns derive from stride. The browser resolves the rest.
-    </p>
-  </div>
-  <figure class="g-breakout-r">Image that pushes out to the right</figure>
-</section>
-```
+## Authoring Ladder
+
+Gerstner is designed to be adopted incrementally. Each rung builds on the last:
+
+1. **Shell** — Add `g-shell` to a section. Get a centered, responsive 12-column grid with frame margins.
+2. **Columns** — Use `col-1` through `col-12` to place elements on the grid.
+3. **Rhythm** — Use `g-prose`, `g-display`, `g-heading`, `g-ui` for type roles with correct leading.
+4. **Subgrid** — Use `g-sub` for exact inherited alignment inside a parent grid.
+5. **Breakout** — Use `g-content`, `g-breakout-r`, `g-breakout-l` for editorial compositions.
+6. **Density** — Use `g-tight`, `g-standard`, `g-loose` for vertical spacing presets.
+7. **Presets** — Use `.g-editorial`, `.g-marketing`, `.g-gallery` for character overrides.
+
+You don't need all seven. Most projects need 1–4.
+
+---
+
+## Surfaces
+
+| Surface | Import | Use When |
+|---------|--------|----------|
+| Vanilla CSS | `gerstner/css` | No Tailwind, any framework |
+| Tailwind v4 | `gerstner/tw4` | Using Tailwind v4 |
+| Debug | `gerstner/debug` | Dev-time overlay (optional) |
+| Stride | `gerstner/stride` | Raw token access only |
 
 ---
 
 ## Architecture
 
-- **Stride** is the programmable layout engine
-- **Gerstner** is the complete system using Stride
-- **CSS-first** configuration with custom properties
-- **Type-first** approach to layout design
-- **Human-readable** utility classes
+### Stride Engine
+
+**Stride** is the single source of truth for all layout geometry:
+
+- **Canonical math**: `stride/core.ts` — pure functions, no DOM
+- **Manifest**: `stride/contract.manifest.json` — generated artifact bridging TS and CSS
+- **CSS runtime**: `stride/index.css` — `@property` registrations + `:root` derived tokens
+- **Generated helpers**: `css/helpers.css` / `tw4/helpers.css` — emitted from manifest
+
+### Token Flow
+
+```
+Authored tokens (--g-cols, --g-gutter, --g-baseline, ...)
+    ↓
+Stride derives (--g-rhythm, --g-stride, --g-scale-*, ...)
+    ↓
+Surfaces consume via var() — never recompute
+```
+
+### What Gerstner Is Not
+
+- Not a JavaScript layout engine — the browser does the math
+- Not a design token dump — every token has a derivation reason
+- Not a grid plugin — it's a programmable system
+- Not a component library — it provides layout, not UI components
+- Not a Tailwind competitor — it's a Tailwind v4 extension
+
+---
+
+## Example
+
+```html
+<section class="g-shell">
+  <div class="g-content">
+    <h1 class="g-display">Designing programmes, not margins</h1>
+    <p class="g-prose">
+      The layout derives from type. The columns derive from stride.
+      The browser resolves the rest.
+    </p>
+  </div>
+</section>
+```
+
+---
+
+## Development
+
+```bash
+vp install                  # Install dependencies
+cd apps/playground && vp dev  # Run the playground
+vp check                    # Format, lint, type-check
+cd packages/gerstner && vp test  # Run tests
+```
+
+### Regeneration Commands
+
+Generated artifacts must not be hand-edited. Regenerate via:
+
+```bash
+pnpm emit:manifest    # stride/contract.manifest.json
+pnpm emit:helpers     # css/helpers.css
+pnpm emit:tw4         # tw4/helpers.css
+pnpm emit:debug       # debug/labels.json
+pnpm emit:reference   # reference-fixtures/metadata.json
+```
 
 ---
 

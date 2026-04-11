@@ -11,7 +11,7 @@ This document is for contributors, maintainers, and tooling authors. The public 
 **Product:** Gerstner  
 **Engine:** Stride  
 **Public package:** `gerstner` (single package with subpath exports)  
-**Surfaces:** `gerstner/css`, `gerstner/tw4`, `gerstner/debug`, `gerstner/text`
+**Surfaces:** `gerstner/css`, `gerstner/tw4`, `gerstner/debug`, `gerstner/stride`
 
 Naming rule:
 
@@ -39,13 +39,12 @@ gerstner/
 ├── packages/
 │   └── gerstner/                     published as "gerstner"
 │       ├── src/
-│       │   ├── css/                  CSS surface (tokens, layout, rhythm)
-│       │   ├── tw4/                  Tailwind v4 surface (@theme, @utility)
+│       │   ├── css/                  CSS surface (tokens, layout, rhythm, helpers)
+│       │   ├── tw4/                  Tailwind v4 surface (theme, utilities, helpers, aliases)
 │       │   ├── cli/                  CLI scaffolding (npx gerstner init)
-│       │   ├── debug/                Optional dev tooling
-│       │   ├── text/                 Text utilities (future)
-│       │   ├── stride/               Internal math engine (not exposed)
-│       │   └── internal/             Shared internal utilities
+│       │   ├── debug/                Optional dev tooling (observer, panel, overlay)
+│       │   ├── stride/               Layout engine (core.ts, manifest, CSS runtime)
+│       │   └── reference-fixtures/    Dev reference page metadata
 │       ├── package.json
 │       ├── vite.config.ts            VP pack config
 │       ├── tsconfig.json
@@ -92,19 +91,22 @@ gerstner/
 
 ## Package responsibility matrix
 
-| Responsibility            | core      | debug                | cli       | Why                          |
-| ------------------------- | --------- | -------------------- | --------- | ---------------------------- |
-| Stride math               | owns      | no                   | no        | Layout belongs to CSS        |
-| `@property` registration  | owns      | no                   | no        | Part of the runtime contract |
-| named zones and utilities | owns      | no                   | no        | Public CSS API               |
-| rhythm and type roles     | owns      | no                   | no        | Runtime CSS behavior         |
-| human-readable labels     | no        | owns                 | no        | Dev ergonomics only          |
-| keyboard overlay          | no        | owns                 | no        | Optional dev tool            |
-| export current values     | no        | owns                 | no        | Dev helper                   |
-| framework detection       | no        | no                   | owns      | Scaffolding concern          |
-| contract CSS generation   | no        | no                   | owns      | Setup concern                |
-| dev reference page        | no        | optional integration | owns      | Setup and teaching           |
-| production layout JS      | forbidden | forbidden            | forbidden | Breaks the system premise    |
+| Responsibility            | stride    | css/tw4               | debug     | cli       | Why                          |
+| ------------------------- | --------- | --------------------- | --------- | --------- | ---------------------------- |
+| Stride math               | owns      | no                    | no        | no        | Layout belongs to CSS        |
+| `@property` registration  | owns      | no                    | no        | no        | Part of the runtime contract |
+| Derived token formulas    | owns      | consumes via var()    | no        | no        | Single derivation source     |
+| named zones and utilities | no        | owns                  | no        | no        | Public CSS API               |
+| rhythm and type roles     | no        | owns                  | no        | no        | Runtime CSS behavior         |
+| human-readable labels     | no        | no                    | owns      | no        | Dev ergonomics only          |
+| manifest-aware observer   | no        | no                    | owns      | no        | Reads stride tokens only     |
+| keyboard overlay          | no        | no                    | owns      | no        | Optional dev tool            |
+| export current values     | no        | no                    | owns      | no        | Dev helper                   |
+| framework detection       | no        | no                    | no        | owns      | Scaffolding concern          |
+| contract CSS generation   | no        | no                    | no        | owns      | Setup concern                |
+| helper generation         | no        | no                    | no        | owns      | Emitted from manifest        |
+| dev reference page        | no        | no                    | optional  | owns      | Setup and teaching           |
+| production layout JS      | forbidden | forbidden             | forbidden | forbidden | Breaks the system premise    |
 
 Hard rule:
 
@@ -119,31 +121,16 @@ Hard rule:
 ```json
 {
   "exports": {
-    ".": "./index.css",
-    "./layout": "./layout.css",
-    "./rhythm": "./rhythm.css"
-  }
-}
-```
-
-### `@gerstner/debug`
-
-```json
-{
-  "exports": {
-    ".": "./dist/index.js",
-    "./css": "./debug.css"
-  }
-}
-```
-
-### `@gerstner/cli`
-
-```json
-{
-  "bin": {
-    "gerstner": "./dist/index.js"
-  }
+    ".": "./dist/css/index.css",
+    "./css": "./dist/css/index.css",
+    "./tw4": "./dist/tw4/index.css",
+    "./stride": "./dist/stride/index.css",
+    "./debug": { "default": "./dist/debug/index.mjs", "types": "./dist/debug/index.d.mts" },
+    "./debug/observer": { "default": "./dist/debug/observer.mjs", "types": "./dist/debug/observer.d.mts" },
+    "./debug/debug.css": "./dist/debug/debug.css",
+    "./debug/labels.json": "./dist/debug/labels.json"
+  },
+  "bin": { "gerstner": "./dist/cli/cli.mjs" }
 }
 ```
 
@@ -175,10 +162,13 @@ Not allowed in core:
 - canvas-specific layout logic
 - framework runtime dependencies
 
-### 2. Debug observes public tokens only
+### 2. Debug observes stride tokens only
 
-`@gerstner/debug` can read and set the public token contract.
-It must not introduce a second hidden layout model.
+`gerstner/debug` reads resolved stride CSS custom properties via `getComputedStyle`.
+It must not introduce a second hidden layout model or parse `gridTemplateColumns`.
+
+The observer (`debug/observer.ts`) is the only JS that reads layout metrics.
+It uses stride tokens as manifest truth, never heuristic track parsing.
 
 If the debug panel can do something the CSS package cannot express, that is a design bug.
 
@@ -269,18 +259,22 @@ Reason: consumer CSS must override without `!important`.
 
 ## Layer stack
 
-Core CSS must declare the full layer order.
+CSS surface must declare the full layer order.
 
 ```css
-@layer gerstner.tokens, gerstner.layout, gerstner.rhythm;
+@layer stride, gerstner.tokens, gerstner.layout, gerstner.rhythm, gerstner.helpers;
 ```
 
 Priority from low to high:
 
-1. `gerstner.tokens`
-2. `gerstner.layout`
-3. `gerstner.rhythm`
-4. unlayered consumer CSS
+1. `stride` (derived tokens)
+2. `gerstner.tokens` (authored defaults)
+3. `gerstner.layout` (grid containers)
+4. `gerstner.rhythm` (type roles)
+5. `gerstner.helpers` (generated helpers)
+6. unlayered consumer CSS
+
+TW4 import order: `stride/index.css → theme → utilities → helpers → aliases`
 
 Unlayered project CSS should always beat shipped package layers.
 
@@ -297,7 +291,7 @@ Legacy `gc-` names are not allowed in new work.
 
 ### Human-readable labels
 
-Every Layer A token must have a matching human-readable label in `packages/debug/src/labels.ts`.
+Every authored token must have a matching human-readable label in `debug/labels.json` (generated via `pnpm emit:debug`).
 
 If a token exists but the debug inspector cannot explain it in plain language, the DX is incomplete.
 
@@ -494,4 +488,4 @@ When in doubt:
 
 If someone asks what this repo is:
 
-> Gerstner is the product. Stride is the engine. `gerstner` ships the CSS, `@gerstner/debug` helps in dev, and `@gerstner/cli` scaffolds the files your team keeps.
+> Gerstner is the product. Stride is the engine. `gerstner` ships the CSS, `gerstner/debug` helps in dev, and `gerstner/cli` scaffolds the files your team keeps.
