@@ -74,7 +74,6 @@ export async function runInit(options: InitOptions): Promise<InitResult> {
       baseline: '0.5rem',
       leadingSteps: 3,
       scaleRatio: 1.25,
-      measure: '70ch',
     }),
     contractFile,
   )

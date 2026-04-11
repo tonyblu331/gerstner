@@ -8,7 +8,6 @@ export interface ContractTemplateOptions {
   baseline: string
   leadingSteps: number
   scaleRatio: number
-  measure: string
 }
 
 export function renderContractCss(options: ContractTemplateOptions): string {
@@ -31,7 +30,6 @@ export function renderContractCss(options: ContractTemplateOptions): string {
   --g-baseline: ${options.baseline};
   --g-leading-steps: ${options.leadingSteps};
   --g-scale-ratio: ${options.scaleRatio};
-  --g-measure: ${options.measure};
 }
 `
 }

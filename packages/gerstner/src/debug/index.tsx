@@ -1,10 +1,10 @@
 import { createRoot } from 'react-dom/client'
 import { DebugPanel } from './DebugPanel.js'
+import { syncDebugMetrics, applyDriftDetection } from './observer.js'
 
 export type DebugLayer = 'cols' | 'baseline' | 'rhythm' | 'zones' | 'drift'
 
 const LAYERS: DebugLayer[] = ['cols', 'baseline', 'rhythm', 'zones', 'drift']
-const SCOPE_SELECTOR = '.g-shell, .g, .g-fit, .g-fill, .g-sub'
 
 export interface GerstnerDebugOptions {
   defaultOpen?: boolean
@@ -47,56 +47,33 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
   }
 
   const syncLayers = () => {
-    const root = document.querySelector<HTMLElement>('.g-debug-root')
-    if (!root) return
+    const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
+    if (!debugRoot) return
 
     for (const layer of LAYERS) {
-      root.setAttribute(`data-g-debug-${layer}`, String(initialLayers[layer] ?? false))
+      debugRoot.setAttribute(`data-g-debug-${layer}`, String(initialLayers[layer] ?? false))
     }
   }
 
-  // Compute resolved pixel values for overlay gradients.
-  // var(--g-col-unit-raw) contains cqi which can't resolve in gradient color stops,
-  // so JS must compute the actual pixel values and set them as --g-debug-* properties.
+  // Sync debug overlay pixel values from stride tokens (manifest truth).
+  // No heuristic track parsing — observer.ts reads resolved stride CSS custom properties.
   const syncMetrics = () => {
-    const root = document.querySelector<HTMLElement>('.g-debug-root')
-    if (!root) return
-
-    // Use the document root (or first grid) for global metrics
-    const scope = document.documentElement
-    const cs = getComputedStyle(scope)
-    const cols = parseInt(cs.getPropertyValue('--g-cols')) || 12
-
-    // Parse resolved track sizes from gridTemplateColumns
-    const tracks = cs.gridTemplateColumns
-    if (!tracks || tracks === 'none') return
-
-    // Extract px values from the computed template
-    const pxValues = [...tracks.matchAll(/([\d.]+)px/g)].map((m) => parseFloat(m[1]))
-    if (pxValues.length === 0) return
-
-    // Find column width: the smallest track that appears most frequently
-    // (gutters are typically smaller than columns)
-    const sorted = [...pxValues].sort((a, b) => a - b)
-    const gutterPx = sorted[0] // smallest track = gutter
-    const colPx = sorted.find((v) => v > gutterPx * 1.5) ?? sorted[sorted.length - 1] // first track bigger than 1.5x gutter = column
-
-    const stridePx = colPx + gutterPx
-
-    root.style.setProperty('--g-debug-col-px', `${colPx}px`)
-    root.style.setProperty('--g-debug-gutter-px', `${gutterPx}px`)
-    root.style.setProperty('--g-debug-stride-px', `${stridePx}px`)
+    const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
+    if (!debugRoot) return
+    syncDebugMetrics(debugRoot, document.documentElement)
   }
 
   // Defer sync to ensure DOM is fully populated and laid out
   setTimeout(() => {
     syncLayers()
     syncMetrics()
+    applyDriftDetection()
   }, 0)
 
   // Recompute metrics on resize
   const resizeObserver = new ResizeObserver(() => {
     syncMetrics()
+    applyDriftDetection()
   })
 
   // Observe documentElement for global metrics
@@ -109,13 +86,13 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
     if (!event.altKey) return
 
     const key = event.key.toLowerCase()
-    const root = document.querySelector<HTMLElement>('.g-debug-root')
-    if (!root) return
+    const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
+    if (!debugRoot) return
 
     if (key === '0') {
       // Alt+0 — turn all layers off
       for (const layer of LAYERS) {
-        root.setAttribute(`data-g-debug-${layer}`, 'false')
+        debugRoot.setAttribute(`data-g-debug-${layer}`, 'false')
       }
       event.preventDefault()
       return
@@ -125,8 +102,8 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
     if (layerIndex >= 0) {
       const layer = LAYERS[layerIndex]
       const attr = `data-g-debug-${layer}`
-      const current = root.getAttribute(attr) === 'true'
-      root.setAttribute(attr, String(!current))
+      const current = debugRoot.getAttribute(attr) === 'true'
+      debugRoot.setAttribute(attr, String(!current))
       event.preventDefault()
     }
   }
@@ -146,7 +123,6 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
   --g-baseline: ${style.getPropertyValue('--g-baseline').trim() || '0.5rem'};
   --g-leading-steps: ${style.getPropertyValue('--g-leading-steps').trim() || '3'};
   --g-scale-ratio: ${style.getPropertyValue('--g-scale-ratio').trim() || '1.25'};
-  --g-measure: ${style.getPropertyValue('--g-measure').trim() || '70ch'};
 }`
     navigator.clipboard.writeText(css).catch(() => {})
     return css

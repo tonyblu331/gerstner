@@ -28,8 +28,15 @@
       "default": "./dist/debug/index.mjs",
       "types": "./dist/debug/index.d.mts"
     },
+    "./debug/observer": {
+      "default": "./dist/debug/observer.mjs",
+      "types": "./dist/debug/observer.d.mts"
+    },
     "./debug/debug.css": {
       "default": "./dist/debug/debug.css"
+    },
+    "./debug/labels.json": {
+      "default": "./dist/debug/labels.json"
     },
     "./stride": {
       "default": "./dist/stride/index.css"
@@ -40,7 +47,7 @@
   },
   "scripts": {
     "build": "vp pack && npm run copy-css",
-    "copy-css": "node -e \"require('fs').cpSync('src/css', 'dist/css', {recursive:true}); require('fs').cpSync('src/tw4', 'dist/tw4', {recursive:true}); require('fs').cpSync('src/debug/debug.css', 'dist/debug/debug.css'); require('fs').cpSync('src/stride/index.css', 'dist/stride/index.css')\"",
+    "copy-css": "node -e \"require('fs').cpSync('src/css', 'dist/css', {recursive:true}); require('fs').cpSync('src/tw4', 'dist/tw4', {recursive:true}); require('fs').cpSync('src/debug/debug.css', 'dist/debug/debug.css'); require('fs').cpSync('src/debug/labels.json', 'dist/debug/labels.json'); require('fs').cpSync('src/stride', 'dist/stride', {recursive:true})\"",
     "dev": "vp pack --watch",
     "test": "vp test",
     "check": "vp check",

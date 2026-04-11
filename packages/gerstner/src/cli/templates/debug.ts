@@ -10,9 +10,13 @@ if (import.meta.env.DEV && !(window).__GERSTNER_DEBUG__) {
   ;(window).__GERSTNER_DEBUG__ = initGerstnerDebug({
     defaultOpen: false,
     initial: {
-      overlay: true,
-      badge: true,
-      ruler: false
+      layers: {
+        cols: true,
+        baseline: true,
+        rhythm: false,
+        zones: false,
+        drift: false
+      }
     }
   })
 }

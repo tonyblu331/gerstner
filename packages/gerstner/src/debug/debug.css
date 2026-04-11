@@ -1,4 +1,6 @@
 /* ── Debug overlay colors and tokens ── */
+/* Consumes stride tokens (--g-baseline, --g-rhythm) and observer metrics */
+/* (--g-debug-col-px, --g-debug-gutter-px, --g-debug-stride-px). No layout math here. */
 :root {
   --g-debug-z: 2147483000;
 
