@@ -1,45 +1,28 @@
 import { createRoot } from 'react-dom/client'
 import { DebugPanel } from './DebugPanel.js'
 
+export type DebugLayer = 'cols' | 'baseline' | 'rhythm' | 'zones' | 'drift'
+
+const LAYERS: DebugLayer[] = ['cols', 'baseline', 'rhythm', 'zones', 'drift']
+const SCOPE_SELECTOR = '.g-shell, .g, .g-fit, .g-fill, .g-sub'
+
 export interface GerstnerDebugOptions {
   defaultOpen?: boolean
   initial?: {
     layers?: Partial<Record<DebugLayer, boolean>>
   }
-  scope?: string | HTMLElement
-  root?: ParentNode
-  onResize?: (metrics: GerstnerDebugMetrics) => void
 }
 
 export interface GerstnerDebugController {
   destroy: () => void
-  refresh: () => void
-  setScope: (scope: HTMLElement | null) => void
   toggleLayer: (layer: DebugLayer) => void
   exportContract: () => string
 }
-
-export interface GerstnerDebugMetrics {
-  cols: number
-  gutter: number
-  frame: number
-  contentWidth: number
-  stride: number
-  rhythm: number
-  baseline: number
-  maxWidth: number
-  measure: string
-  scaleRatio: number
-}
-
-export type DebugLayer = 'cols' | 'baseline' | 'rhythm' | 'zones' | 'drift'
 
 export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerDebugController {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
     return {
       destroy() {},
-      refresh() {},
-      setScope() {},
       toggleLayer() {},
       exportContract() {
         return ''
@@ -47,13 +30,10 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
     }
   }
 
-  // Create mount container
   const container = document.createElement('div')
   container.className = 'g-debug-root'
-  const mount = options.root ?? document.body
-  mount.appendChild(container)
+  document.body.appendChild(container)
 
-  // Mount React app
   const root = createRoot(container)
   root.render(<DebugPanel />)
 
@@ -67,34 +47,97 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
   }
 
   const syncLayers = () => {
-    const grids = document.querySelectorAll<HTMLElement>('.g-shell, .g, .g-fit, .g-fill, .g-sub')
+    const grids = document.querySelectorAll<HTMLElement>(SCOPE_SELECTOR)
     grids.forEach((grid) => {
-      grid.setAttribute('data-g-debug-cols', String(initialLayers.cols ?? false))
-      grid.setAttribute('data-g-debug-baseline', String(initialLayers.baseline ?? false))
-      grid.setAttribute('data-g-debug-rhythm', String(initialLayers.rhythm ?? false))
-      grid.setAttribute('data-g-debug-zones', String(initialLayers.zones ?? false))
-      grid.setAttribute('data-g-debug-drift', String(initialLayers.drift ?? false))
+      for (const layer of LAYERS) {
+        grid.setAttribute(`data-g-debug-${layer}`, String(initialLayers[layer] ?? false))
+      }
     })
   }
 
-  syncLayers()
+  // Compute resolved pixel values for overlay gradients.
+  // var(--g-col-unit-raw) contains cqi which can't resolve in gradient color stops,
+  // so JS must compute the actual pixel values and set them as --g-debug-* properties.
+  const syncMetrics = () => {
+    const grids = Array.from(document.querySelectorAll<HTMLElement>(SCOPE_SELECTOR))
+    for (const grid of grids) {
+      const cs = getComputedStyle(grid)
+      const cols = parseInt(cs.getPropertyValue('--g-cols')) || 12
+
+      // Parse resolved track sizes from gridTemplateColumns
+      const tracks = cs.gridTemplateColumns
+      if (!tracks || tracks === 'none') continue
+
+      // Extract px values from the computed template
+      const pxValues = [...tracks.matchAll(/([\d.]+)px/g)].map((m) => parseFloat(m[1]))
+      if (pxValues.length === 0) continue
+
+      // For .g-shell: tracks are [frame, col, gutter, col, gutter, ..., col, frame]
+      // For .g/.g-fit/.g-fill: tracks are [col, gutter, col, gutter, ..., col]
+      // Detect pattern: find the smallest repeating unit (column + gutter pair)
+      const isShell = grid.classList.contains('g-shell')
+
+      // Find column width: the smallest track that appears most frequently
+      // (gutters are typically smaller than columns)
+      const sorted = [...pxValues].sort((a, b) => a - b)
+      const gutterPx = sorted[0] // smallest track = gutter
+      const colPx = sorted.find((v) => v > gutterPx * 1.5) ?? sorted[sorted.length - 1] // first track bigger than 1.5x gutter = column
+
+      const stridePx = colPx + gutterPx
+
+      grid.style.setProperty('--g-debug-col-px', `${colPx}px`)
+      grid.style.setProperty('--g-debug-gutter-px', `${gutterPx}px`)
+      grid.style.setProperty('--g-debug-stride-px', `${stridePx}px`)
+
+      // For .g-shell, compute the content-start offset (frame track width)
+      if (isShell && pxValues.length >= 2) {
+        // First track is the left frame margin
+        const frameOffset = pxValues[0]
+        grid.style.setProperty('--g-debug-frame-offset-px', `${frameOffset}px`)
+      }
+    }
+  }
+
+  // Defer sync to ensure DOM is fully populated and laid out
+  setTimeout(() => {
+    syncLayers()
+    syncMetrics()
+  }, 0)
+
+  // Recompute metrics on resize
+  const resizeObserver = new ResizeObserver(() => {
+    syncMetrics()
+  })
+
+  // Observe existing grids + watch for new ones
+  const observeGrids = () => {
+    const grids = Array.from(document.querySelectorAll<HTMLElement>(SCOPE_SELECTOR))
+    grids.forEach((grid) => resizeObserver.observe(grid))
+  }
+
+  setTimeout(observeGrids, 0)
 
   // Keyboard shortcuts for layer toggles
   const onKeyDown = (event: KeyboardEvent) => {
     if (!event.altKey) return
 
     const key = event.key.toLowerCase()
-    if (key === 'g') {
-      // Panel toggle handled by DialKit
+    if (key === '0') {
+      // Alt+0 — turn all layers off
+      const grids = document.querySelectorAll<HTMLElement>(SCOPE_SELECTOR)
+      grids.forEach((grid) => {
+        for (const layer of LAYERS) {
+          grid.setAttribute(`data-g-debug-${layer}`, 'false')
+        }
+      })
+      event.preventDefault()
       return
     }
 
-    const layers: DebugLayer[] = ['cols', 'baseline', 'rhythm', 'zones', 'drift']
     const layerIndex = ['1', '2', '3', '4', '5'].indexOf(key)
-
     if (layerIndex >= 0) {
-      const layer = layers[layerIndex]
-      const grids = document.querySelectorAll<HTMLElement>('.g-shell, .g, .g-fit, .g-fill, .g-sub')
+      const layer = LAYERS[layerIndex]
+      const grids = document.querySelectorAll<HTMLElement>(SCOPE_SELECTOR)
       grids.forEach((grid) => {
         const attr = `data-g-debug-${layer}`
         const current = grid.getAttribute(attr) === 'true'
@@ -128,20 +171,12 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
   return {
     destroy() {
       document.removeEventListener('keydown', onKeyDown)
+      resizeObserver.disconnect()
       root.unmount()
       container.remove()
     },
-    refresh() {
-      // DialKit handles its own refresh via useEffect
-    },
-    setScope(scope) {
-      // Handled by DebugPanel pointer tracking
-      if (scope) {
-        scope.dispatchEvent(new CustomEvent('g-debug-scope-change', { detail: { scope } }))
-      }
-    },
     toggleLayer(layer) {
-      const grids = document.querySelectorAll<HTMLElement>('.g-shell, .g, .g-fit, .g-fill, .g-sub')
+      const grids = document.querySelectorAll<HTMLElement>(SCOPE_SELECTOR)
       grids.forEach((grid) => {
         const attr = `data-g-debug-${layer}`
         const current = grid.getAttribute(attr) === 'true'

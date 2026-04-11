@@ -3,6 +3,7 @@
     display: grid;
     gap: var(--g-gutter);
     align-content: start;
+    position: relative;
   }
 
   :where(
