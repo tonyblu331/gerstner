@@ -56,199 +56,103 @@
 }
 
 @utility col-start-1 {
-  grid-column-start: 1;
+  grid-column-start: col-1;
 }
 
 @utility col-start-2 {
-  grid-column-start: 2;
+  grid-column-start: col-2;
 }
 
 @utility col-start-3 {
-  grid-column-start: 3;
+  grid-column-start: col-3;
 }
 
 @utility col-start-4 {
-  grid-column-start: 4;
+  grid-column-start: col-4;
 }
 
 @utility col-start-5 {
-  grid-column-start: 5;
+  grid-column-start: col-5;
 }
 
 @utility col-start-6 {
-  grid-column-start: 6;
+  grid-column-start: col-6;
 }
 
 @utility col-start-7 {
-  grid-column-start: 7;
+  grid-column-start: col-7;
 }
 
 @utility col-start-8 {
-  grid-column-start: 8;
+  grid-column-start: col-8;
 }
 
 @utility col-start-9 {
-  grid-column-start: 9;
+  grid-column-start: col-9;
 }
 
 @utility col-start-10 {
-  grid-column-start: 10;
+  grid-column-start: col-10;
 }
 
 @utility col-start-11 {
-  grid-column-start: 11;
+  grid-column-start: col-11;
 }
 
 @utility col-start-12 {
-  grid-column-start: 12;
+  grid-column-start: col-12;
 }
 
 @utility col-end-1 {
-  grid-column-end: 1;
+  grid-column-end: col-1;
 }
 
 @utility col-end-2 {
-  grid-column-end: 2;
+  grid-column-end: col-2;
 }
 
 @utility col-end-3 {
-  grid-column-end: 3;
+  grid-column-end: col-3;
 }
 
 @utility col-end-4 {
-  grid-column-end: 4;
+  grid-column-end: col-4;
 }
 
 @utility col-end-5 {
-  grid-column-end: 5;
+  grid-column-end: col-5;
 }
 
 @utility col-end-6 {
-  grid-column-end: 6;
+  grid-column-end: col-6;
 }
 
 @utility col-end-7 {
-  grid-column-end: 7;
+  grid-column-end: col-7;
 }
 
 @utility col-end-8 {
-  grid-column-end: 8;
+  grid-column-end: col-8;
 }
 
 @utility col-end-9 {
-  grid-column-end: 9;
+  grid-column-end: col-9;
 }
 
 @utility col-end-10 {
-  grid-column-end: 10;
+  grid-column-end: col-10;
 }
 
 @utility col-end-11 {
-  grid-column-end: 11;
+  grid-column-end: col-11;
 }
 
 @utility col-end-12 {
-  grid-column-end: 12;
+  grid-column-end: col-12;
 }
 
 @utility col-end-13 {
-  grid-column-end: 13;
-}
-
-@utility col-from-1 {
-  grid-column-start: 1;
-}
-
-@utility col-from-2 {
-  grid-column-start: 2;
-}
-
-@utility col-from-3 {
-  grid-column-start: 3;
-}
-
-@utility col-from-4 {
-  grid-column-start: 4;
-}
-
-@utility col-from-5 {
-  grid-column-start: 5;
-}
-
-@utility col-from-6 {
-  grid-column-start: 6;
-}
-
-@utility col-from-7 {
-  grid-column-start: 7;
-}
-
-@utility col-from-8 {
-  grid-column-start: 8;
-}
-
-@utility col-from-9 {
-  grid-column-start: 9;
-}
-
-@utility col-from-10 {
-  grid-column-start: 10;
-}
-
-@utility col-from-11 {
-  grid-column-start: 11;
-}
-
-@utility col-from-12 {
-  grid-column-start: 12;
-}
-
-@utility col-to-1 {
-  grid-column-end: 1;
-}
-
-@utility col-to-2 {
-  grid-column-end: 2;
-}
-
-@utility col-to-3 {
-  grid-column-end: 3;
-}
-
-@utility col-to-4 {
-  grid-column-end: 4;
-}
-
-@utility col-to-5 {
-  grid-column-end: 5;
-}
-
-@utility col-to-6 {
-  grid-column-end: 6;
-}
-
-@utility col-to-7 {
-  grid-column-end: 7;
-}
-
-@utility col-to-8 {
-  grid-column-end: 8;
-}
-
-@utility col-to-9 {
-  grid-column-end: 9;
-}
-
-@utility col-to-10 {
-  grid-column-end: 10;
-}
-
-@utility col-to-11 {
-  grid-column-end: 11;
-}
-
-@utility col-to-12 {
-  grid-column-end: 12;
+  grid-column-end: full-end;
 }
 
 @utility col-from-gutter-1 {
@@ -339,28 +243,31 @@
   grid-column-end: gutter-11;
 }
 
+/* g-stack-N: actual spacing via .g-stack-N > * + * in aliases.css.
+   @utility can't express child combinators, so we use list-style
+   as a harmless placeholder to satisfy the "at least one property" rule. */
 @utility g-stack-1 {
-  margin-block-start: calc(var(--g-rhythm) * 1);
+  list-style: inherit;
 }
 
 @utility g-stack-2 {
-  margin-block-start: calc(var(--g-rhythm) * 2);
+  list-style: inherit;
 }
 
 @utility g-stack-3 {
-  margin-block-start: calc(var(--g-rhythm) * 3);
+  list-style: inherit;
 }
 
 @utility g-stack-4 {
-  margin-block-start: calc(var(--g-rhythm) * 4);
+  list-style: inherit;
 }
 
 @utility g-stack-5 {
-  margin-block-start: calc(var(--g-rhythm) * 5);
+  list-style: inherit;
 }
 
 @utility g-stack-6 {
-  margin-block-start: calc(var(--g-rhythm) * 6);
+  list-style: inherit;
 }
 
 @utility g-content {
