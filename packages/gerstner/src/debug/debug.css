@@ -18,15 +18,13 @@
 
 /* ── Layer 1: Per-shell column stripes ── */
 /* .g-debug-col-overlay is injected as a child of each .g-shell by syncShellOverlays().
-   Uses subgrid to align perfectly with the shell's named grid lines (col-1, col-2, etc.)
-   instead of gradient approximation which can't match 1fr tracks. */
+   Uses absolute positioning with gradient stripes to avoid layout shift.
+   Stripes are sized from computed metrics to match the shell's actual geometry. */
 .g-debug-col-overlay {
+  position: absolute;
+  inset: 0;
   pointer-events: none;
   z-index: 9998;
-}
-
-.g-debug-col-stripe {
-  background: var(--g-debug-col-tint);
 }
 
 /* ── Layer 2: Baseline grid — global fixed, same baseline unit page-wide ── */
@@ -264,6 +262,13 @@ body:has(.g-debug-root[data-g-debug-drift='true']) [data-g-debug-drift-px]::befo
 .dialkit-panel-header {
   display: flex;
   align-items: center;
+}
+
+/* Hide the version/presets dropdown from the panel toolbar */
+.dialkit-panel-header .dialkit-select,
+.dialkit-panel-header .dialkit-preset,
+.dialkit-panel-header select {
+  display: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

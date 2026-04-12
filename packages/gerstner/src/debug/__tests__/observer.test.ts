@@ -263,10 +263,10 @@ describe('debug/observer.ts — structural contracts', () => {
 describe('debug/debug.css — structural contracts', () => {
   const css = readSrcFile('debug/debug.css')
 
-  it('column overlay uses subgrid to align with shell grid', () => {
-    expect(css).toContain('subgrid')
-    expect(css).toContain('g-debug-col-stripe')
-    expect(css).toContain('--g-debug-col-tint')
+  it('column overlay uses absolute positioning to avoid layout shift', () => {
+    expect(css).toContain('position: absolute')
+    expect(css).toContain('inset: 0')
+    expect(css).toContain('pointer-events: none')
   })
 
   it('uses --g-baseline and --g-rhythm from stride', () => {
@@ -274,8 +274,8 @@ describe('debug/debug.css — structural contracts', () => {
     expect(css).toContain('var(--g-rhythm)')
   })
 
-  it('column stripe uses tint variable', () => {
-    expect(css).toContain('var(--g-debug-col-tint)')
+  it('defines column tint variable', () => {
+    expect(css).toContain('--g-debug-col-tint')
   })
 })
 

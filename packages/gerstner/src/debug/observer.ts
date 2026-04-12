@@ -135,12 +135,11 @@ export function syncDebugMetrics(debugRoot: HTMLElement, scope: HTMLElement): vo
 }
 
 const COL_OVERLAY_CLASS = 'g-debug-col-overlay'
-const COL_STRIPE_CLASS = 'g-debug-col-stripe'
 
 /**
- * Inject or update per-shell column overlay divs.
- * Uses actual grid-positioned divs that align with the shell's grid lines,
- * not gradient approximation which can't match 1fr tracks.
+ * Inject or update per-shell column overlay.
+ * Uses absolute positioning with gradient stripes sized to match the shell's
+ * actual computed column geometry. No subgrid, no layout shift.
  *
  * Called when the cols layer is active. Removes all overlays when inactive.
  */
@@ -155,32 +154,46 @@ export function syncShellOverlays(colsActive: boolean): void {
     const metrics = readMetrics(shell)
     if (!metrics) return
 
-    // Create overlay container that spans full shell
+    // Ensure shell has position context
+    const shellPos = getComputedStyle(shell).position
+    if (shellPos === 'static') {
+      shell.style.position = 'relative'
+    }
+
+    // Measure the actual content area by finding content-start element or computing
+    const shellRect = shell.getBoundingClientRect()
+
+    // Create absolutely positioned overlay covering full shell
     const overlay = document.createElement('div')
     overlay.className = COL_OVERLAY_CLASS
     overlay.setAttribute('aria-hidden', 'true')
 
-    // Use subgrid to align with parent's grid lines
+    // Calculate stripe pattern from computed metrics
+    // colPx = width of column, stridePx = col + gutter
+    const { colPx, gutterPx, stridePx, cols } = metrics
+
+    // Build gradient stops for each column stripe
+    const stops: string[] = []
+    for (let i = 0; i < cols; i++) {
+      const colStart = i * stridePx
+      const gutterStart = colStart + colPx
+      const nextCol = (i + 1) * stridePx
+
+      stops.push(
+        `transparent ${colStart}px`,
+        `var(--g-debug-col-tint) ${colStart}px`,
+        `var(--g-debug-col-tint) ${gutterStart}px`,
+        `transparent ${gutterStart}px`,
+      )
+    }
+
     overlay.style.cssText = [
-      'display:grid',
-      'grid-template-columns:subgrid',
-      'grid-column:full-start / full-end',
-      'grid-row:1 / -1',
+      'position:absolute',
+      'inset:0',
       'pointer-events:none',
       'z-index:9998',
+      `background-image:linear-gradient(to right, ${stops.join(', ')})`,
     ].join(';')
-
-    // Create column stripes at each col-N line
-    for (let i = 1; i <= metrics.cols; i++) {
-      const stripe = document.createElement('div')
-      stripe.className = COL_STRIPE_CLASS
-      stripe.style.cssText = [
-        `grid-column:col-${i}`,
-        'background:oklch(0.72 0.18 254 / 0.35)',
-        'height:100%',
-      ].join(';')
-      overlay.appendChild(stripe)
-    }
 
     shell.appendChild(overlay)
   })
