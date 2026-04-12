@@ -18,22 +18,15 @@
 
 /* ── Layer 1: Per-shell column stripes ── */
 /* .g-debug-col-overlay is injected as a child of each .g-shell by syncShellOverlays().
-   It is position:absolute within the shell, so stripes are scoped to that shell's
-   geometry — not a viewport-wide fixed overlay that ignores per-section token overrides. */
+   Uses subgrid to align perfectly with the shell's named grid lines (col-1, col-2, etc.)
+   instead of gradient approximation which can't match 1fr tracks. */
 .g-debug-col-overlay {
-  display: block;
-  position: absolute;
   pointer-events: none;
   z-index: 9998;
-  background-image: repeating-linear-gradient(
-    to right,
-    var(--g-debug-col-tint) 0,
-    var(--g-debug-col-tint) var(--g-debug-col-px),
-    var(--g-debug-gutter-tint) var(--g-debug-col-px),
-    var(--g-debug-gutter-tint) var(--g-debug-stride-px)
-  );
-  background-repeat: repeat-y;
-  background-size: calc(var(--g-debug-stride-px, 0px) * var(--g-cols, 12)) 100%;
+}
+
+.g-debug-col-stripe {
+  background: var(--g-debug-col-tint);
 }
 
 /* ── Layer 2: Baseline grid — global fixed, same baseline unit page-wide ── */
