@@ -63,8 +63,10 @@ export function readMetrics(scope: HTMLElement): ObserverMetrics | null {
   const rhythmPx = baselinePx * leadingSteps
 
   // Derived: stride from resolved inputs + element dimensions
-  // Mirrors stride/index.css :root formula but uses pixel values
-  const contentInline = Math.min(maxwidthPx, scope.clientWidth - framePx * 2)
+  // Mirrors stride/index.css formula: min(max-width, 100cqi - frame*2)
+  // For JS, clientWidth approximates 100cqi for container-type:inline-size elements
+  const cqiPx = scope.clientWidth // 100cqi for container-type elements
+  const contentInline = Math.min(maxwidthPx, cqiPx - framePx * 2)
   const gapTotal = gutterPx * (cols - 1)
   const colUnitRaw = (contentInline - gapTotal) / cols
   const stridePx = colUnitRaw + gutterPx
