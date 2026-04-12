@@ -15,6 +15,7 @@ export interface ObserverMetrics {
   gutterPx: number
   stridePx: number
   framePx: number
+  frameOffsetPx: number
   baselinePx: number
   rhythmPx: number
   cols: number
@@ -46,21 +47,101 @@ function toPx(val: string, rootFontSize: number): number {
   return parseFloat(trimmed) || 0
 }
 
+/**
+ * Parse a single authored length when getComputedStyle still returns non-px text
+ * (e.g. 0.5rem, 1.2em). For calc()/clamp() etc., prefer resolveVarAsBlockSizePx.
+ */
+function parseAuthoredLengthToPx(raw: string, rootFontPx: number, emContextPx: number): number {
+  const t = raw.trim().toLowerCase()
+  if (!t) return 0
+  const pxMatch = t.match(/^(-?[\d.]+)\s*px$/)
+  if (pxMatch) return parseFloat(pxMatch[1])
+  const remMatch = t.match(/^(-?[\d.]+)\s*rem$/)
+  if (remMatch) return parseFloat(remMatch[1]) * rootFontPx
+  const emMatch = t.match(/^(-?[\d.]+)\s*em$/)
+  if (emMatch) return parseFloat(emMatch[1]) * emContextPx
+  return parseFloat(t) || 0
+}
+
+/**
+ * Resolve a custom property used as block-size by laying out a probe under `scope`.
+ * Inherits `font`/`line-height` so em/rem/calc match the scope element; returns 0 in
+ * non-DOM test mocks (no appendChild).
+ */
+function resolveVarAsBlockSizePx(scope: HTMLElement, varName: string): number {
+  const append = scope.appendChild?.bind(scope)
+  const remove = scope.removeChild?.bind(scope)
+  if (typeof append !== 'function' || typeof remove !== 'function') return 0
+
+  let probe: HTMLDivElement | null = null
+  try {
+    probe = document.createElement('div')
+    probe.setAttribute('data-g-debug-typo-probe', '')
+    probe.style.cssText = [
+      'position:absolute',
+      'visibility:hidden',
+      'pointer-events:none',
+      'inset-inline-start:-99999px',
+      'inset-block-start:0',
+      'inline-size:0',
+      'margin:0',
+      'padding:0',
+      'border:none',
+      'overflow:hidden',
+      'box-sizing:border-box',
+      'font:inherit',
+      'line-height:inherit',
+    ].join(';')
+    probe.style.height = `var(${varName})`
+    append(probe)
+    const h = probe.getBoundingClientRect().height
+    remove(probe)
+    probe = null
+    return Number.isFinite(h) && h > 0 ? h : 0
+  } catch {
+    if (probe) {
+      try {
+        remove!(probe)
+      } catch {
+        /* ignore */
+      }
+    }
+    return 0
+  }
+}
+
+function readTypographyMetrics(scope: HTMLElement): { baselinePx: number; rhythmPx: number } {
+  const cs = getComputedStyle(scope)
+  const rootFontPx = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
+  const emContextPx = parseFloat(cs.fontSize) || rootFontPx
+
+  let baselinePx = resolveVarAsBlockSizePx(scope, '--g-baseline')
+  if (!(baselinePx > 0)) {
+    baselinePx =
+      parseAuthoredLengthToPx(cs.getPropertyValue('--g-baseline'), rootFontPx, emContextPx) || 8
+  }
+
+  let rhythmPx = resolveVarAsBlockSizePx(scope, '--g-rhythm')
+  if (!(rhythmPx > 0)) {
+    const leadingSteps = parseFloat(cs.getPropertyValue('--g-leading-steps')) || 3
+    rhythmPx = baselinePx * leadingSteps
+  }
+
+  return { baselinePx, rhythmPx }
+}
+
 export function readMetrics(scope: HTMLElement): ObserverMetrics | null {
   const cs = getComputedStyle(scope)
   // Read actual root font-size — never assume 16px
   const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
 
+  const { baselinePx, rhythmPx } = readTypographyMetrics(scope)
+
   // Registered properties — resolve to computed values, convert rem→px
   const cols = parseInt(cs.getPropertyValue('--g-cols')) || 12
   const gutterPx = toPx(cs.getPropertyValue('--g-gutter'), rootFontSize) || 16
-  const baselinePx = toPx(cs.getPropertyValue('--g-baseline'), rootFontSize) || 8
-  const leadingSteps = parseFloat(cs.getPropertyValue('--g-leading-steps')) || 3
   const framePx = toPx(cs.getPropertyValue('--g-frame'), rootFontSize) || 16
   const maxwidthPx = toPx(cs.getPropertyValue('--g-max-width'), rootFontSize) || 1440
-
-  // Derived: rhythm = baseline × leading-steps
-  const rhythmPx = baselinePx * leadingSteps
 
   // Derived: stride from resolved inputs + element dimensions
   // Mirrors stride/index.css formula: min(max-width, 100cqi - frame*2)
@@ -74,7 +155,12 @@ export function readMetrics(scope: HTMLElement): ObserverMetrics | null {
 
   if (colPx <= 0) return null
 
-  return { colPx, gutterPx, stridePx, framePx, baselinePx, rhythmPx, cols }
+  // Actual frame offset = distance from shell edge to col-1 start.
+  // When viewport > max-width + 2*frame, frame columns absorb extra space via 1fr,
+  // so the offset is (cqiPx - contentInline) / 2, not just framePx.
+  const frameOffsetPx = (cqiPx - contentInline) / 2
+
+  return { colPx, gutterPx, stridePx, framePx, frameOffsetPx, baselinePx, rhythmPx, cols }
 }
 
 /**
@@ -125,13 +211,20 @@ export function applyDriftDetection(): void {
  */
 export function syncDebugMetrics(debugRoot: HTMLElement, scope: HTMLElement): void {
   const metrics = readMetrics(scope)
-  if (!metrics) return
+  if (metrics) {
+    debugRoot.style.setProperty('--g-debug-baseline-px', `${metrics.baselinePx}px`)
+    debugRoot.style.setProperty('--g-debug-rhythm-px', `${metrics.rhythmPx}px`)
+    debugRoot.style.setProperty('--g-debug-col-px', `${metrics.colPx}px`)
+    debugRoot.style.setProperty('--g-debug-gutter-px', `${metrics.gutterPx}px`)
+    debugRoot.style.setProperty('--g-debug-stride-px', `${metrics.stridePx}px`)
+    debugRoot.style.setProperty('--g-debug-frame-px', `${metrics.framePx}px`)
+    debugRoot.style.setProperty('--g-cols', String(metrics.cols))
+    return
+  }
 
-  debugRoot.style.setProperty('--g-debug-col-px', `${metrics.colPx}px`)
-  debugRoot.style.setProperty('--g-debug-gutter-px', `${metrics.gutterPx}px`)
-  debugRoot.style.setProperty('--g-debug-stride-px', `${metrics.stridePx}px`)
-  debugRoot.style.setProperty('--g-debug-frame-px', `${metrics.framePx}px`)
-  debugRoot.style.setProperty('--g-cols', String(metrics.cols))
+  const typo = readTypographyMetrics(scope)
+  debugRoot.style.setProperty('--g-debug-baseline-px', `${typo.baselinePx}px`)
+  debugRoot.style.setProperty('--g-debug-rhythm-px', `${typo.rhythmPx}px`)
 }
 
 const COL_OVERLAY_CLASS = 'g-debug-col-overlay'
@@ -160,9 +253,6 @@ export function syncShellOverlays(colsActive: boolean): void {
       shell.style.position = 'relative'
     }
 
-    // Measure the actual content area by finding content-start element or computing
-    const shellRect = shell.getBoundingClientRect()
-
     // Create absolutely positioned overlay covering full shell
     const overlay = document.createElement('div')
     overlay.className = COL_OVERLAY_CLASS
@@ -170,14 +260,13 @@ export function syncShellOverlays(colsActive: boolean): void {
 
     // Calculate stripe pattern from computed metrics
     // colPx = width of column, stridePx = col + gutter
-    const { colPx, gutterPx, stridePx, cols } = metrics
+    const { colPx, stridePx, frameOffsetPx, cols } = metrics
 
     // Build gradient stops for each column stripe
     const stops: string[] = []
     for (let i = 0; i < cols; i++) {
       const colStart = i * stridePx
       const gutterStart = colStart + colPx
-      const nextCol = (i + 1) * stridePx
 
       stops.push(
         `transparent ${colStart}px`,
@@ -187,9 +276,13 @@ export function syncShellOverlays(colsActive: boolean): void {
       )
     }
 
+    // The overlay is inset by the resolved frame offset so the gradient origin (0px)
+    // aligns with col-1. frameOffsetPx accounts for 1fr frame columns when viewport > max-width.
+    // inset-block:0 keeps it full height; inset-inline uses the resolved frameOffsetPx.
     overlay.style.cssText = [
       'position:absolute',
-      'inset:0',
+      'inset-block:0',
+      `inset-inline:${frameOffsetPx}px`,
       'pointer-events:none',
       'z-index:9998',
       `background-image:linear-gradient(to right, ${stops.join(', ')})`,

@@ -91,22 +91,22 @@ gerstner/
 
 ## Package responsibility matrix
 
-| Responsibility            | stride    | css/tw4               | debug     | cli       | Why                          |
-| ------------------------- | --------- | --------------------- | --------- | --------- | ---------------------------- |
-| Stride math               | owns      | no                    | no        | no        | Layout belongs to CSS        |
-| `@property` registration  | owns      | no                    | no        | no        | Part of the runtime contract |
-| Derived token formulas    | owns      | consumes via var()    | no        | no        | Single derivation source     |
-| named zones and utilities | no        | owns                  | no        | no        | Public CSS API               |
-| rhythm and type roles     | no        | owns                  | no        | no        | Runtime CSS behavior         |
-| human-readable labels     | no        | no                    | owns      | no        | Dev ergonomics only          |
-| manifest-aware observer   | no        | no                    | owns      | no        | Reads stride tokens only     |
-| keyboard overlay          | no        | no                    | owns      | no        | Optional dev tool            |
-| export current values     | no        | no                    | owns      | no        | Dev helper                   |
-| framework detection       | no        | no                    | no        | owns      | Scaffolding concern          |
-| contract CSS generation   | no        | no                    | no        | owns      | Setup concern                |
-| helper generation         | no        | no                    | no        | owns      | Emitted from manifest        |
-| dev reference page        | no        | no                    | optional  | owns      | Setup and teaching           |
-| production layout JS      | forbidden | forbidden             | forbidden | forbidden | Breaks the system premise    |
+| Responsibility            | stride    | css/tw4            | debug     | cli       | Why                          |
+| ------------------------- | --------- | ------------------ | --------- | --------- | ---------------------------- |
+| Stride math               | owns      | no                 | no        | no        | Layout belongs to CSS        |
+| `@property` registration  | owns      | no                 | no        | no        | Part of the runtime contract |
+| Derived token formulas    | owns      | consumes via var() | no        | no        | Single derivation source     |
+| named zones and utilities | no        | owns               | no        | no        | Public CSS API               |
+| rhythm and type roles     | no        | owns               | no        | no        | Runtime CSS behavior         |
+| human-readable labels     | no        | no                 | owns      | no        | Dev ergonomics only          |
+| manifest-aware observer   | no        | no                 | owns      | no        | Reads stride tokens only     |
+| keyboard overlay          | no        | no                 | owns      | no        | Optional dev tool            |
+| export current values     | no        | no                 | owns      | no        | Dev helper                   |
+| framework detection       | no        | no                 | no        | owns      | Scaffolding concern          |
+| contract CSS generation   | no        | no                 | no        | owns      | Setup concern                |
+| helper generation         | no        | no                 | no        | owns      | Emitted from manifest        |
+| dev reference page        | no        | no                 | optional  | owns      | Setup and teaching           |
+| production layout JS      | forbidden | forbidden          | forbidden | forbidden | Breaks the system premise    |
 
 Hard rule:
 
@@ -125,8 +125,12 @@ Hard rule:
     "./css": "./dist/css/index.css",
     "./tw4": "./dist/tw4/index.css",
     "./stride": "./dist/stride/index.css",
+    "./layout": "./dist/css/layout-only.css",
     "./debug": { "default": "./dist/debug/index.mjs", "types": "./dist/debug/index.d.mts" },
-    "./debug/observer": { "default": "./dist/debug/observer.mjs", "types": "./dist/debug/observer.d.mts" },
+    "./debug/observer": {
+      "default": "./dist/debug/observer.mjs",
+      "types": "./dist/debug/observer.d.mts"
+    },
     "./debug/debug.css": "./dist/debug/debug.css",
     "./debug/labels.json": "./dist/debug/labels.json"
   },
@@ -441,7 +445,7 @@ If a team must edit `gerstner.contract.css` because of a package change, assume 
 
 Before opening a PR:
 
-1. read the ADR-relevant sections of `docs/gerstner-full-spec.html`
+1. read the ADR citations in `AGENT.md` hard rules table and the layer stack in `css/index.css`
 2. run the local checks
 3. run Playwright when behavior changes
 4. explain the why, not only the diff

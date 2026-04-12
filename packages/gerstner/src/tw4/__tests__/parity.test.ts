@@ -118,6 +118,33 @@ describe('tw4/utilities.css parity', () => {
     expect(utilities).toContain('@utility g-heading')
     expect(utilities).toContain('@utility g-ui')
   })
+
+  it('g-shell matches vanilla gap model: repeat(var(--g-cols), [col] …), no explicit gutter tracks', () => {
+    expect(utilities).toMatch(
+      /repeat\(\s*var\(--g-cols\)\s*,\s*\[col\]\s*minmax\(0,\s*var\(--g-col-unit-raw\)\)\s*\)/,
+    )
+    expect(utilities).not.toContain('[gutter-1]')
+  })
+
+  it('raw g field names col lines like layout.css', () => {
+    expect(utilities).toMatch(/repeat\(\s*var\(--g-cols\)\s*,\s*\[col\]\s*minmax\(0,\s*1fr\)\s*\)/)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// CSS ↔ TW4 layout parity — one shell track model
+// ---------------------------------------------------------------------------
+
+describe('css/layout.css ↔ tw4/utilities.css g-shell parity', () => {
+  const layout = readSrcFile('css/layout.css')
+  const utilities = readSrcFile('tw4/utilities.css')
+
+  it('both use repeat(var(--g-cols), [col] minmax(0, var(--g-col-unit-raw))) in shell', () => {
+    const pattern =
+      /repeat\(\s*var\(--g-cols\)\s*,\s*\[col\]\s*minmax\(0,\s*var\(--g-col-unit-raw\)\)\s*\)/
+    expect(layout).toMatch(pattern)
+    expect(utilities).toMatch(pattern)
+  })
 })
 
 // ---------------------------------------------------------------------------
@@ -128,28 +155,28 @@ describe('tw4/index.css parity', () => {
   const index = readSrcFile('tw4/index.css')
 
   it('imports stride before theme', () => {
-    const stridePos = index.indexOf("stride/index.css")
-    const themePos = index.indexOf("theme.css")
+    const stridePos = index.indexOf('stride/index.css')
+    const themePos = index.indexOf('theme.css')
     expect(stridePos).toBeGreaterThan(-1)
     expect(themePos).toBeGreaterThan(-1)
     expect(stridePos).toBeLessThan(themePos)
   })
 
   it('imports theme before utilities', () => {
-    const themePos = index.indexOf("theme.css")
-    const utilPos = index.indexOf("utilities.css")
+    const themePos = index.indexOf('theme.css')
+    const utilPos = index.indexOf('utilities.css')
     expect(themePos).toBeLessThan(utilPos)
   })
 
   it('imports utilities before helpers', () => {
-    const utilPos = index.indexOf("utilities.css")
-    const helpersPos = index.indexOf("helpers.css")
+    const utilPos = index.indexOf('utilities.css')
+    const helpersPos = index.indexOf('helpers.css')
     expect(utilPos).toBeLessThan(helpersPos)
   })
 
   it('imports helpers before aliases', () => {
-    const helpersPos = index.indexOf("helpers.css")
-    const aliasesPos = index.indexOf("aliases.css")
+    const helpersPos = index.indexOf('helpers.css')
+    const aliasesPos = index.indexOf('aliases.css')
     expect(helpersPos).toBeLessThan(aliasesPos)
   })
 })

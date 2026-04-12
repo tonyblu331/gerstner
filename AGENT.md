@@ -61,15 +61,15 @@ When someone pushes back: engage with the reasoning, not the rule. "The ADR says
 
 ## Hard rules (non-negotiable)
 
-| Rule                                       | Why                                                             |
-| ------------------------------------------ | --------------------------------------------------------------- |
-| No `minmax()` inside a CSS variable        | Silent grid track failure — ADR-002                             |
-| No `line-height: var(--g-rhythm)` on prose | Length doesn't scale with user font-size — ADR-004              |
-| No layout math in production JS            | Browser C++ is faster and correct — ADR-001                     |
-| No bare `vh`                               | iOS address bar bug. Use `svh`/`dvh` — `docs/VIEWPORT-UNITS.md` |
-| `@layer` on all utilities                  | Consumer CSS must win without `!important` — ADR-011            |
+| Rule                                       | Why                                                                                                          |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| No `minmax()` inside a CSS variable        | Silent grid track failure — ADR-002                                                                          |
+| No `line-height: var(--g-rhythm)` on prose | Length doesn't scale with user font-size — ADR-004                                                           |
+| No layout math in production JS            | Browser C++ is faster and correct — ADR-001                                                                  |
+| No bare `vh`                               | iOS address bar bug. Use `svh`/`dvh` — `docs/VIEWPORT-UNITS.md`                                              |
+| `@layer` on all utilities                  | Consumer CSS must win without `!important` — ADR-011                                                         |
 | Never hand-edit generated artifacts        | `contract.manifest.json`, `helpers.css`, `tw4/helpers.css`, `labels.json`, `metadata.json` — regenerate only |
-| No heuristic track parsing in debug JS    | observer.ts reads stride tokens, never gridTemplateColumns — ADR-001 |
+| No heuristic track parsing in debug JS     | observer.ts reads stride tokens, never gridTemplateColumns — ADR-001                                         |
 
 ADRs exist for the default case, not every case. If someone has a legitimate reason to deviate, engage with the reason. Document the deviation. Move forward.
 

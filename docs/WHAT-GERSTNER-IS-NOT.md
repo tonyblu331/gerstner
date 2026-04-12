@@ -20,8 +20,8 @@ If you find yourself writing JS to calculate layout values that CSS already hand
 
 Every token in Gerstner has a derivation reason. There are no decorative tokens, no "just in case" variables, and no tokens that exist because someone thought they might be useful someday.
 
-- **Authored tokens** are inputs the user controls (cols, gutter, baseline, scale-ratio, measure-*)
-- **Derived tokens** are computed from authored inputs (rhythm, stride, scale-*, density-*)
+- **Authored tokens** are inputs the user controls (cols, gutter, baseline, scale-ratio, measure-\*)
+- **Derived tokens** are computed from authored inputs (rhythm, stride, scale-_, density-_)
 - **No orphan tokens** — if a token can't be traced back to an authored input or a derivation formula, it doesn't belong
 
 ---
@@ -39,6 +39,7 @@ The grid is a consequence of type. The Stride unit (column + gutter) derives fro
 Gerstner provides layout primitives, not UI components. There are no buttons, cards, modals, or navigation bars here.
 
 What Gerstner provides:
+
 - Grid containers (`g-shell`, `g`, `g-sub`, `g-fit`, `g-fill`)
 - Column placement (`col-1` through `col-12`)
 - Type roles (`g-prose`, `g-display`, `g-heading`, `g-ui`)
@@ -46,6 +47,7 @@ What Gerstner provides:
 - Breakout helpers (`g-content`, `g-breakout-r`, `g-breakout-l`)
 
 What Gerstner does NOT provide:
+
 - Component styling
 - Color systems
 - Animation libraries

@@ -61,6 +61,17 @@ function emitTw4NamedLineHelpers(): string {
   return lines.join('\n\n')
 }
 
+/** Same semantics as CSS gutter aliases — nth `col` line after column k. */
+function emitTw4GutterLineAliases(cols: number): string {
+  const lines: string[] = []
+  for (let k = 1; k <= cols - 1; k++) {
+    const line = k + 1
+    lines.push(`@utility col-from-gutter-${k} {\n  grid-column-start: col ${line};\n}`)
+    lines.push(`@utility col-to-gutter-${k} {\n  grid-column-end: col ${line};\n}`)
+  }
+  return lines.join('\n\n')
+}
+
 // ---------------------------------------------------------------------------
 // View Column Overrides
 // ---------------------------------------------------------------------------
@@ -136,6 +147,8 @@ export function emitTw4Helpers(manifest: StrideManifest): string {
 
   // Named line helpers
   sections.push(emitTw4NamedLineHelpers())
+
+  sections.push(emitTw4GutterLineAliases(manifest.contract.cols))
 
   // View column overrides
   sections.push(emitTw4ViewHelpers(manifest))

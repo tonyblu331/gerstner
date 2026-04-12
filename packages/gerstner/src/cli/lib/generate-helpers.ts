@@ -63,6 +63,20 @@ function emitNamedLineHelpers(): string {
   return lines.join('\n\n')
 }
 
+/**
+ * Gap-based shells use [col] lines only. Legacy gutter-N names mapped to col (N+1)
+ * (boundary after column N, before column N+1).
+ */
+function emitGutterLineAliases(cols: number): string {
+  const lines: string[] = []
+  for (let k = 1; k <= cols - 1; k++) {
+    const line = k + 1
+    lines.push(`.col-from-gutter-${k} {\n  grid-column-start: col ${line};\n}`)
+    lines.push(`.col-to-gutter-${k} {\n  grid-column-end: col ${line};\n}`)
+  }
+  return lines.join('\n\n')
+}
+
 // ---------------------------------------------------------------------------
 // Density Helpers
 // ---------------------------------------------------------------------------
@@ -141,6 +155,9 @@ export function emitCssHelpers(manifest: StrideManifest): string {
 
   // Named line helpers
   sections.push(emitNamedLineHelpers())
+
+  // Gutter line aliases (col (k+1) for gap-based grids)
+  sections.push(emitGutterLineAliases(manifest.contract.cols))
 
   // View column overrides
   sections.push(emitViewHelpers(manifest))

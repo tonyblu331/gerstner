@@ -138,7 +138,9 @@ Common layout patterns as starting points. Copy, paste, adapt.
   if (import.meta.env.DEV) {
     window.__GERSTNER_DEBUG__ = initGerstnerDebug({
       defaultOpen: true,
-      initial: { layers: { cols: true, baseline: true, rhythm: false, zones: false, drift: false } }
+      initial: {
+        layers: { cols: true, baseline: true, rhythm: false, zones: false, drift: false },
+      },
     })
   }
 </script>

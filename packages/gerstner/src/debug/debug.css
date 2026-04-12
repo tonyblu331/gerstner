@@ -1,6 +1,7 @@
 /* ── Debug overlay colors and tokens ── */
-/* Consumes stride tokens (--g-baseline, --g-rhythm) and observer metrics */
-/* (--g-debug-col-px, --g-debug-gutter-px, --g-debug-stride-px). No layout math here. */
+/* Baseline/rhythm: --g-debug-baseline-px / --g-debug-rhythm-px (set by observer as px, */
+/* resolved on the DialKit scope so rem/em/calc match layout, not .g-debug-root font-size). */
+/* Column metrics: --g-debug-col-px, --g-debug-gutter-px, --g-debug-stride-px. */
 :root {
   --g-debug-z: 2147483000;
   --g-debug-stride: #e8a14a;
@@ -42,9 +43,9 @@
   background-image: repeating-linear-gradient(
     to bottom,
     transparent 0,
-    transparent calc(var(--g-baseline) - 1px),
-    var(--g-debug-baseline-line) calc(var(--g-baseline) - 1px),
-    var(--g-debug-baseline-line) var(--g-baseline)
+    transparent calc(var(--g-debug-baseline-px) - 1px),
+    var(--g-debug-baseline-line) calc(var(--g-debug-baseline-px) - 1px),
+    var(--g-debug-baseline-line) var(--g-debug-baseline-px)
   );
 }
 
@@ -63,23 +64,13 @@
   background-image: repeating-linear-gradient(
     to bottom,
     transparent 0,
-    transparent calc(var(--g-rhythm) - 1px),
-    var(--g-debug-rhythm-line) calc(var(--g-rhythm) - 1px),
-    var(--g-debug-rhythm-line) var(--g-rhythm)
+    transparent calc(var(--g-debug-rhythm-px) - 1px),
+    var(--g-debug-rhythm-line) calc(var(--g-debug-rhythm-px) - 1px),
+    var(--g-debug-rhythm-line) var(--g-debug-rhythm-px)
   );
 }
 
-/* ── Baseline + Rhythm combined in ::after ── */
-.g-debug-root[data-g-debug-baseline='true'][data-g-debug-rhythm='true']::after {
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent calc(var(--g-baseline) - 1px),
-    oklch(0.7 0.12 254 / 0.2) calc(var(--g-baseline) - 1px),
-    oklch(0.7 0.12 254 / 0.2) var(--g-baseline)
-  );
-}
-
+/* Baseline uses ::after, rhythm uses ::before — both can be on without clobbering. */
 
 /* ── Layer 4: Zone markers — outline only, no pseudo ── */
 /* .g-debug-root is position:fixed in body, not an ancestor of .g-shell.
@@ -264,18 +255,15 @@ body:has(.g-debug-root[data-g-debug-drift='true']) [data-g-debug-drift-px]::befo
   align-items: center;
 }
 
-/* Hide the version/presets dropdown from the panel toolbar */
-.dialkit-panel-header .dialkit-select,
-.dialkit-panel-header .dialkit-preset,
-.dialkit-panel-header select {
+/* Hide the version/presets UI from the panel toolbar */
+.dialkit-preset-manager,
+.dialkit-toolbar-add[title='Add preset'] {
   display: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-g-debug-cols]::before,
-  [data-g-debug-baseline]::after,
-  [data-g-debug-rhythm]::before,
-  [data-g-debug-rhythm]::after {
+  .g-debug-root[data-g-debug-baseline='true']::after,
+  .g-debug-root[data-g-debug-rhythm='true']::before {
     transition: none;
   }
 }

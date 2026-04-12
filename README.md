@@ -57,12 +57,12 @@ You don't need all seven. Most projects need 1–4.
 
 ## Surfaces
 
-| Surface | Import | Use When |
-|---------|--------|----------|
-| Vanilla CSS | `gerstner/css` | No Tailwind, any framework |
-| Tailwind v4 | `gerstner/tw4` | Using Tailwind v4 |
-| Debug | `gerstner/debug` | Dev-time overlay (optional) |
-| Stride | `gerstner/stride` | Raw token access only |
+| Surface     | Import            | Use When                    |
+| ----------- | ----------------- | --------------------------- |
+| Vanilla CSS | `gerstner/css`    | No Tailwind, any framework  |
+| Tailwind v4 | `gerstner/tw4`    | Using Tailwind v4           |
+| Debug       | `gerstner/debug`  | Dev-time overlay (optional) |
+| Stride      | `gerstner/stride` | Raw token access only       |
 
 ---
 
@@ -104,8 +104,7 @@ Surfaces consume via var() — never recompute
   <div class="g-content">
     <h1 class="g-display">Designing programmes, not margins</h1>
     <p class="g-prose">
-      The layout derives from type. The columns derive from stride.
-      The browser resolves the rest.
+      The layout derives from type. The columns derive from stride. The browser resolves the rest.
     </p>
   </div>
 </section>

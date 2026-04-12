@@ -23,13 +23,15 @@ export function buildDebugLabels(manifest: StrideManifest): DebugLabelSet {
   const columns = Array.from({ length: manifest.contract.cols }, (_, i) => ({
     index: i + 1,
     name: `col-${i + 1}`,
-    lineName: `col-${i + 1}`,
+    /** CSS Grid: nth line named `col` (gap-based repeat(var(--g-cols), [col] …)). */
+    lineName: `col ${i + 1}`,
   }))
 
   const gutters = Array.from({ length: manifest.contract.cols - 1 }, (_, i) => ({
     index: i + 1,
     name: `gutter-${i + 1}`,
-    lineName: `gutter-${i + 1}`,
+    /** Same grid line as col-from-gutter-{i+1} / col {i + 2} (boundary after column i+1). */
+    lineName: `col ${i + 2}`,
   }))
 
   const boundaries = manifest.boundaries.map((b) => ({

@@ -2,43 +2,27 @@
 /* @utility definitions for Gerstner classes */
 /* Grid containers recompute derived tokens locally for cqi context — field overrides, not duplicated derivations */
 
+/* Shell field — must match packages/gerstner/src/css/layout.css .g-shell
+   (gap-only gutters, repeat(var(--g-cols), [col] …), no hardcoded track count). */
 @utility g-shell {
   display: grid;
   gap: var(--g-gutter);
   align-content: start;
+  position: relative;
   container-type: inline-size;
   inline-size: 100%;
-  --g-gap-total: calc(var(--g-gutter) * (var(--g-cols) - 1));
   --g-content-inline: min(var(--g-max-width), calc(100cqi - var(--g-frame) * 2));
+  --g-gap-total: calc(var(--g-gutter) * (var(--g-cols) - 1));
   --g-col-unit-raw: calc((var(--g-content-inline) - var(--g-gap-total)) / var(--g-cols));
   --g-stride: calc(var(--g-col-unit-raw) + var(--g-gutter));
   --g-align-mode: shell;
   grid-template-columns:
-    [full-start] minmax(calc(var(--g-frame) - var(--g-gutter)), 1fr)
-    [content-start col-1] minmax(0, var(--g-col-unit-raw))
-    [gutter-1] var(--g-gutter)
-    [col-2] minmax(0, var(--g-col-unit-raw))
-    [gutter-2] var(--g-gutter)
-    [col-3] minmax(0, var(--g-col-unit-raw))
-    [gutter-3] var(--g-gutter)
-    [col-4] minmax(0, var(--g-col-unit-raw))
-    [gutter-4] var(--g-gutter)
-    [col-5] minmax(0, var(--g-col-unit-raw))
-    [gutter-5] var(--g-gutter)
-    [col-6] minmax(0, var(--g-col-unit-raw))
-    [gutter-6] var(--g-gutter)
-    [col-7] minmax(0, var(--g-col-unit-raw))
-    [gutter-7] var(--g-gutter)
-    [col-8] minmax(0, var(--g-col-unit-raw))
-    [gutter-8] var(--g-gutter)
-    [col-9] minmax(0, var(--g-col-unit-raw))
-    [gutter-9] var(--g-gutter)
-    [col-10] minmax(0, var(--g-col-unit-raw))
-    [gutter-10] var(--g-gutter)
-    [col-11] minmax(0, var(--g-col-unit-raw))
-    [gutter-11] var(--g-gutter)
-    [col-12] minmax(0, var(--g-col-unit-raw))
-    [content-end] minmax(calc(var(--g-frame) - var(--g-gutter)), 1fr)
+    [full-start]
+    minmax(calc(var(--g-frame) - var(--g-gutter)), 1fr)
+    [content-start]
+    repeat(var(--g-cols), [col] minmax(0, var(--g-col-unit-raw)))
+    [content-end]
+    minmax(calc(var(--g-frame) - var(--g-gutter)), 1fr)
     [full-end];
 }
 
@@ -46,6 +30,7 @@
   display: grid;
   gap: var(--g-gutter);
   align-content: start;
+  position: relative;
   container-type: inline-size;
   inline-size: 100%;
   --g-gap-total: calc(var(--g-gutter) * (var(--g-cols) - 1));
@@ -53,14 +38,16 @@
   --g-col-unit-raw: calc((var(--g-grid-inline) - var(--g-gap-total)) / var(--g-cols));
   --g-stride: calc(var(--g-col-unit-raw) + var(--g-gutter));
   --g-align-mode: raw;
-  grid-template-columns: repeat(var(--g-cols), minmax(0, 1fr));
+  grid-template-columns: repeat(var(--g-cols), [col] minmax(0, 1fr));
 }
 
 @utility g-sub {
   display: grid;
   gap: var(--g-gutter);
   align-content: start;
+  position: relative;
   --g-align-mode: exact;
+  grid-column: 1 / -1;
   grid-template-columns: subgrid;
 }
 
@@ -84,6 +71,7 @@
   display: grid;
   gap: var(--g-gutter);
   align-content: start;
+  position: relative;
   container-type: inline-size;
   inline-size: 100%;
   --g-gap-total: calc(var(--g-gutter) * (var(--g-cols) - 1));
@@ -98,6 +86,7 @@
   display: grid;
   gap: var(--g-gutter);
   align-content: start;
+  position: relative;
   container-type: inline-size;
   inline-size: 100%;
   --g-gap-total: calc(var(--g-gutter) * (var(--g-cols) - 1));
@@ -135,4 +124,3 @@
   max-inline-size: var(--g-measure-ui);
   text-wrap: wrap;
 }
-

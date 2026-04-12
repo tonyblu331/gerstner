@@ -33,7 +33,7 @@ function makeMockElement(props: {
     style: {
       _props: {} as Record<string, string>,
       setProperty(k: string, v: string) {
-        (this._props as Record<string, string>)[k] = v
+        ;(this._props as Record<string, string>)[k] = v
       },
       getPropertyValue(k: string) {
         return (this._props as Record<string, string>)[k] ?? ''
@@ -112,6 +112,8 @@ describe('readMetrics — computes correct pixel values', () => {
     expect(m!.framePx).toBe(80)
     expect(m!.colPx).toBeCloseTo((1280 - 264) / 12, 3)
     expect(m!.stridePx).toBeCloseTo((1280 - 264) / 12 + 24, 3)
+    // frameOffsetPx = (cqiPx - contentInline) / 2 = (1440 - 1280) / 2 = 80
+    expect(m!.frameOffsetPx).toBe(80)
   })
 
   it('converts rem values using actual root font-size, not hardcoded 16', async () => {
@@ -141,6 +143,8 @@ describe('readMetrics — computes correct pixel values', () => {
     expect(m!.baselinePx).toBe(10) // 0.5rem * 20px
     expect(m!.rhythmPx).toBe(30) // 10 * 3
     expect(m!.colPx).toBeCloseTo((1240 - 220) / 12, 3)
+    // frameOffsetPx = (1440 - 1240) / 2 = 100
+    expect(m!.frameOffsetPx).toBe(100)
   })
 
   it('returns null when colPx is zero or negative', async () => {
@@ -183,6 +187,8 @@ describe('readMetrics — computes correct pixel values', () => {
     expect(m).not.toBeNull()
     // contentInline capped at 1440, not 2000-160=1840
     expect(m!.colPx).toBeCloseTo((1440 - 24 * 11) / 12, 3)
+    // frameOffsetPx = (2000 - 1440) / 2 = 280 — NOT 80 (framePx)
+    expect(m!.frameOffsetPx).toBe(280)
   })
 })
 
@@ -219,6 +225,34 @@ describe('syncDebugMetrics — publishes px values to debug root', () => {
     expect(style['--g-debug-stride-px']).toMatch(/px$/)
     expect(style['--g-debug-frame-px']).toBe('80px')
     expect(style['--g-cols']).toBe('12')
+    expect(style['--g-debug-baseline-px']).toBe('8px')
+    expect(style['--g-debug-rhythm-px']).toBe('24px')
+  })
+
+  it('still publishes baseline/rhythm px when readMetrics is null (invalid grid)', async () => {
+    const debugRoot = makeMockElement({ clientWidth: 0, styles: {} })
+    const scope = makeMockElement({ clientWidth: 10, styles: {} })
+    globalThis.document = mockDocument as unknown as Document
+
+    installGetComputedStyle(
+      {
+        '--g-cols': '12',
+        '--g-gutter': '24px',
+        '--g-baseline': '8px',
+        '--g-leading-steps': '3',
+        '--g-frame': '80px',
+        '--g-max-width': '1440px',
+      },
+      { fontSize: '16px' },
+    )
+
+    const { syncDebugMetrics } = await import('../observer.js')
+    syncDebugMetrics(debugRoot, scope)
+
+    const style = (debugRoot.style as unknown as { _props: Record<string, string> })._props
+    expect(style['--g-debug-baseline-px']).toBe('8px')
+    expect(style['--g-debug-rhythm-px']).toBe('24px')
+    expect(style['--g-debug-col-px']).toBeUndefined()
   })
 })
 
@@ -255,8 +289,9 @@ describe('debug/observer.ts — structural contracts', () => {
     expect(observer).toContain('export function syncDebugMetrics')
   })
 
-  it('exports ObserverMetrics interface with framePx', () => {
+  it('exports ObserverMetrics interface with framePx and frameOffsetPx', () => {
     expect(observer).toContain('framePx')
+    expect(observer).toContain('frameOffsetPx')
   })
 })
 
@@ -269,13 +304,18 @@ describe('debug/debug.css — structural contracts', () => {
     expect(css).toContain('pointer-events: none')
   })
 
-  it('uses --g-baseline and --g-rhythm from stride', () => {
-    expect(css).toContain('var(--g-baseline)')
-    expect(css).toContain('var(--g-rhythm)')
+  it('uses px metrics from observer for baseline/rhythm overlays', () => {
+    expect(css).toContain('var(--g-debug-baseline-px)')
+    expect(css).toContain('var(--g-debug-rhythm-px)')
   })
 
   it('defines column tint variable', () => {
     expect(css).toContain('--g-debug-col-tint')
+  })
+
+  it('hides version/presets UI from the panel toolbar', () => {
+    expect(css).toContain('.dialkit-preset-manager')
+    expect(css).toContain('.dialkit-toolbar-add')
   })
 })
 

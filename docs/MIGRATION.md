@@ -12,11 +12,11 @@ The Stride architecture introduces a single derivation engine. If you used Gerst
 
 The singular `--g-measure` token has been demoted. It was always ambiguous (which measure?). Three explicit authored tokens replace it:
 
-| Old | New | Default |
-|-----|-----|---------|
-| `--g-measure` | `--g-measure-body` | `70ch` |
-| _(none)_ | `--g-measure-tight` | `45ch` |
-| _(none)_ | `--g-measure-ui` | `35ch` |
+| Old           | New                 | Default |
+| ------------- | ------------------- | ------- |
+| `--g-measure` | `--g-measure-body`  | `70ch`  |
+| _(none)_      | `--g-measure-tight` | `45ch`  |
+| _(none)_      | `--g-measure-ui`    | `35ch`  |
 
 **Action:** Search your CSS for `--g-measure` (without a suffix). Replace with the appropriate measure token.
 
@@ -78,10 +78,10 @@ Use this if you only need the token runtime without layout utilities.
 
 The heuristic drift detection (parsing `gridTemplateColumns`) has been replaced by manifest-aware observation.
 
-| Old | New |
-|-----|-----|
-| `debug/drift.ts` | `debug/observer.ts` |
-| Heuristic track parsing | Reads stride tokens via `getComputedStyle` |
+| Old                                | New                                              |
+| ---------------------------------- | ------------------------------------------------ |
+| `debug/drift.ts`                   | `debug/observer.ts`                              |
+| Heuristic track parsing            | Reads stride tokens via `getComputedStyle`       |
 | `detectDrift()` parsed grid tracks | `detectDrift()` reads `--g-stride`, `--g-gutter` |
 
 **Action:** If you imported from `debug/drift.ts`, change to `debug/observer.ts`. The API surface is compatible.
@@ -89,18 +89,20 @@ The heuristic drift detection (parsing `gridTemplateColumns`) has been replaced 
 ### Debug panel config
 
 Old:
+
 ```js
 initGerstnerDebug({
-  initial: { overlay: true, badge: true, ruler: false }
+  initial: { overlay: true, badge: true, ruler: false },
 })
 ```
 
 New:
+
 ```js
 initGerstnerDebug({
   initial: {
-    layers: { cols: true, baseline: true, rhythm: false, zones: false, drift: false }
-  }
+    layers: { cols: true, baseline: true, rhythm: false, zones: false, drift: false },
+  },
 })
 ```
 
@@ -130,9 +132,9 @@ pnpm emit:reference   # reference-fixtures/metadata.json
 
 ## Breaking Changes Summary
 
-| Change | Impact | Migration |
-|--------|--------|-----------|
-| `--g-measure` demoted | CSS references break | Replace with `--g-measure-body/tight/ui` |
-| Inline derived recalcs removed | TW4 theme, CSS tokens | Use `var()` from stride |
-| `debug/drift.ts` deleted | JS imports break | Use `debug/observer.ts` |
-| Debug panel config shape | `initGerstnerDebug()` calls | Use `layers` object |
+| Change                         | Impact                      | Migration                                |
+| ------------------------------ | --------------------------- | ---------------------------------------- |
+| `--g-measure` demoted          | CSS references break        | Replace with `--g-measure-body/tight/ui` |
+| Inline derived recalcs removed | TW4 theme, CSS tokens       | Use `var()` from stride                  |
+| `debug/drift.ts` deleted       | JS imports break            | Use `debug/observer.ts`                  |
+| Debug panel config shape       | `initGerstnerDebug()` calls | Use `layers` object                      |

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-04-11T18:16:35.229Z",
+  "generatedAt": "2026-04-12T19:15:47.928Z",
   "contract": {
     "cols": 12,
     "gutter": 24,
@@ -173,28 +173,14 @@
       "min": 1,
       "max": 12,
       "cssProperty": "grid-column-start",
-      "cssValueTemplate": "col-{n}"
+      "cssValueTemplate": "col {n}"
     },
     {
       "prefix": "col-end-",
       "min": 1,
       "max": 13,
       "cssProperty": "grid-column-end",
-      "cssValueTemplate": "col-{n}"
-    },
-    {
-      "prefix": "col-from-gutter-",
-      "min": 1,
-      "max": 11,
-      "cssProperty": "grid-column-start",
-      "cssValueTemplate": "gutter-{n}"
-    },
-    {
-      "prefix": "col-to-gutter-",
-      "min": 1,
-      "max": 11,
-      "cssProperty": "grid-column-end",
-      "cssValueTemplate": "gutter-{n}"
+      "cssValueTemplate": "col {n}"
     },
     {
       "prefix": "g-stack-",

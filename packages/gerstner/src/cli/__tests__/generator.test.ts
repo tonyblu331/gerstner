@@ -67,19 +67,26 @@ describe('emitCssHelpers', () => {
     expect(output).toContain('.col-end-13 {')
   })
 
-  it('emits col-from-* helpers', () => {
-    expect(output).toContain('.col-from-1 {')
-    expect(output).toContain('.col-from-12 {')
+  it('emits col-start-* with nth-occurrence named lines', () => {
+    expect(output).toContain('grid-column-start: col 1')
+    expect(output).toContain('grid-column-start: col 12')
   })
 
-  it('emits col-to-* helpers', () => {
-    expect(output).toContain('.col-to-1 {')
-    expect(output).toContain('.col-to-12 {')
+  it('emits col-end-* with nth-occurrence named lines', () => {
+    expect(output).toContain('grid-column-end: col 1')
+    expect(output).toContain('grid-column-end: col 13')
   })
 
-  it('emits gutter anchor helpers', () => {
+  it('emits gutter line aliases as col (k+1) (gap-based grid has no gutter- line names)', () => {
     expect(output).toContain('.col-from-gutter-1 {')
+    expect(output).toContain('grid-column-start: col 2')
     expect(output).toContain('.col-to-gutter-11 {')
+    expect(output).toContain('grid-column-end: col 12')
+  })
+
+  it('does not emit col-from-N / col-to-N numeric helpers (removed)', () => {
+    expect(output).not.toContain('.col-from-1 {')
+    expect(output).not.toContain('.col-to-1 {')
   })
 
   it('emits boundary helpers', () => {
@@ -153,17 +160,22 @@ describe('emitTw4Helpers', () => {
     expect(output).toContain('@utility col-end-13 {')
   })
 
-  it('emits col-from-* as @utility', () => {
-    expect(output).toContain('@utility col-from-1 {')
+  it('emits col-start-* with nth-occurrence named lines as @utility', () => {
+    expect(output).toContain('grid-column-start: col 1')
   })
 
-  it('emits col-to-* as @utility', () => {
-    expect(output).toContain('@utility col-to-1 {')
+  it('emits col-end-* with nth-occurrence named lines as @utility', () => {
+    expect(output).toContain('grid-column-end: col 1')
   })
 
-  it('emits gutter anchor helpers as @utility', () => {
+  it('emits gutter line aliases as @utility mapped to col lines', () => {
     expect(output).toContain('@utility col-from-gutter-1 {')
     expect(output).toContain('@utility col-to-gutter-11 {')
+  })
+
+  it('does not emit col-from-N / col-to-N numeric helpers (removed)', () => {
+    expect(output).not.toContain('@utility col-from-1 {')
+    expect(output).not.toContain('@utility col-to-1 {')
   })
 
   it('emits boundary helpers as @utility', () => {
@@ -212,13 +224,17 @@ describe('buildDebugLabels', () => {
   it('has 12 columns', () => {
     expect(labels.columns).toHaveLength(12)
     expect(labels.columns[0].name).toBe('col-1')
+    expect(labels.columns[0].lineName).toBe('col 1')
     expect(labels.columns[11].name).toBe('col-12')
+    expect(labels.columns[11].lineName).toBe('col 12')
   })
 
   it('has 11 gutters', () => {
     expect(labels.gutters).toHaveLength(11)
     expect(labels.gutters[0].name).toBe('gutter-1')
+    expect(labels.gutters[0].lineName).toBe('col 2')
     expect(labels.gutters[10].name).toBe('gutter-11')
+    expect(labels.gutters[10].lineName).toBe('col 12')
   })
 
   it('has 4 boundaries', () => {

@@ -1,7 +1,6 @@
 @layer gerstner.layout {
   :where(.g-shell, .g, .g-sub, .g-fit, .g-fill) {
     display: grid;
-    gap: var(--g-gutter);
     align-content: start;
     position: relative;
   }
@@ -30,10 +29,12 @@
     inline-size: 100%;
   }
 
-  /* Shell field — consumes stride-derived tokens, no inline recalcs.
-     stride/index.css :root defines --g-gap-total, --g-content-inline,
-     --g-col-unit-raw, --g-stride. Shell overrides content-inline for cqi. */
+  /* Shell field — gap + repeat(), no explicit gutter tracks.
+     gap handles gutter spacing. repeat(var(--g-cols)) makes column count configurable.
+     Named lines [full-start], [content-start], [content-end], [full-end] for boundaries.
+     col-N span helpers work correctly: span N = N columns (gap is not a track). */
   .g-shell {
+    gap: var(--g-gutter);
     --g-content-inline: min(var(--g-max-width), calc(100cqi - var(--g-frame) * 2));
     --g-gap-total: calc(var(--g-gutter) * (var(--g-cols) - 1));
     --g-col-unit-raw: calc((var(--g-content-inline) - var(--g-gap-total)) / var(--g-cols));
@@ -43,77 +44,38 @@
     grid-template-columns:
       [full-start]
       minmax(calc(var(--g-frame) - var(--g-gutter)), 1fr)
-      [content-start col-1]
-      minmax(0, var(--g-col-unit-raw))
-      [gutter-1]
-      var(--g-gutter)
-      [col-2]
-      minmax(0, var(--g-col-unit-raw))
-      [gutter-2]
-      var(--g-gutter)
-      [col-3]
-      minmax(0, var(--g-col-unit-raw))
-      [gutter-3]
-      var(--g-gutter)
-      [col-4]
-      minmax(0, var(--g-col-unit-raw))
-      [gutter-4]
-      var(--g-gutter)
-      [col-5]
-      minmax(0, var(--g-col-unit-raw))
-      [gutter-5]
-      var(--g-gutter)
-      [col-6]
-      minmax(0, var(--g-col-unit-raw))
-      [gutter-6]
-      var(--g-gutter)
-      [col-7]
-      minmax(0, var(--g-col-unit-raw))
-      [gutter-7]
-      var(--g-gutter)
-      [col-8]
-      minmax(0, var(--g-col-unit-raw))
-      [gutter-8]
-      var(--g-gutter)
-      [col-9]
-      minmax(0, var(--g-col-unit-raw))
-      [gutter-9]
-      var(--g-gutter)
-      [col-10]
-      minmax(0, var(--g-col-unit-raw))
-      [gutter-10]
-      var(--g-gutter)
-      [col-11]
-      minmax(0, var(--g-col-unit-raw))
-      [gutter-11]
-      var(--g-gutter)
-      [col-12]
-      minmax(0, var(--g-col-unit-raw))
+      [content-start]
+      repeat(var(--g-cols), [col] minmax(0, var(--g-col-unit-raw)))
       [content-end]
       minmax(calc(var(--g-frame) - var(--g-gutter)), 1fr)
       [full-end];
   }
 
-  /* Raw field — overrides inline size to 100cqi, recomputes derived tokens locally.
+  /* Raw field — no explicit gutter tracks, uses gap for spacing.
+     Overrides inline size to 100cqi, recomputes derived tokens locally.
      This is NOT a duplicated derivation — it's a field override for cqi context. */
   .g {
+    gap: var(--g-gutter);
     --g-grid-inline: 100cqi;
     --g-gap-total: calc(var(--g-gutter) * (var(--g-cols) - 1));
     --g-col-unit-raw: calc((var(--g-grid-inline) - var(--g-gap-total)) / var(--g-cols));
     --g-stride: calc(var(--g-col-unit-raw) + var(--g-gutter));
     --g-align-mode: raw;
 
-    grid-template-columns: repeat(var(--g-cols), minmax(0, 1fr));
+    grid-template-columns: repeat(var(--g-cols), [col] minmax(0, 1fr));
   }
 
   .g-sub {
     --g-align-mode: exact;
+    grid-column: 1 / -1;
     grid-template-columns: subgrid;
   }
 
-  /* Adaptive fields — same cqi override as raw field. */
+  /* Adaptive fields — no explicit gutter tracks, uses gap for spacing.
+     Same cqi override as raw field. */
   .g-fit,
   .g-fill {
+    gap: var(--g-gutter);
     --g-grid-inline: 100cqi;
     --g-gap-total: calc(var(--g-gutter) * (var(--g-cols) - 1));
     --g-col-unit-raw: calc((var(--g-grid-inline) - var(--g-gap-total)) / var(--g-cols));

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { DialRoot, DialStore, useDialKit } from 'dialkit'
 
 const SCOPE_SELECTOR = '.g-shell, .g, .g-fit, .g-fill, .g-sub'
@@ -11,23 +11,36 @@ const DEFAULT_LAYERS: Record<string, boolean> = {
   drift: false,
 }
 
-function readLayerStates(): Record<string, boolean> {
-  const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
-  const states: Record<string, boolean> = {}
-  for (const layer of LAYER_KEYS) {
-    const attr = debugRoot?.getAttribute(`data-g-debug-${layer}`)
-    states[layer] = attr !== null ? attr === 'true' : DEFAULT_LAYERS[layer]
-  }
-  return states
+// @property initial-value declarations from stride/index.css — single source of truth
+const PROPERTY_DEFAULTS = {
+  '--g-cols': 12,
+  '--g-gutter': 1,
+  '--g-frame': 1,
+  '--g-max-width': 90,
+  '--g-baseline': 0.5,
+  '--g-leading-steps': 3,
+  '--g-scale-ratio': 1.25,
+} as const
+
+interface ScopeValues {
+  Columns: number
+  Gutter: number
+  Frame: number
+  'Body Size': number
+  Baseline: number
+  'Leading Steps': number
+  'Scale Ratio': number
 }
 
-function readScopeValues(scope: HTMLElement) {
+// Read CSS custom properties from an element — called ONCE per scope change, never in render path
+function readScopeValues(scope: HTMLElement): ScopeValues {
   const style = getComputedStyle(scope)
+  const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
   const getRem = (prop: string, fallback: number) => {
     const val = style.getPropertyValue(prop).trim()
     if (!val) return fallback
     if (val.endsWith('rem')) return parseFloat(val)
-    if (val.endsWith('px')) return parseFloat(val) / 16
+    if (val.endsWith('px')) return parseFloat(val) / rootFontSize
     return parseFloat(val) || fallback
   }
   const getNum = (prop: string, fallback: number) => {
@@ -35,39 +48,52 @@ function readScopeValues(scope: HTMLElement) {
   }
 
   return {
-    cols: getNum('--g-cols', 12),
-    gutter: getRem('--g-gutter', 1.5),
-    frame: getRem('--g-frame', 5),
-    max_width: getRem('--g-max-width', 90),
-    baseline: getRem('--g-baseline', 0.5),
-    leading: getNum('--g-leading-steps', 3),
-    scale: getNum('--g-scale-ratio', 1.25),
+    Columns: getNum('--g-cols', PROPERTY_DEFAULTS['--g-cols']),
+    Gutter: getRem('--g-gutter', PROPERTY_DEFAULTS['--g-gutter']),
+    Frame: getRem('--g-frame', PROPERTY_DEFAULTS['--g-frame']),
+    'Body Size': getRem('--g-max-width', PROPERTY_DEFAULTS['--g-max-width']),
+    Baseline: getRem('--g-baseline', PROPERTY_DEFAULTS['--g-baseline']),
+    'Leading Steps': getNum('--g-leading-steps', PROPERTY_DEFAULTS['--g-leading-steps']),
+    'Scale Ratio': getNum('--g-scale-ratio', PROPERTY_DEFAULTS['--g-scale-ratio']),
   }
 }
 
 export function DebugPanel() {
-  const [_scopeId, setScopeId] = useState(0) // bump to force re-render + DialKit re-init
   const scopeRef = useRef<HTMLElement>(document.documentElement)
   const pinnedRef = useRef(false)
+  const layerStatesRef = useRef<Record<string, boolean>>({})
+  const syncingRef = useRef(false)
 
-  const values = readScopeValues(scopeRef.current)
-  const layerStates = readLayerStates()
+  // Read CSS values ONCE at mount, store in state — never in render path
+  const [values, setValues] = useState<ScopeValues>(() => readScopeValues(document.documentElement))
+  // Initialize from DEFAULT_LAYERS (matches index.tsx defaults) — MutationObserver syncs external changes
+  const [layerStates, setLayerStates] = useState<Record<string, boolean>>(() => ({
+    ...DEFAULT_LAYERS,
+  }))
+  layerStatesRef.current = layerStates
+
+  // Re-read scope values when scope changes (hover/pin) — single getComputedStyle call
+  const rescope = useCallback((scope: HTMLElement) => {
+    scopeRef.current = scope
+    setValues(readScopeValues(scope))
+    document.dispatchEvent(new CustomEvent('gerstner-debug-sync', { detail: { scope } }))
+  }, [])
 
   const params = useDialKit(
     'Gerstner',
     {
-      grid: {
-        cols: [values.cols, 3, 24, 1],
-        gutter: [values.gutter, 0, 4, 0.25],
-        frame: [values.frame, 0, 10, 0.5],
-        max_width: [values.max_width, 40, 160, 5],
+      Grid: {
+        Columns: [values.Columns, 3, 24, 1],
+        Gutter: [values.Gutter, 0, 4, 0.25],
+        Frame: [values.Frame, 0, 10, 0.5],
+        'Body Size': [values['Body Size'], 40, 160, 5],
       },
-      type: {
-        baseline: [values.baseline, 0.25, 2, 0.25],
-        leading: [values.leading, 1, 6, 1],
-        scale: [values.scale, 1.05, 2, 0.05],
+      Typography: {
+        Baseline: [values.Baseline, 0.25, 2, 0.25],
+        'Leading Steps': [values['Leading Steps'], 1, 6, 1],
+        'Scale Ratio': [values['Scale Ratio'], 1.05, 2, 0.05],
       },
-      overlays: {
+      Overlays: {
         cols: layerStates.cols,
         baseline: layerStates.baseline,
         rhythm: layerStates.rhythm,
@@ -77,63 +103,74 @@ export function DebugPanel() {
     },
     {
       shortcuts: {
-        'overlays.cols': { key: '1', modifier: 'alt' },
-        'overlays.baseline': { key: '2', modifier: 'alt' },
-        'overlays.rhythm': { key: '3', modifier: 'alt' },
-        'overlays.zones': { key: '4', modifier: 'alt' },
-        'overlays.drift': { key: '5', modifier: 'alt' },
+        'Overlays.cols': { key: '1', modifier: 'alt' },
+        'Overlays.baseline': { key: '2', modifier: 'alt' },
+        'Overlays.rhythm': { key: '3', modifier: 'alt' },
+        'Overlays.zones': { key: '4', modifier: 'alt' },
+        'Overlays.drift': { key: '5', modifier: 'alt' },
       },
     },
   )
 
-  // Write CSS custom properties when params change — with correct units
+  // Write CSS custom properties when params change — DialKit owns the state, writes to CSS
   useEffect(() => {
     const scope = scopeRef.current
-    scope.style.setProperty('--g-cols', String(params.grid.cols))
-    scope.style.setProperty('--g-gutter', `${params.grid.gutter}rem`)
-    scope.style.setProperty('--g-frame', `${params.grid.frame}rem`)
-    scope.style.setProperty('--g-max-width', `${params.grid.max_width}rem`)
-    scope.style.setProperty('--g-baseline', `${params.type.baseline}rem`)
-    scope.style.setProperty('--g-leading-steps', String(params.type.leading))
-    scope.style.setProperty('--g-scale-ratio', String(params.type.scale))
-  }, [params.grid, params.type])
+    scope.style.setProperty('--g-cols', String(params.Grid.Columns))
+    scope.style.setProperty('--g-gutter', `${params.Grid.Gutter}rem`)
+    scope.style.setProperty('--g-frame', `${params.Grid.Frame}rem`)
+    scope.style.setProperty('--g-max-width', `${params.Grid['Body Size']}rem`)
+    scope.style.setProperty('--g-baseline', `${params.Typography.Baseline}rem`)
+    scope.style.setProperty('--g-leading-steps', String(params.Typography['Leading Steps']))
+    scope.style.setProperty('--g-scale-ratio', String(params.Typography['Scale Ratio']))
+  }, [params.Grid, params.Typography])
 
   // Sync overlay toggles → DOM data attributes
   useEffect(() => {
     const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
     if (!debugRoot) return
+    syncingRef.current = true // prevent observer from echoing back
     for (const layer of LAYER_KEYS) {
       const current = debugRoot.getAttribute(`data-g-debug-${layer}`) === 'true'
-      const target = params.overlays[layer]
+      const target = params.Overlays[layer]
       if (current !== target) {
         debugRoot.setAttribute(`data-g-debug-${layer}`, String(target))
       }
     }
+    syncingRef.current = false
   }, [
-    params.overlays.cols,
-    params.overlays.baseline,
-    params.overlays.rhythm,
-    params.overlays.zones,
-    params.overlays.drift,
+    params.Overlays.cols,
+    params.Overlays.baseline,
+    params.Overlays.rhythm,
+    params.Overlays.zones,
+    params.Overlays.drift,
   ])
 
-  // Watch for DOM attribute changes (keyboard shortcuts) → sync back to DialKit
+  // Watch for DOM attribute changes (keyboard shortcuts) → sync back to DialKit + state
   useEffect(() => {
     const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
     if (!debugRoot) return
 
     const observer = new MutationObserver(() => {
+      if (syncingRef.current) return // skip echo from panel-initiated changes
+
       const panels = DialStore.getPanels()
       const panel = panels.find((p) => p.name === 'Gerstner')
       if (!panel) return
 
+      const newStates = { ...layerStatesRef.current }
+      let changed = false
       for (const layer of LAYER_KEYS) {
         const domValue = debugRoot.getAttribute(`data-g-debug-${layer}`) === 'true'
-        const dialValue = DialStore.getValue(panel.id, `overlays.${layer}`)
+        const dialValue = DialStore.getValue(panel.id, `Overlays.${layer}`)
         if (domValue !== dialValue) {
-          DialStore.updateValue(panel.id, `overlays.${layer}`, domValue)
+          DialStore.updateValue(panel.id, `Overlays.${layer}`, domValue)
+        }
+        if (newStates[layer] !== domValue) {
+          newStates[layer] = domValue
+          changed = true
         }
       }
+      if (changed) setLayerStates(newStates)
     })
 
     observer.observe(debugRoot, {
@@ -150,14 +187,13 @@ export function DebugPanel() {
       const target = e.target instanceof HTMLElement ? e.target : null
       const scope = target?.closest<HTMLElement>(SCOPE_SELECTOR) ?? document.documentElement
       if (scope !== scopeRef.current) {
-        scopeRef.current = scope
-        setScopeId((n) => n + 1)
+        rescope(scope)
       }
     }
 
     document.addEventListener('pointermove', onPointerMove, { passive: true })
     return () => document.removeEventListener('pointermove', onPointerMove)
-  }, [])
+  }, [rescope])
 
   // Click to pin/unpin scope
   useEffect(() => {
@@ -171,8 +207,7 @@ export function DebugPanel() {
 
       if (e.altKey || !pinnedRef.current) {
         pinnedRef.current = true
-        scopeRef.current = scope
-        setScopeId((n) => n + 1)
+        rescope(scope)
       } else if (pinnedRef.current && scope === scopeRef.current) {
         pinnedRef.current = false
       }
@@ -180,7 +215,7 @@ export function DebugPanel() {
 
     document.addEventListener('click', onClick)
     return () => document.removeEventListener('click', onClick)
-  }, [])
+  }, [rescope])
 
   return <DialRoot position="top-right" defaultOpen />
 }

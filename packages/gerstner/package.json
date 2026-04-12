@@ -16,30 +16,42 @@
   ],
   "exports": {
     ".": {
+      "development": "./src/css/index.css",
       "default": "./dist/css/index.css"
     },
     "./css": {
+      "development": "./src/css/index.css",
       "default": "./dist/css/index.css"
     },
     "./tw4": {
+      "development": "./src/tw4/index.css",
       "default": "./dist/tw4/index.css"
     },
     "./debug": {
+      "development": "./src/debug/index.tsx",
       "default": "./dist/debug/index.mjs",
       "types": "./dist/debug/index.d.mts"
     },
     "./debug/observer": {
+      "development": "./src/debug/observer.ts",
       "default": "./dist/debug/observer.mjs",
       "types": "./dist/debug/observer.d.mts"
     },
     "./debug/debug.css": {
+      "development": "./src/debug/debug.css",
       "default": "./dist/debug/debug.css"
     },
     "./debug/labels.json": {
+      "development": "./src/debug/labels.json",
       "default": "./dist/debug/labels.json"
     },
     "./stride": {
+      "development": "./src/stride/index.css",
       "default": "./dist/stride/index.css"
+    },
+    "./layout": {
+      "development": "./src/css/layout-only.css",
+      "default": "./dist/css/layout-only.css"
     }
   },
   "publishConfig": {

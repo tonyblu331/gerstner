@@ -126,6 +126,7 @@ function buildHelperRanges(cols: number): ManifestHelperRange[] {
   const ranges: ManifestHelperRange[] = []
 
   // Column span helpers: col-1..col-{cols}
+  // span N / span N works correctly with gap-based grids (gap is not a track).
   ranges.push({
     prefix: 'col-',
     min: 1,
@@ -135,61 +136,25 @@ function buildHelperRanges(cols: number): ManifestHelperRange[] {
   })
 
   // Column start helpers: col-start-1..col-start-{cols}
+  // Uses nth-occurrence of named line 'col': 'col 1' = first col line, 'col 3' = third.
+  // Works in both .g-shell (with [col] in repeat) and .g (same repeat pattern).
   ranges.push({
     prefix: 'col-start-',
     min: 1,
     max: cols,
     cssProperty: 'grid-column-start',
-    cssValueTemplate: '{n}',
+    cssValueTemplate: 'col {n}',
   })
 
   // Column end helpers: col-end-1..col-end-{cols+1}
+  // col-end-{cols+1} maps to content-end boundary (after last column).
   ranges.push({
     prefix: 'col-end-',
     min: 1,
     max: cols + 1,
     cssProperty: 'grid-column-end',
-    cssValueTemplate: '{n}',
+    cssValueTemplate: 'col {n}',
   })
-
-  // Column from helpers: col-from-1..col-from-{cols}
-  ranges.push({
-    prefix: 'col-from-',
-    min: 1,
-    max: cols,
-    cssProperty: 'grid-column-start',
-    cssValueTemplate: '{n}',
-  })
-
-  // Column to helpers: col-to-1..col-to-{cols}
-  ranges.push({
-    prefix: 'col-to-',
-    min: 1,
-    max: cols,
-    cssProperty: 'grid-column-end',
-    cssValueTemplate: '{n}',
-  })
-
-  // Gutter anchor from helpers: col-from-gutter-1..col-from-gutter-{cols-1}
-  const gutterMax = cols - 1
-  if (gutterMax >= 1) {
-    ranges.push({
-      prefix: 'col-from-gutter-',
-      min: 1,
-      max: gutterMax,
-      cssProperty: 'grid-column-start',
-      cssValueTemplate: 'gutter-{n}',
-    })
-
-    // Gutter anchor to helpers: col-to-gutter-1..col-to-gutter-{cols-1}
-    ranges.push({
-      prefix: 'col-to-gutter-',
-      min: 1,
-      max: gutterMax,
-      cssProperty: 'grid-column-end',
-      cssValueTemplate: 'gutter-{n}',
-    })
-  }
 
   // Stack spacing helpers: g-stack-1..g-stack-6
   ranges.push({

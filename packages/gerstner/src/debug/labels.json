@@ -3,119 +3,119 @@
     {
       "index": 1,
       "name": "col-1",
-      "lineName": "col-1"
+      "lineName": "col 1"
     },
     {
       "index": 2,
       "name": "col-2",
-      "lineName": "col-2"
+      "lineName": "col 2"
     },
     {
       "index": 3,
       "name": "col-3",
-      "lineName": "col-3"
+      "lineName": "col 3"
     },
     {
       "index": 4,
       "name": "col-4",
-      "lineName": "col-4"
+      "lineName": "col 4"
     },
     {
       "index": 5,
       "name": "col-5",
-      "lineName": "col-5"
+      "lineName": "col 5"
     },
     {
       "index": 6,
       "name": "col-6",
-      "lineName": "col-6"
+      "lineName": "col 6"
     },
     {
       "index": 7,
       "name": "col-7",
-      "lineName": "col-7"
+      "lineName": "col 7"
     },
     {
       "index": 8,
       "name": "col-8",
-      "lineName": "col-8"
+      "lineName": "col 8"
     },
     {
       "index": 9,
       "name": "col-9",
-      "lineName": "col-9"
+      "lineName": "col 9"
     },
     {
       "index": 10,
       "name": "col-10",
-      "lineName": "col-10"
+      "lineName": "col 10"
     },
     {
       "index": 11,
       "name": "col-11",
-      "lineName": "col-11"
+      "lineName": "col 11"
     },
     {
       "index": 12,
       "name": "col-12",
-      "lineName": "col-12"
+      "lineName": "col 12"
     }
   ],
   "gutters": [
     {
       "index": 1,
       "name": "gutter-1",
-      "lineName": "gutter-1"
+      "lineName": "col 2"
     },
     {
       "index": 2,
       "name": "gutter-2",
-      "lineName": "gutter-2"
+      "lineName": "col 3"
     },
     {
       "index": 3,
       "name": "gutter-3",
-      "lineName": "gutter-3"
+      "lineName": "col 4"
     },
     {
       "index": 4,
       "name": "gutter-4",
-      "lineName": "gutter-4"
+      "lineName": "col 5"
     },
     {
       "index": 5,
       "name": "gutter-5",
-      "lineName": "gutter-5"
+      "lineName": "col 6"
     },
     {
       "index": 6,
       "name": "gutter-6",
-      "lineName": "gutter-6"
+      "lineName": "col 7"
     },
     {
       "index": 7,
       "name": "gutter-7",
-      "lineName": "gutter-7"
+      "lineName": "col 8"
     },
     {
       "index": 8,
       "name": "gutter-8",
-      "lineName": "gutter-8"
+      "lineName": "col 9"
     },
     {
       "index": 9,
       "name": "gutter-9",
-      "lineName": "gutter-9"
+      "lineName": "col 10"
     },
     {
       "index": 10,
       "name": "gutter-10",
-      "lineName": "gutter-10"
+      "lineName": "col 11"
     },
     {
       "index": 11,
       "name": "gutter-11",
-      "lineName": "gutter-11"
+      "lineName": "col 12"
     }
   ],
   "boundaries": [

@@ -55,14 +55,15 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
     }
   }
 
-  // Sync baseline/rhythm debug vars from the first .g-shell's resolved tokens.
-  // Falls back to documentElement if no shell is present.
-  // Per-shell column overlays are handled by syncShellOverlays separately.
+  // DialKit scope (hover/pin) drives baseline/rhythm on .g-debug-root; else first .g-shell.
+  let metricsScope: HTMLElement | null = null
+
   const syncMetrics = () => {
     const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
     if (!debugRoot) return
-    const firstShell = document.querySelector<HTMLElement>('.g-shell')
-    syncDebugMetrics(debugRoot, firstShell ?? document.documentElement)
+    const scope =
+      metricsScope ?? document.querySelector<HTMLElement>('.g-shell') ?? document.documentElement
+    syncDebugMetrics(debugRoot, scope)
   }
 
   const syncCols = () => {
@@ -105,14 +106,53 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
     }
   }, 0)
 
+  // Watch for inline style changes on scope element (DialKit writes --g-cols etc. to inline style).
+  // ResizeObserver on documentElement doesn't fire when --g-cols changes because the document
+  // size doesn't change — only the internal grid layout reflows.
+  const styleObserver = new MutationObserver(() => {
+    syncMetrics()
+    syncCols()
+    applyDriftDetection()
+  })
+
+  const observeShellStyles = () => {
+    document.querySelectorAll<HTMLElement>('.g-shell').forEach((shell) => {
+      styleObserver.observe(shell, {
+        attributes: true,
+        attributeFilter: ['style'],
+      })
+    })
+  }
+
+  setTimeout(() => {
+    styleObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['style'],
+    })
+    observeShellStyles()
+  }, 0)
+
+  const fullResync = () => {
+    syncMetrics()
+    syncCols()
+    applyDriftDetection()
+  }
+
+  // DebugPanel rescopes DialKit to hovered/pinned .g-shell — refresh metrics for baseline/rhythm.
+  const onGerstnerDebugSync = (ev: Event) => {
+    const ce = ev as CustomEvent<{ scope?: HTMLElement }>
+    if (ce.detail?.scope) metricsScope = ce.detail.scope
+    queueMicrotask(() => fullResync())
+  }
+  document.addEventListener('gerstner-debug-sync', onGerstnerDebugSync)
+
   // Re-sync per-shell overlays after SPA route changes.
   // The router replaces mount innerHTML, destroying old overlay divs.
   const onRouteChange = () => {
-    // Defer one tick to let the router finish rendering the new page HTML.
+    metricsScope = null
     setTimeout(() => {
-      syncMetrics()
-      syncCols()
-      applyDriftDetection()
+      observeShellStyles()
+      fullResync()
     }, 0)
   }
   window.addEventListener('hashchange', onRouteChange)
@@ -170,9 +210,11 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
   return {
     destroy() {
       document.removeEventListener('keydown', onKeyDown)
+      document.removeEventListener('gerstner-debug-sync', onGerstnerDebugSync)
       window.removeEventListener('hashchange', onRouteChange)
       resizeObserver.disconnect()
       colsObserver.disconnect()
+      styleObserver.disconnect()
       syncShellOverlays(false)
       root.unmount()
       container.remove()
