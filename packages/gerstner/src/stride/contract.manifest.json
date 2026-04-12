@@ -173,28 +173,14 @@
       "min": 1,
       "max": 12,
       "cssProperty": "grid-column-start",
-      "cssValueTemplate": "{n}"
+      "cssValueTemplate": "col-{n}"
     },
     {
       "prefix": "col-end-",
       "min": 1,
       "max": 13,
       "cssProperty": "grid-column-end",
-      "cssValueTemplate": "{n}"
-    },
-    {
-      "prefix": "col-from-",
-      "min": 1,
-      "max": 12,
-      "cssProperty": "grid-column-start",
-      "cssValueTemplate": "{n}"
-    },
-    {
-      "prefix": "col-to-",
-      "min": 1,
-      "max": 12,
-      "cssProperty": "grid-column-end",
-      "cssValueTemplate": "{n}"
+      "cssValueTemplate": "col-{n}"
     },
     {
       "prefix": "col-from-gutter-",
