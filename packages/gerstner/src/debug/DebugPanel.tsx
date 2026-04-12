@@ -1,7 +1,25 @@
 import { useEffect, useRef, useState } from 'react'
-import { DialRoot, useDialKit } from 'dialkit'
+import { DialRoot, DialStore, useDialKit } from 'dialkit'
 
 const SCOPE_SELECTOR = '.g-shell, .g, .g-fit, .g-fill, .g-sub'
+const LAYER_KEYS = ['cols', 'baseline', 'rhythm', 'zones', 'drift'] as const
+const DEFAULT_LAYERS: Record<string, boolean> = {
+  cols: true,
+  baseline: true,
+  rhythm: false,
+  zones: false,
+  drift: false,
+}
+
+function readLayerStates(): Record<string, boolean> {
+  const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
+  const states: Record<string, boolean> = {}
+  for (const layer of LAYER_KEYS) {
+    const attr = debugRoot?.getAttribute(`data-g-debug-${layer}`)
+    states[layer] = attr !== null ? attr === 'true' : DEFAULT_LAYERS[layer]
+  }
+  return states
+}
 
 function readScopeValues(scope: HTMLElement) {
   const style = getComputedStyle(scope)
@@ -28,26 +46,45 @@ function readScopeValues(scope: HTMLElement) {
 }
 
 export function DebugPanel() {
-  const [scopeId, setScopeId] = useState(0) // bump to force re-render + DialKit re-init
-  const [panelOpen, setPanelOpen] = useState(true)
+  const [_scopeId, setScopeId] = useState(0) // bump to force re-render + DialKit re-init
   const scopeRef = useRef<HTMLElement>(document.documentElement)
   const pinnedRef = useRef(false)
 
   const values = readScopeValues(scopeRef.current)
+  const layerStates = readLayerStates()
 
-  const params = useDialKit('Gerstner', {
-    grid: {
-      cols: [values.cols, 3, 24, 1],
-      gutter: [values.gutter, 0, 4, 0.25],
-      frame: [values.frame, 0, 10, 0.5],
-      max_width: [values.max_width, 40, 160, 5],
+  const params = useDialKit(
+    'Gerstner',
+    {
+      grid: {
+        cols: [values.cols, 3, 24, 1],
+        gutter: [values.gutter, 0, 4, 0.25],
+        frame: [values.frame, 0, 10, 0.5],
+        max_width: [values.max_width, 40, 160, 5],
+      },
+      type: {
+        baseline: [values.baseline, 0.25, 2, 0.25],
+        leading: [values.leading, 1, 6, 1],
+        scale: [values.scale, 1.05, 2, 0.05],
+      },
+      overlays: {
+        cols: layerStates.cols,
+        baseline: layerStates.baseline,
+        rhythm: layerStates.rhythm,
+        zones: layerStates.zones,
+        drift: layerStates.drift,
+      },
     },
-    type: {
-      baseline: [values.baseline, 0.25, 2, 0.25],
-      leading: [values.leading, 1, 6, 1],
-      scale: [values.scale, 1.05, 2, 0.05],
+    {
+      shortcuts: {
+        'overlays.cols': { key: '1', modifier: 'alt' },
+        'overlays.baseline': { key: '2', modifier: 'alt' },
+        'overlays.rhythm': { key: '3', modifier: 'alt' },
+        'overlays.zones': { key: '4', modifier: 'alt' },
+        'overlays.drift': { key: '5', modifier: 'alt' },
+      },
     },
-  })
+  )
 
   // Write CSS custom properties when params change — with correct units
   useEffect(() => {
@@ -59,7 +96,52 @@ export function DebugPanel() {
     scope.style.setProperty('--g-baseline', `${params.type.baseline}rem`)
     scope.style.setProperty('--g-leading-steps', String(params.type.leading))
     scope.style.setProperty('--g-scale-ratio', String(params.type.scale))
-  }, [params])
+  }, [params.grid, params.type])
+
+  // Sync overlay toggles → DOM data attributes
+  useEffect(() => {
+    const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
+    if (!debugRoot) return
+    for (const layer of LAYER_KEYS) {
+      const current = debugRoot.getAttribute(`data-g-debug-${layer}`) === 'true'
+      const target = params.overlays[layer]
+      if (current !== target) {
+        debugRoot.setAttribute(`data-g-debug-${layer}`, String(target))
+      }
+    }
+  }, [
+    params.overlays.cols,
+    params.overlays.baseline,
+    params.overlays.rhythm,
+    params.overlays.zones,
+    params.overlays.drift,
+  ])
+
+  // Watch for DOM attribute changes (keyboard shortcuts) → sync back to DialKit
+  useEffect(() => {
+    const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
+    if (!debugRoot) return
+
+    const observer = new MutationObserver(() => {
+      const panels = DialStore.getPanels()
+      const panel = panels.find((p) => p.name === 'Gerstner')
+      if (!panel) return
+
+      for (const layer of LAYER_KEYS) {
+        const domValue = debugRoot.getAttribute(`data-g-debug-${layer}`) === 'true'
+        const dialValue = DialStore.getValue(panel.id, `overlays.${layer}`)
+        if (domValue !== dialValue) {
+          DialStore.updateValue(panel.id, `overlays.${layer}`, domValue)
+        }
+      }
+    })
+
+    observer.observe(debugRoot, {
+      attributes: true,
+      attributeFilter: LAYER_KEYS.map((l) => `data-g-debug-${l}`),
+    })
+    return () => observer.disconnect()
+  }, [])
 
   // Pointer tracking for scope — hover to dial
   useEffect(() => {
@@ -100,40 +182,5 @@ export function DebugPanel() {
     return () => document.removeEventListener('click', onClick)
   }, [])
 
-  // Alt+D to toggle panel visibility (D for Debug)
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.altKey && e.key.toLowerCase() === 'd') {
-        setPanelOpen((v) => !v)
-        e.preventDefault()
-      }
-    }
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
-  }, [])
-
-  return (
-    <>
-      <button
-        onClick={() => setPanelOpen((v) => !v)}
-        style={{
-          position: 'fixed',
-          top: '1rem',
-          right: '1rem',
-          zIndex: 10000,
-          padding: '0.5rem 1rem',
-          background: '#000',
-          color: 'white',
-          border: 'none',
-          borderRadius: '0.5rem',
-          cursor: 'pointer',
-          fontSize: '0.875rem',
-          fontWeight: '500',
-        }}
-      >
-        {panelOpen ? 'Hide Panel' : 'Show Panel'}
-      </button>
-      {panelOpen && <DialRoot position="top-right" />}
-    </>
-  )
+  return <DialRoot position="top-right" defaultOpen />
 }
