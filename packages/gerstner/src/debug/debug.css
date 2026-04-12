@@ -15,18 +15,17 @@
 }
 
 /* ── CSS-NATIVE OVERLAY LAYERS ── */
-/* Global overlay container - spans entire page */
-.g-debug-root::before,
-.g-debug-root::after {
-  content: '';
-  position: fixed;
+
+/* ── Layer 1: Per-shell column stripes ── */
+/* .g-debug-col-overlay is injected as a child of each .g-shell by syncShellOverlays().
+   It is position:absolute within the shell, so stripes are scoped to that shell's
+   geometry — not a viewport-wide fixed overlay that ignores per-section token overrides. */
+.g-debug-col-overlay {
+  display: block;
+  position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 9998;
-}
-
-/* ── Layer 1: Column stripes ── */
-.g-debug-root[data-g-debug-cols='true']::before {
   background-image: repeating-linear-gradient(
     to right,
     var(--g-debug-col-tint) 0,
@@ -34,11 +33,23 @@
     var(--g-debug-gutter-tint) var(--g-debug-col-px),
     var(--g-debug-gutter-tint) var(--g-debug-stride-px)
   );
+  background-position: var(--g-debug-frame-px, 0px) 0;
+  background-repeat: repeat-y;
+  background-size: calc(var(--g-debug-stride-px, 0px) * var(--g-cols, 12)) 100%;
 }
 
-/* ── Layer 2: Baseline grid ── */
-.g-debug-root[data-g-debug-baseline='true']::after {
+/* ── Layer 2: Baseline grid — global fixed, same baseline unit page-wide ── */
+.g-debug-root::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
   z-index: 9997;
+  display: none;
+}
+
+.g-debug-root[data-g-debug-baseline='true']::after {
+  display: block;
   background-image: repeating-linear-gradient(
     to bottom,
     transparent 0,
@@ -48,28 +59,18 @@
   );
 }
 
-/* ── Layer 1 + 3: Columns + Rhythm combined ── */
-.g-debug-root[data-g-debug-cols='true'][data-g-debug-rhythm='true']::before {
-  background-image:
-    repeating-linear-gradient(
-      to bottom,
-      transparent 0,
-      transparent calc(var(--g-rhythm) - 1px),
-      var(--g-debug-rhythm-line) calc(var(--g-rhythm) - 1px),
-      var(--g-debug-rhythm-line) var(--g-rhythm)
-    ),
-    repeating-linear-gradient(
-      to right,
-      var(--g-debug-col-tint) 0,
-      var(--g-debug-col-tint) var(--g-debug-col-px),
-      var(--g-debug-gutter-tint) var(--g-debug-col-px),
-      var(--g-debug-gutter-tint) var(--g-debug-stride-px)
-    );
-  background-repeat: repeat-y, no-repeat;
+/* ── Layer 3: Rhythm — global fixed, same rhythm unit page-wide ── */
+.g-debug-root::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9997;
+  display: none;
 }
 
-/* ── Layer 3 only: Rhythm without cols ── */
-.g-debug-root[data-g-debug-rhythm='true']:not([data-g-debug-cols='true'])::before {
+.g-debug-root[data-g-debug-rhythm='true']::before {
+  display: block;
   background-image: repeating-linear-gradient(
     to bottom,
     transparent 0,
@@ -79,7 +80,7 @@
   );
 }
 
-/* ── Layer 2 + 3: Baseline + Rhythm combined in ::after ── */
+/* ── Baseline + Rhythm combined in ::after ── */
 .g-debug-root[data-g-debug-baseline='true'][data-g-debug-rhythm='true']::after {
   background-image: repeating-linear-gradient(
     to bottom,
@@ -90,19 +91,23 @@
   );
 }
 
+
 /* ── Layer 4: Zone markers — outline only, no pseudo ── */
-.g-debug-root[data-g-debug-zones='true'] .g-shell {
+/* .g-debug-root is position:fixed in body, not an ancestor of .g-shell.
+   Use :has() to trigger from a sibling relationship via body. */
+body:has(.g-debug-root[data-g-debug-zones='true']) .g-shell {
   outline: 2px dashed var(--g-debug-zone-line);
   outline-offset: -2px;
 }
 
 /* ── Layer 5: Subgrid drift — JS-assisted ── */
-.g-debug-root[data-g-debug-drift='true'] [data-g-debug-drift-px] {
+/* .g-debug-root is not an ancestor of [data-g-debug-drift-px] — use body:has() */
+body:has(.g-debug-root[data-g-debug-drift='true']) [data-g-debug-drift-px] {
   outline: 2px solid var(--g-debug-drift-indicator);
   outline-offset: -1px;
 }
 
-.g-debug-root[data-g-debug-drift='true'] [data-g-debug-drift-px]::before {
+body:has(.g-debug-root[data-g-debug-drift='true']) [data-g-debug-drift-px]::before {
   content: attr(data-g-debug-drift-label) ' drift: ' attr(data-g-debug-drift-px);
   position: absolute;
   top: 0.25rem;
@@ -129,8 +134,12 @@
 }
 
 /* DialKit portals to document.body, so it sits outside .g-debug-root's
-   stacking context. Override its z-index to render above the overlays. */
-.dialkit-root {
+   stacking context. DialKit's visible fixed panel uses .dialkit-panel,
+   and dropdowns use .dialkit-select-dropdown. Those must sit above the
+   overlay container's z-index, not just .dialkit-root. */
+.dialkit-root,
+.dialkit-panel,
+.dialkit-select-dropdown {
   z-index: calc(var(--g-debug-z, 2147483000) + 1) !important;
 }
 

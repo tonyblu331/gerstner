@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import { DebugPanel } from './DebugPanel.js'
-import { syncDebugMetrics, applyDriftDetection } from './observer.js'
+import { syncDebugMetrics, applyDriftDetection, syncShellOverlays } from './observer.js'
 
 export type DebugLayer = 'cols' | 'baseline' | 'rhythm' | 'zones' | 'drift'
 
@@ -55,31 +55,67 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
     }
   }
 
-  // Sync debug overlay pixel values from stride tokens (manifest truth).
-  // No heuristic track parsing — observer.ts reads resolved stride CSS custom properties.
+  // Sync baseline/rhythm debug vars from the first .g-shell's resolved tokens.
+  // Falls back to documentElement if no shell is present.
+  // Per-shell column overlays are handled by syncShellOverlays separately.
   const syncMetrics = () => {
     const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
     if (!debugRoot) return
-    syncDebugMetrics(debugRoot, document.documentElement)
+    const firstShell = document.querySelector<HTMLElement>('.g-shell')
+    syncDebugMetrics(debugRoot, firstShell ?? document.documentElement)
+  }
+
+  const syncCols = () => {
+    const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
+    const colsActive = debugRoot?.getAttribute('data-g-debug-cols') === 'true'
+    syncShellOverlays(colsActive)
   }
 
   // Defer sync to ensure DOM is fully populated and laid out
   setTimeout(() => {
     syncLayers()
     syncMetrics()
+    syncCols()
     applyDriftDetection()
   }, 0)
 
-  // Recompute metrics on resize
+  // Recompute metrics and per-shell overlays on resize
   const resizeObserver = new ResizeObserver(() => {
     syncMetrics()
+    syncCols()
     applyDriftDetection()
   })
 
-  // Observe documentElement for global metrics
+  // Observe documentElement for resize events
   setTimeout(() => {
     resizeObserver.observe(document.documentElement)
   }, 0)
+
+  // Watch for cols layer toggle to re-render per-shell overlays
+  const colsObserver = new MutationObserver(() => {
+    syncCols()
+  })
+  setTimeout(() => {
+    const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
+    if (debugRoot) {
+      colsObserver.observe(debugRoot, {
+        attributes: true,
+        attributeFilter: ['data-g-debug-cols'],
+      })
+    }
+  }, 0)
+
+  // Re-sync per-shell overlays after SPA route changes.
+  // The router replaces mount innerHTML, destroying old overlay divs.
+  const onRouteChange = () => {
+    // Defer one tick to let the router finish rendering the new page HTML.
+    setTimeout(() => {
+      syncMetrics()
+      syncCols()
+      applyDriftDetection()
+    }, 0)
+  }
+  window.addEventListener('hashchange', onRouteChange)
 
   // Keyboard shortcuts for layer toggles
   const onKeyDown = (event: KeyboardEvent) => {
@@ -134,7 +170,10 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
   return {
     destroy() {
       document.removeEventListener('keydown', onKeyDown)
+      window.removeEventListener('hashchange', onRouteChange)
       resizeObserver.disconnect()
+      colsObserver.disconnect()
+      syncShellOverlays(false)
       root.unmount()
       container.remove()
     },
