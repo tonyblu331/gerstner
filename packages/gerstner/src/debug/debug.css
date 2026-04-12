@@ -23,7 +23,6 @@
 .g-debug-col-overlay {
   display: block;
   position: absolute;
-  inset: 0;
   pointer-events: none;
   z-index: 9998;
   background-image: repeating-linear-gradient(
@@ -33,7 +32,6 @@
     var(--g-debug-gutter-tint) var(--g-debug-col-px),
     var(--g-debug-gutter-tint) var(--g-debug-stride-px)
   );
-  background-position: var(--g-debug-frame-px, 0px) 0;
   background-repeat: repeat-y;
   background-size: calc(var(--g-debug-stride-px, 0px) * var(--g-cols, 12)) 100%;
 }

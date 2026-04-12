@@ -163,13 +163,14 @@ export function syncShellOverlays(colsActive: boolean): void {
     overlay.setAttribute('aria-hidden', 'true')
     overlay.style.cssText = [
       'position:absolute',
-      'inset:0',
+      // Inset by frame so overlay sits on content area, not padding area
+      `inset-inline:${metrics.framePx}px`,
+      'inset-block:0',
       'pointer-events:none',
       'z-index:9998',
       `--g-debug-col-px:${metrics.colPx}px`,
       `--g-debug-gutter-px:${metrics.gutterPx}px`,
       `--g-debug-stride-px:${metrics.stridePx}px`,
-      `--g-debug-frame-px:${metrics.framePx}px`,
       `--g-cols:${metrics.cols}`,
     ].join(';')
 
