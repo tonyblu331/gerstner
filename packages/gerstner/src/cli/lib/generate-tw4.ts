@@ -150,7 +150,7 @@ export function emitTw4Helpers(manifest: StrideManifest): string {
 
   sections.push(emitTw4GutterLineAliases(manifest.contract.cols))
 
-  // View column overrides
+  // View helpers
   sections.push(emitTw4ViewHelpers(manifest))
 
   // Align mode override

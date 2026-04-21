@@ -17,6 +17,7 @@ export interface DebugLabelSet {
   boundaries: { name: string; lineName: string; description: string }[]
   views: { viewCols: number; name: string; grouping: number[][] }[]
   scales: { step: number; name: string; cssRef: string }[]
+  collapses: { containerWidth: string; cols: number }[]
 }
 
 export function buildDebugLabels(manifest: StrideManifest): DebugLabelSet {
@@ -57,7 +58,13 @@ export function buildDebugLabels(manifest: StrideManifest): DebugLabelSet {
     { step: 5, name: 'scale-5', cssRef: '--g-scale-5' },
   ]
 
-  return { columns, gutters, boundaries, views, scales }
+  const collapses = [
+    { containerWidth: '64rem', cols: 6 },
+    { containerWidth: '48rem', cols: 4 },
+    { containerWidth: '32rem', cols: 2 },
+  ]
+
+  return { columns, gutters, boundaries, views, scales, collapses }
 }
 
 export function emitDebugLabelsJson(manifest: StrideManifest): string {

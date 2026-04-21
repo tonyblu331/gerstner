@@ -5,7 +5,7 @@ export function render(): string {
          HERO — g-full breakout with g-content + g-breakout-r
          ═══════════════════════════════════════════════════════════════ -->
     <header class="g-full g-sub hero">
-      <div class="g-stack-3 hero-text" style="grid-column: content-start / col 8">
+      <div class="g-stack-3 hero-text col-from-content-start col-end-8">
         <p class="g-ui">Layout System</p>
         <h1 class="g-display">Gerstner</h1>
         <p class="g-prose">A stride-derived grid system for the web. One contract, multiple surfaces. Column grids, rhythm, and typography — all from a single source of truth.</p>
@@ -14,7 +14,7 @@ export function render(): string {
           <a href="#typography" class="btn btn-secondary">Typography Scale</a>
         </div>
       </div>
-      <aside class="hero-visual" style="grid-column: col-8 / full-end">
+      <aside class="hero-visual col-start-8 col-to-full-end">
         <div class="visual-grid">
           <span></span><span></span><span></span><span></span>
           <span></span><span></span><span></span><span></span>

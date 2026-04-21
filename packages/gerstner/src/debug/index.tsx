@@ -47,11 +47,8 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
   }
 
   const syncLayers = () => {
-    const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
-    if (!debugRoot) return
-
     for (const layer of LAYERS) {
-      debugRoot.setAttribute(`data-g-debug-${layer}`, String(initialLayers[layer] ?? false))
+      document.body.setAttribute(`data-g-debug-${layer}`, String(initialLayers[layer] ?? false))
     }
   }
 
@@ -67,8 +64,7 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
   }
 
   const syncCols = () => {
-    const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
-    const colsActive = debugRoot?.getAttribute('data-g-debug-cols') === 'true'
+    const colsActive = document.body.getAttribute('data-g-debug-cols') === 'true'
     syncShellOverlays(colsActive)
   }
 
@@ -97,13 +93,10 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
     syncCols()
   })
   setTimeout(() => {
-    const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
-    if (debugRoot) {
-      colsObserver.observe(debugRoot, {
-        attributes: true,
-        attributeFilter: ['data-g-debug-cols'],
-      })
-    }
+    colsObserver.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['data-g-debug-cols'],
+    })
   }, 0)
 
   // Watch for inline style changes on scope element (DialKit writes --g-cols etc. to inline style).
@@ -168,7 +161,7 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
     if (key === '0') {
       // Alt+0 — turn all layers off
       for (const layer of LAYERS) {
-        debugRoot.setAttribute(`data-g-debug-${layer}`, 'false')
+        document.body.setAttribute(`data-g-debug-${layer}`, 'false')
       }
       event.preventDefault()
       return
@@ -178,8 +171,8 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
     if (layerIndex >= 0) {
       const layer = LAYERS[layerIndex]
       const attr = `data-g-debug-${layer}`
-      const current = debugRoot.getAttribute(attr) === 'true'
-      debugRoot.setAttribute(attr, String(!current))
+      const current = document.body.getAttribute(attr) === 'true'
+      document.body.setAttribute(attr, String(!current))
       event.preventDefault()
     }
   }
@@ -220,11 +213,9 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
       container.remove()
     },
     toggleLayer(layer) {
-      const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
-      if (!debugRoot) return
       const attr = `data-g-debug-${layer}`
-      const current = debugRoot.getAttribute(attr) === 'true'
-      debugRoot.setAttribute(attr, String(!current))
+      const current = document.body.getAttribute(attr) === 'true'
+      document.body.setAttribute(attr, String(!current))
     },
     exportContract,
   }

@@ -227,5 +227,19 @@
       "name": "scale-5",
       "cssRef": "--g-scale-5"
     }
+  ],
+  "collapses": [
+    {
+      "containerWidth": "64rem",
+      "cols": 6
+    },
+    {
+      "containerWidth": "48rem",
+      "cols": 4
+    },
+    {
+      "containerWidth": "32rem",
+      "cols": 2
+    }
   ]
 }

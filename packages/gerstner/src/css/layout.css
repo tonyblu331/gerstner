@@ -26,6 +26,7 @@
   .g-fit,
   .g-fill {
     container-type: inline-size;
+    container-name: gerstner;
     inline-size: 100%;
   }
 

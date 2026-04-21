@@ -19,7 +19,7 @@ export function render(): string {
     <main>
       <section class="g-shell re-hero" id="hero" style="--g-frame: clamp(1rem, 4vw, 3rem); --g-max-width: 88rem;">
         <div class="g-full g-sub re-hero__grid">
-          <div class="re-hero__left g-stack-3" style="grid-column: content-start / col 7;">
+          <div class="re-hero__left g-stack-3 col-from-content-start col-end-7">
             <div class="re-hero__eyebrow g-ui">Swiss Precision for Modern Living</div>
             <h1 class="g-display re-hero__h1">Homes Built on Clarity.</h1>
             <p class="g-prose re-hero__sub">We design systems, not just spaces — twelve years editing the city grid into homes of proportion, light, and enduring value.</p>
@@ -33,7 +33,7 @@ export function render(): string {
               <div class="re-hero__stat"><strong>4</strong><span class="re-hero__stat-label g-ui">Cities</span></div>
             </div>
           </div>
-          <div class="re-hero__right" style="grid-column: col 7 / full-end;">
+          <div class="re-hero__right col-start-7 col-to-full-end">
             <div class="re-hero__img-wrap">
               <img class="re-hero__img" src="https://picsum.photos/seed/re-hero/900/760" alt="Casa Luz exterior" />
               <div class="re-hero__price-card g-stack-1">

@@ -143,3 +143,82 @@
     --g-state: valid;
   }
 }
+
+@layer stride.responsive {
+  /* ══════════════════════════════════════════════════════════════════════════
+     RESPONSIVE OVERRIDES — Container-aware column reconfiguration
+     ══════════════════════════════════════════════════════════════════════════ */
+  .g-sub {
+    container-type: inline-size;
+    container-name: gerstner;
+  }
+
+  /* Default counts */
+  .g-view-2 {
+    --g-cols: 2;
+  }
+  .g-view-3 {
+    --g-cols: 3;
+  }
+  .g-view-4 {
+    --g-cols: 4;
+  }
+  .g-view-6 {
+    --g-cols: 6;
+  }
+  .g-view-8 {
+    --g-cols: 8;
+  }
+  .g-view-12 {
+    --g-cols: 12;
+  }
+
+  /* Collapse g-view-2: 2 -> 1 below 36rem (576px) */
+  @container gerstner (max-width: 36rem) {
+    .g-view-2 {
+      --g-cols: 1;
+    }
+  }
+
+  /* Collapse g-view-3: 3 -> 2 below 48rem (768px), 2 -> 1 below 30rem (480px) */
+  @container gerstner (max-width: 48rem) {
+    .g-view-3 {
+      --g-cols: 2;
+    }
+  }
+  @container gerstner (max-width: 30rem) {
+    .g-view-3 {
+      --g-cols: 1;
+      background-color: red !important;
+    }
+  }
+
+  /* Collapse g-view-4: 4 -> 2 below 60rem (960px), 2 -> 1 below 36rem (576px) */
+  @container gerstner (max-width: 60rem) {
+    .g-view-4 {
+      --g-cols: 2;
+    }
+  }
+  @container gerstner (max-width: 36rem) {
+    .g-view-4 {
+      --g-cols: 1;
+    }
+  }
+
+  /* Collapse g-view-6: 6 -> 3 below 72rem (1152px), 3 -> 2 below 48rem, 2 -> 1 below 30rem */
+  @container gerstner (max-width: 72rem) {
+    .g-view-6 {
+      --g-cols: 3;
+    }
+  }
+  @container gerstner (max-width: 48rem) {
+    .g-view-6 {
+      --g-cols: 2;
+    }
+  }
+  @container gerstner (max-width: 30rem) {
+    .g-view-6 {
+      --g-cols: 1;
+    }
+  }
+}

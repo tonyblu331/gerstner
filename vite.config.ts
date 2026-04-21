@@ -9,6 +9,10 @@ export default defineConfig({
     semi: false,
   },
 
+  test: {
+    exclude: ['**/node_modules/**', '**/dist/**', '**/tests/playwright/**'],
+  },
+
   lint: {
     ignorePatterns: [
       '**/dist/**',

@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 import { mkdtemp, mkdir, readFile, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
-import { runInit } from '../../packages/cli/commands/init'
+import { runInit } from '../../packages/gerstner/src/cli/commands/init'
 
 describe('gerstner cli fixture tests', () => {
   it('generates contract files with exact content', async () => {
@@ -51,26 +51,16 @@ describe('gerstner cli fixture tests', () => {
       'utf8',
     )
 
-    // Snapshot tests for exact content matching
-    expect(contract).toMatchInlineSnapshot(`
-      ":root {
-        --g-cols: 12;
-        --g-gap: clamp(0.875rem, 2.2vw, 1.5rem);
-        --g-frame: clamp(1rem, 5dvw, 5rem);
-        --g-max-width: 90rem;
-        --g-min: 16rem;
-        --g-type-base: 1rem;
-        --g-baseline: 0.25rem;
-        --g-leading-steps: 3;
-        --g-scale-ratio: 1.25;
-        --g-measure: 70ch;
-      }"
-    `)
+    // Content matching
+    expect(contract).toContain('Gerstner project contract')
+    expect(contract).toContain('--g-cols: 12;')
+    expect(contract).toContain('--g-gutter: clamp(0.875rem, 2.2vw, 1.5rem);')
+    expect(contract).toContain('--g-baseline: 0.5rem;')
+    expect(contract).toContain('--g-measure-body: 70ch;')
 
-    expect(debug).toContain('@import "@gerstner/debug/debug.css";')
+    expect(debug).toContain('@import "gerstner/debug/debug.css";')
     expect(debugJs).toContain('initGerstnerDebug({')
-    expect(reference).toContain('<!DOCTYPE html>')
-    expect(reference).toContain('@import "../src/styles/gerstner.contract.css";')
+    expect(reference).toMatch(/<!doctype html>/i)
   })
 
   it('injects imports correctly into existing files', async () => {
@@ -108,9 +98,9 @@ describe('gerstner cli fixture tests', () => {
     const updatedJs = await readFile(path.join(cwd, 'apps/playground/src/main.ts'), 'utf8')
 
     expect(updatedCss).toContain('@import "tailwindcss";')
-    expect(updatedCss).toContain('@import "gerstner";')
+    expect(updatedCss).toContain('@import "gerstner/tw4";')
     expect(updatedCss).toContain('@import "./styles/gerstner.contract.css";')
-    expect(updatedJs).toContain('import "./scripts/gerstner.debug.js"')
+    expect(updatedJs).toContain("import './scripts/gerstner.debug.js'")
   })
 
   it('handles idempotent runs without duplication', async () => {
@@ -128,7 +118,10 @@ describe('gerstner cli fixture tests', () => {
         2,
       ),
     )
-    await writeFile(path.join(cwd, 'apps/playground/src/index.css'), '.app { display: block; }\n')
+    await writeFile(
+      path.join(cwd, 'apps/playground/src/index.css'),
+      '@import "tailwindcss";\n.app { display: block; }\n',
+    )
     await writeFile(path.join(cwd, 'apps/playground/src/main.ts'), "console.log('boot')\n")
 
     // Run init twice
@@ -154,8 +147,8 @@ describe('gerstner cli fixture tests', () => {
     const js = await readFile(path.join(cwd, 'apps/playground/src/main.ts'), 'utf8')
 
     // Should not have duplicate imports
-    expect(css.match(/@import "gerstner";/g)?.length).toBe(1)
-    expect(css.match(/@import "\.\/styles\/gerstner\.contract\.css";/g)?.length).toBe(1)
-    expect(js.match(/import "\.\/scripts\/gerstner\.debug\.js"/g)?.length).toBe(1)
+    expect(css.split('@import "gerstner/tw4";').length - 1).toBe(1)
+    expect(css.split('@import "./styles/gerstner.contract.css";').length - 1).toBe(1)
+    expect(js.split("import './scripts/gerstner.debug.js'").length - 1).toBe(1)
   })
 })

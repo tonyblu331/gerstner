@@ -67,6 +67,7 @@ function removeGetComputedStyle() {
 
 const mockDocument = {
   documentElement: makeMockElement({ clientWidth: 1440, styles: {} }),
+  body: makeMockElement({ clientWidth: 1440, styles: {} }),
   querySelector: vi.fn(),
   querySelectorAll: vi.fn(() => []),
 }
@@ -220,13 +221,14 @@ describe('syncDebugMetrics — publishes px values to debug root', () => {
     syncDebugMetrics(debugRoot, scope)
 
     const style = (debugRoot.style as unknown as { _props: Record<string, string> })._props
+    const bodyStyle = (document.body.style as unknown as { _props: Record<string, string> })._props
     expect(style['--g-debug-col-px']).toMatch(/px$/)
     expect(style['--g-debug-gutter-px']).toBe('24px')
     expect(style['--g-debug-stride-px']).toMatch(/px$/)
     expect(style['--g-debug-frame-px']).toBe('80px')
     expect(style['--g-cols']).toBe('12')
-    expect(style['--g-debug-baseline-px']).toBe('8px')
-    expect(style['--g-debug-rhythm-px']).toBe('24px')
+    expect(bodyStyle['--g-debug-baseline-px']).toBe('8px')
+    expect(bodyStyle['--g-debug-rhythm-px']).toBe('24px')
   })
 
   it('still publishes baseline/rhythm px when readMetrics is null (invalid grid)', async () => {
@@ -250,8 +252,9 @@ describe('syncDebugMetrics — publishes px values to debug root', () => {
     syncDebugMetrics(debugRoot, scope)
 
     const style = (debugRoot.style as unknown as { _props: Record<string, string> })._props
-    expect(style['--g-debug-baseline-px']).toBe('8px')
-    expect(style['--g-debug-rhythm-px']).toBe('24px')
+    const bodyStyle = (document.body.style as unknown as { _props: Record<string, string> })._props
+    expect(bodyStyle['--g-debug-baseline-px']).toBe('8px')
+    expect(bodyStyle['--g-debug-rhythm-px']).toBe('24px')
     expect(style['--g-debug-col-px']).toBeUndefined()
   })
 })

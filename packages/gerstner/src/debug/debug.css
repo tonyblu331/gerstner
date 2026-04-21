@@ -29,16 +29,16 @@
 }
 
 /* ── Layer 2: Baseline grid — global fixed, same baseline unit page-wide ── */
-.g-debug-root::after {
+body::after {
   content: '';
-  position: fixed;
+  position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 9997;
   display: none;
 }
 
-.g-debug-root[data-g-debug-baseline='true']::after {
+body[data-g-debug-baseline='true']::after {
   display: block;
   background-image: repeating-linear-gradient(
     to bottom,
@@ -50,16 +50,16 @@
 }
 
 /* ── Layer 3: Rhythm — global fixed, same rhythm unit page-wide ── */
-.g-debug-root::before {
+body::before {
   content: '';
-  position: fixed;
+  position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 9997;
   display: none;
 }
 
-.g-debug-root[data-g-debug-rhythm='true']::before {
+body[data-g-debug-rhythm='true']::before {
   display: block;
   background-image: repeating-linear-gradient(
     to bottom,
@@ -73,21 +73,42 @@
 /* Baseline uses ::after, rhythm uses ::before — both can be on without clobbering. */
 
 /* ── Layer 4: Zone markers — outline only, no pseudo ── */
-/* .g-debug-root is position:fixed in body, not an ancestor of .g-shell.
-   Use :has() to trigger from a sibling relationship via body. */
-body:has(.g-debug-root[data-g-debug-zones='true']) .g-shell {
+body[data-g-debug-zones='true'] .g-shell {
   outline: 2px dashed var(--g-debug-zone-line);
   outline-offset: -2px;
 }
 
+body[data-g-debug-zones='true'] .g-shell > .g-content {
+  outline: 2px solid oklch(0.65 0.2 55 / 0.8);
+  outline-offset: -2px;
+  background-color: oklch(0.65 0.2 55 / 0.1);
+}
+
+body[data-g-debug-zones='true'] .g-shell > .g-full {
+  outline: 2px solid oklch(0.7 0.15 200 / 0.8);
+  outline-offset: -2px;
+  background-color: oklch(0.7 0.15 200 / 0.1);
+}
+
+body[data-g-debug-zones='true'] .g-shell > .g-breakout-l {
+  outline: 2px solid oklch(0.65 0.18 300 / 0.8);
+  outline-offset: -2px;
+  background-color: oklch(0.65 0.18 300 / 0.1);
+}
+
+body[data-g-debug-zones='true'] .g-shell > .g-breakout-r {
+  outline: 2px solid oklch(0.65 0.18 300 / 0.8);
+  outline-offset: -2px;
+  background-color: oklch(0.65 0.18 300 / 0.1);
+}
+
 /* ── Layer 5: Subgrid drift — JS-assisted ── */
-/* .g-debug-root is not an ancestor of [data-g-debug-drift-px] — use body:has() */
-body:has(.g-debug-root[data-g-debug-drift='true']) [data-g-debug-drift-px] {
+body[data-g-debug-drift='true'] [data-g-debug-drift-px] {
   outline: 2px solid var(--g-debug-drift-indicator);
   outline-offset: -1px;
 }
 
-body:has(.g-debug-root[data-g-debug-drift='true']) [data-g-debug-drift-px]::before {
+body[data-g-debug-drift='true'] [data-g-debug-drift-px]::before {
   content: attr(data-g-debug-drift-label) ' drift: ' attr(data-g-debug-drift-px);
   position: absolute;
   top: 0.25rem;

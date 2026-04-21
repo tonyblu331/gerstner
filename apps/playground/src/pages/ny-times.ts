@@ -29,14 +29,14 @@ export function render(): string {
     <header class="nyt-masthead">
       <div class="g-shell">
         <div class="g-sub nyt-masthead__grid">
-          <div class="nyt-masthead__left" style="grid-column: content-start / col 4;">
+          <div class="nyt-masthead__left col-from-content-start col-end-4">
             <span class="nyt-date g-ui">${today}</span>
             <a href="#" class="nyt-masthead__paper">Today's Paper</a>
           </div>
-          <div class="nyt-masthead__center" style="grid-column: col 4 / col 11;">
+          <div class="nyt-masthead__center col-start-4 col-end-11">
             <a href="#/ny-times" class="nyt-logo">The New York Times</a>
           </div>
-          <div class="nyt-masthead__right" style="grid-column: col 11 / content-end;">
+          <div class="nyt-masthead__right col-start-11 col-to-content-end">
             <div class="nyt-ticker">
               <span class="nyt-ticker__item">DOW <strong class="nyt-ticker__up">▲0.3%</strong></span>
               <span class="nyt-ticker__item">S&amp;P <strong class="nyt-ticker__up">▲0.5%</strong></span>

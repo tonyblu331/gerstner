@@ -139,9 +139,16 @@ export function readMetrics(scope: HTMLElement): ObserverMetrics | null {
 
   // Registered properties — resolve to computed values, convert rem→px
   const cols = parseInt(cs.getPropertyValue('--g-cols')) || 12
-  const gutterPx = toPx(cs.getPropertyValue('--g-gutter'), rootFontSize) || 16
-  const framePx = toPx(cs.getPropertyValue('--g-frame'), rootFontSize) || 16
-  const maxwidthPx = toPx(cs.getPropertyValue('--g-max-width'), rootFontSize) || 1440
+
+  let gutterPx = resolveVarAsBlockSizePx(scope, '--g-gutter')
+  if (!(gutterPx > 0)) gutterPx = toPx(cs.getPropertyValue('--g-gutter'), rootFontSize) || 16
+
+  let framePx = resolveVarAsBlockSizePx(scope, '--g-frame')
+  if (!(framePx > 0)) framePx = toPx(cs.getPropertyValue('--g-frame'), rootFontSize) || 16
+
+  let maxwidthPx = resolveVarAsBlockSizePx(scope, '--g-max-width')
+  if (!(maxwidthPx > 0))
+    maxwidthPx = toPx(cs.getPropertyValue('--g-max-width'), rootFontSize) || 1440
 
   // Derived: stride from resolved inputs + element dimensions
   // Mirrors stride/index.css formula: min(max-width, 100cqi - frame*2)
@@ -212,8 +219,8 @@ export function applyDriftDetection(): void {
 export function syncDebugMetrics(debugRoot: HTMLElement, scope: HTMLElement): void {
   const metrics = readMetrics(scope)
   if (metrics) {
-    debugRoot.style.setProperty('--g-debug-baseline-px', `${metrics.baselinePx}px`)
-    debugRoot.style.setProperty('--g-debug-rhythm-px', `${metrics.rhythmPx}px`)
+    document.body.style.setProperty('--g-debug-baseline-px', `${metrics.baselinePx}px`)
+    document.body.style.setProperty('--g-debug-rhythm-px', `${metrics.rhythmPx}px`)
     debugRoot.style.setProperty('--g-debug-col-px', `${metrics.colPx}px`)
     debugRoot.style.setProperty('--g-debug-gutter-px', `${metrics.gutterPx}px`)
     debugRoot.style.setProperty('--g-debug-stride-px', `${metrics.stridePx}px`)
@@ -223,8 +230,8 @@ export function syncDebugMetrics(debugRoot: HTMLElement, scope: HTMLElement): vo
   }
 
   const typo = readTypographyMetrics(scope)
-  debugRoot.style.setProperty('--g-debug-baseline-px', `${typo.baselinePx}px`)
-  debugRoot.style.setProperty('--g-debug-rhythm-px', `${typo.rhythmPx}px`)
+  document.body.style.setProperty('--g-debug-baseline-px', `${typo.baselinePx}px`)
+  document.body.style.setProperty('--g-debug-rhythm-px', `${typo.rhythmPx}px`)
 }
 
 const COL_OVERLAY_CLASS = 'g-debug-col-overlay'

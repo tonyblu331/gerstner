@@ -57,7 +57,7 @@ export function render(): string {
 
       <section class="g-shell art-body-shell">
         <div class="g-full g-sub art-body-grid">
-          <article class="art-body" style="grid-column: content-start / col 9;">
+          <article class="art-body col-from-content-start col-end-9">
             <p class="art-body__p art-drop-cap">Jason Allen didn't set out to cause an uproar. The Pueblo, Colo., game designer had been experimenting with Midjourney, a new A.I. image generator, for only a few months when he decided to enter the Colorado State Fair's fine arts competition.</p>
             <p class="art-body__p">He printed his favorite creation on canvas, submitted it under the category &quot;Digital Arts/Digitally-Manipulated Photography,&quot; and won first place. The $300 prize came with something else: outrage.</p>
             <p class="art-body__p">&quot;I knew this would be controversial,&quot; Mr. Allen said in an interview. &quot;I just didn't expect the level of vitriol.&quot;</p>
@@ -71,7 +71,7 @@ export function render(): string {
             <p class="art-body__p">The debate is unlikely to be settled in a county fair in Pueblo. But as generative tools become faster, cheaper, and harder to detect, museums, galleries, and competitions around the world are being forced to answer a question that once felt theoretical: What, exactly, counts as art?</p>
           </article>
 
-          <aside class="art-rail" aria-label="Related content" style="grid-column: col-9 / content-end;">
+          <aside class="art-rail col-start-9 col-to-content-end" aria-label="Related content">
             <div class="art-rail__sticky">
               <div>
                 <h3 class="art-rail__title">Most Popular</h3>
