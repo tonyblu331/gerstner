@@ -1,19 +1,19 @@
 {
   "version": 1,
-  "generatedAt": "2026-04-21T07:46:35.024Z",
+  "generatedAt": "2026-04-24T23:06:21.031Z",
   "contract": {
     "cols": 12,
-    "gutter": 24,
-    "frame": 80,
-    "maxWidth": 1440,
-    "minAutoTrack": 256,
-    "typeBase": 16,
-    "baseline": 8,
+    "gutterPx": 24,
+    "framePx": 80,
+    "maxInlinePx": 1440,
+    "minAutoTrackPx": 256,
+    "typeBasePx": 16,
+    "baselinePx": 8,
     "leadingSteps": 3,
     "scaleRatio": 1.25,
-    "measureBody": 70,
-    "measureTight": 45,
-    "measureUi": 35
+    "measureBodyPx": 70,
+    "measureTightPx": 45,
+    "measureUiPx": 35
   },
   "tokens": [
     {
@@ -22,32 +22,32 @@
       "kind": "authored"
     },
     {
-      "name": "gutter",
+      "name": "gutterPx",
       "cssRef": "--g-gutter",
       "kind": "authored"
     },
     {
-      "name": "frame",
+      "name": "framePx",
       "cssRef": "--g-frame",
       "kind": "authored"
     },
     {
-      "name": "maxWidth",
+      "name": "maxInlinePx",
       "cssRef": "--g-max-width",
       "kind": "authored"
     },
     {
-      "name": "minAutoTrack",
+      "name": "minAutoTrackPx",
       "cssRef": "--g-min",
       "kind": "authored"
     },
     {
-      "name": "typeBase",
+      "name": "typeBasePx",
       "cssRef": "--g-type-base",
       "kind": "authored"
     },
     {
-      "name": "baseline",
+      "name": "baselinePx",
       "cssRef": "--g-baseline",
       "kind": "authored"
     },
@@ -62,22 +62,22 @@
       "kind": "authored"
     },
     {
-      "name": "measureBody",
+      "name": "measureBodyPx",
       "cssRef": "--g-measure-body",
       "kind": "authored"
     },
     {
-      "name": "measureTight",
+      "name": "measureTightPx",
       "cssRef": "--g-measure-tight",
       "kind": "authored"
     },
     {
-      "name": "measureUi",
+      "name": "measureUiPx",
       "cssRef": "--g-measure-ui",
       "kind": "authored"
     },
     {
-      "name": "rhythm",
+      "name": "rhythmPx",
       "cssRef": "--g-rhythm",
       "kind": "derived"
     },
@@ -87,27 +87,27 @@
       "kind": "derived"
     },
     {
-      "name": "gapTotal",
+      "name": "gapTotalPx",
       "cssRef": "--g-gap-total",
       "kind": "derived"
     },
     {
-      "name": "colUnitRaw",
+      "name": "colUnitRawPx",
       "cssRef": "--g-col-unit-raw",
       "kind": "derived"
     },
     {
-      "name": "stride",
+      "name": "strideRawPx",
       "cssRef": "--g-stride",
       "kind": "derived"
     },
     {
-      "name": "colUnit",
+      "name": "colUnitRoundedPx",
       "cssRef": "--g-col-unit",
       "kind": "derived"
     },
     {
-      "name": "contentInline",
+      "name": "contentInlinePx",
       "cssRef": "--g-content-inline",
       "kind": "derived"
     },
@@ -133,29 +133,29 @@
     "densityLoose": 240
   },
   "rawFieldSample": {
-    "gapTotal": 264,
-    "unit": 98,
-    "stride": 122,
-    "fullStart": 0,
-    "contentStart": 0,
-    "contentEnd": 1440,
-    "fullEnd": 1440,
-    "linePositions": [0, 122, 244, 366, 488, 610, 732, 854, 976, 1098, 1220, 1342],
-    "gutterCenters": [110, 232, 354, 476, 598, 720, 842, 964, 1086, 1208, 1330]
+    "gapTotalPx": 264,
+    "unitRawPx": 98,
+    "strideRawPx": 122,
+    "fullStartPx": 0,
+    "contentStartPx": 0,
+    "contentEndPx": 1440,
+    "fullEndPx": 1440,
+    "lineStartPx": [0, 122, 244, 366, 488, 610, 732, 854, 976, 1098, 1220, 1342],
+    "gutterCenterPx": [110, 232, 354, 476, 598, 720, 842, 964, 1086, 1208, 1330]
   },
   "shellFieldSample": {
-    "gapTotal": 264,
-    "unit": 84.66666666666667,
-    "stride": 108.66666666666667,
-    "fullStart": 0,
-    "contentStart": 80,
-    "contentEnd": 1360,
-    "fullEnd": 1440,
-    "linePositions": [
+    "gapTotalPx": 264,
+    "unitRawPx": 84.66666666666667,
+    "strideRawPx": 108.66666666666667,
+    "fullStartPx": 0,
+    "contentStartPx": 80,
+    "contentEndPx": 1360,
+    "fullEndPx": 1440,
+    "lineStartPx": [
       80, 188.66666666666669, 297.33333333333337, 406, 514.6666666666667, 623.3333333333334, 732,
       840.6666666666667, 949.3333333333334, 1058, 1166.6666666666667, 1275.3333333333335
     ],
-    "gutterCenters": [
+    "gutterCenterPx": [
       176.66666666666669, 285.33333333333337, 394, 502.6666666666667, 611.3333333333334, 720,
       828.6666666666667, 937.3333333333334, 1046, 1154.6666666666667, 1263.3333333333335
     ]

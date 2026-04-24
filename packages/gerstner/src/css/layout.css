@@ -36,9 +36,12 @@
      col-N span helpers work correctly: span N = N columns (gap is not a track). */
   .g-shell {
     gap: var(--g-gutter);
-    --g-content-inline: min(var(--g-max-width), calc(100cqi - var(--g-frame) * 2));
+    --g-content-inline: max(0px, min(var(--g-max-width), calc(100cqi - var(--g-frame) * 2)));
     --g-gap-total: calc(var(--g-gutter) * (var(--g-cols) - 1));
-    --g-col-unit-raw: calc((var(--g-content-inline) - var(--g-gap-total)) / var(--g-cols));
+    --g-col-unit-raw: max(
+      0px,
+      calc((var(--g-content-inline) - var(--g-gap-total)) / var(--g-cols))
+    );
     --g-stride: calc(var(--g-col-unit-raw) + var(--g-gutter));
     --g-align-mode: shell;
 
@@ -59,7 +62,7 @@
     gap: var(--g-gutter);
     --g-grid-inline: 100cqi;
     --g-gap-total: calc(var(--g-gutter) * (var(--g-cols) - 1));
-    --g-col-unit-raw: calc((var(--g-grid-inline) - var(--g-gap-total)) / var(--g-cols));
+    --g-col-unit-raw: max(0px, calc((var(--g-grid-inline) - var(--g-gap-total)) / var(--g-cols)));
     --g-stride: calc(var(--g-col-unit-raw) + var(--g-gutter));
     --g-align-mode: raw;
 
@@ -79,7 +82,7 @@
     gap: var(--g-gutter);
     --g-grid-inline: 100cqi;
     --g-gap-total: calc(var(--g-gutter) * (var(--g-cols) - 1));
-    --g-col-unit-raw: calc((var(--g-grid-inline) - var(--g-gap-total)) / var(--g-cols));
+    --g-col-unit-raw: max(0px, calc((var(--g-grid-inline) - var(--g-gap-total)) / var(--g-cols)));
     --g-stride: calc(var(--g-col-unit-raw) + var(--g-gutter));
     --g-align-mode: adaptive;
   }

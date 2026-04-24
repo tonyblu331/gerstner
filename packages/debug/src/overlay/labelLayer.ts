@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import type { GridDebugSnapshot } from '../../stride/snapshot.js'
+import type { GridDebugSnapshot } from 'gerstner/stride/snapshot'
 import { relationshipColor } from './colors.js'
 
 export function renderLabelLayer(snap: GridDebugSnapshot, svg: SVGSVGElement): void {

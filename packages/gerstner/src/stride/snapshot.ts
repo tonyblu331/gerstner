@@ -280,17 +280,21 @@ function buildWarnings(
 ): DebugWarning[] {
   const warnings: DebugWarning[] = []
 
-  if (geometry.unit <= 0) {
+  if (geometry.unitRawPx <= 0) {
     warnings.push({
       code: 'NEGATIVE_CONTENT_INLINE',
       message: `Content inline size is zero or negative at ${outerInlinePx}px viewport. The grid cannot render columns.`,
     })
   }
 
-  if (inputs.minAutoTrackPx > 0 && geometry.unit > 0 && geometry.unit < inputs.minAutoTrackPx) {
+  if (
+    inputs.minAutoTrackPx > 0 &&
+    geometry.unitRawPx > 0 &&
+    geometry.unitRawPx < inputs.minAutoTrackPx
+  ) {
     warnings.push({
       code: 'TRACK_BELOW_MIN',
-      message: `Column unit (${geometry.unit.toFixed(1)}px) is below the declared minimum track size (${inputs.minAutoTrackPx}px).`,
+      message: `Column unit (${geometry.unitRawPx.toFixed(1)}px) is below the declared minimum track size (${inputs.minAutoTrackPx}px).`,
     })
   }
 
@@ -343,17 +347,17 @@ export function buildSnapshot(element: HTMLElement): GridDebugSnapshot | null {
 
   const strideInput: StrideContractInput = {
     cols: inputs.cols,
-    gutter: inputs.gutterPx,
-    frame: inputs.framePx,
-    maxWidth: inputs.maxInlinePx,
-    minAutoTrack: inputs.minAutoTrackPx,
-    typeBase: inputs.typeBasePx,
-    baseline: inputs.baselinePx,
+    gutterPx: inputs.gutterPx,
+    framePx: inputs.framePx,
+    maxInlinePx: inputs.maxInlinePx,
+    minAutoTrackPx: inputs.minAutoTrackPx,
+    typeBasePx: inputs.typeBasePx,
+    baselinePx: inputs.baselinePx,
     leadingSteps: inputs.leadingSteps,
     scaleRatio: inputs.scaleRatio,
-    measureBody: inputs.measureBodyPx,
-    measureTight: inputs.measureTightPx,
-    measureUi: inputs.measureUiPx,
+    measureBodyPx: inputs.measureBodyPx,
+    measureTightPx: inputs.measureTightPx,
+    measureUiPx: inputs.measureUiPx,
   }
 
   let geometry: FieldGeometry
@@ -365,14 +369,11 @@ export function buildSnapshot(element: HTMLElement): GridDebugSnapshot | null {
 
   const typeMetrics = computeTypeMetrics(strideInput)
 
-  const contentInlinePx = geometry.contentEnd - geometry.contentStart
+  const contentInlinePx = geometry.contentEndPx - geometry.contentStartPx
 
   const warnings = buildWarnings(kind, relationship, geometry, inputs, outerInlinePx)
 
-  const id = element.getAttribute('data-g-snapshot-id') ?? `g-snap-${++_snapshotCounter}`
-  if (!element.getAttribute('data-g-snapshot-id')) {
-    element.setAttribute('data-g-snapshot-id', id)
-  }
+  const id = `g-snap-${++_snapshotCounter}`
 
   return {
     id,
@@ -410,24 +411,24 @@ export function buildSnapshot(element: HTMLElement): GridDebugSnapshot | null {
 
     derived: {
       contentInlinePx,
-      gapTotalPx: geometry.gapTotal,
-      colUnitRawPx: geometry.unit,
-      colUnitRoundedPx: Math.round(geometry.unit),
-      strideRawPx: geometry.stride,
+      gapTotalPx: geometry.gapTotalPx,
+      colUnitRawPx: geometry.unitRawPx,
+      colUnitRoundedPx: Math.round(geometry.unitRawPx),
+      strideRawPx: geometry.strideRawPx,
       rhythmPx: typeMetrics.rhythm,
       proseLineHeight: typeMetrics.proseLineHeight,
     },
 
     boundaries: {
-      fullStartPx: geometry.fullStart,
-      contentStartPx: geometry.contentStart,
-      contentEndPx: geometry.contentEnd,
-      fullEndPx: geometry.fullEnd,
+      fullStartPx: geometry.fullStartPx,
+      contentStartPx: geometry.contentStartPx,
+      contentEndPx: geometry.contentEndPx,
+      fullEndPx: geometry.fullEndPx,
     },
 
     lines: {
-      lineStartPx: geometry.linePositions,
-      gutterCenterPx: geometry.gutterCenters,
+      lineStartPx: geometry.lineStartPx,
+      gutterCenterPx: geometry.gutterCenterPx,
     },
 
     warnings,

@@ -14,7 +14,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const srcRoot = path.resolve(__dirname, '../../')
+const srcRoot = path.resolve(__dirname, '../')
 
 function readSrcFile(relativePath: string): string {
   return readFileSync(path.join(srcRoot, relativePath), 'utf8')
@@ -256,7 +256,7 @@ describe('syncDebugMetrics — publishes px values to debug root', () => {
 // ---------------------------------------------------------------------------
 
 describe('debug/observer.ts — structural contracts', () => {
-  const observer = readSrcFile('debug/observer.ts')
+  const observer = readSrcFile('observer.ts')
 
   it('does not use gridTemplateColumns heuristic', () => {
     expect(observer).not.toContain('gridTemplateColumns')
@@ -278,7 +278,7 @@ describe('debug/observer.ts — structural contracts', () => {
   })
 
   it('imports buildSnapshot from stride/snapshot', () => {
-    expect(observer).toContain("from '../stride/snapshot.js'")
+    expect(observer).toContain("from 'gerstner/stride/snapshot'")
     expect(observer).toContain('buildSnapshot')
   })
 
@@ -297,7 +297,7 @@ describe('debug/observer.ts — structural contracts', () => {
 })
 
 describe('debug/debug.css — structural contracts', () => {
-  const css = readSrcFile('debug/debug.css')
+  const css = readSrcFile('debug.css')
 
   it('column overlay uses absolute positioning to avoid layout shift', () => {
     expect(css).toContain('position: absolute')
@@ -321,7 +321,7 @@ describe('debug/debug.css — structural contracts', () => {
 })
 
 describe('debug/index.tsx — structural contracts', () => {
-  const index = readSrcFile('debug/index.tsx')
+  const index = readSrcFile('index.tsx')
 
   it('imports from observer.js', () => {
     expect(index).toContain("from './observer.js'")
@@ -353,7 +353,7 @@ describe('debug/index.tsx — structural contracts', () => {
 // ---------------------------------------------------------------------------
 
 describe('debug/labels.json — shape', () => {
-  const labels = JSON.parse(readSrcFile('debug/labels.json'))
+  const labels = JSON.parse(readSrcFile('labels.json'))
 
   it('has 12 columns with index, name, lineName', () => {
     expect(Array.isArray(labels.columns)).toBe(true)
@@ -374,34 +374,5 @@ describe('debug/labels.json — shape', () => {
     expect(labels).toHaveProperty('boundaries')
     expect(labels).toHaveProperty('views')
     expect(labels).toHaveProperty('scales')
-  })
-})
-
-// ---------------------------------------------------------------------------
-// CLI templates — structural contracts
-// ---------------------------------------------------------------------------
-
-describe('cli/templates/contract.ts — structural contracts', () => {
-  const template = readSrcFile('cli/templates/contract.ts')
-
-  it('does not contain deprecated --g-measure (singular)', () => {
-    expect(template).not.toMatch(/--g-measure:\s/)
-  })
-
-  it('contains --g-measure-body/tight/ui', () => {
-    expect(template).toContain('--g-measure-body')
-    expect(template).toContain('--g-measure-tight')
-    expect(template).toContain('--g-measure-ui')
-  })
-})
-
-describe('cli/templates/debug.ts — structural contracts', () => {
-  const template = readSrcFile('cli/templates/debug.ts')
-
-  it('uses layers config, not legacy overlay/badge/ruler', () => {
-    expect(template).toContain('layers:')
-    expect(template).not.toContain('overlay:')
-    expect(template).not.toContain('badge:')
-    expect(template).not.toContain('ruler:')
   })
 })

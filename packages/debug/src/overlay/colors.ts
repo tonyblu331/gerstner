@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import type { AlignmentTruth } from '../../stride/snapshot.js'
+import type { AlignmentTruth } from 'gerstner/stride/snapshot'
 
 export interface StrokeSpec {
   stroke: string

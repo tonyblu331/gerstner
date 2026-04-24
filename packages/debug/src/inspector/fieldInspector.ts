@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import type { GridDebugSnapshot } from '../../stride/snapshot.js'
+import type { GridDebugSnapshot } from 'gerstner/stride/snapshot'
 
 /**
  * Short one-line label: "g-shell · 12 cols · exact"

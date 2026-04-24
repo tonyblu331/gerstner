@@ -21,17 +21,17 @@ const srcRoot = path.resolve(__dirname, '../../')
 
 const DEFAULT_CONTRACT: StrideContractInput = {
   cols: 12,
-  gutter: 24,
-  frame: 80,
-  maxWidth: 1440,
-  minAutoTrack: 256,
-  typeBase: 16,
-  baseline: 8,
+  gutterPx: 24,
+  framePx: 80,
+  maxInlinePx: 1440,
+  minAutoTrackPx: 256,
+  typeBasePx: 16,
+  baselinePx: 8,
   leadingSteps: 3,
   scaleRatio: 1.25,
-  measureBody: 70,
-  measureTight: 45,
-  measureUi: 35,
+  measureBodyPx: 70,
+  measureTightPx: 45,
+  measureUiPx: 35,
 }
 
 const manifest = emitManifest(DEFAULT_CONTRACT)
@@ -113,7 +113,7 @@ describe('tw4/helpers.css fixture', () => {
 
 describe('debug/labels.json fixture', () => {
   it('matches emitDebugLabelsJson output', () => {
-    const onDisk = readSrcFile('debug/labels.json')
+    const onDisk = readFileSync(path.join(srcRoot, '../../debug/src/labels.json'), 'utf8')
     const fromGenerator = emitDebugLabelsJson(manifest)
     expect(JSON.parse(onDisk)).toEqual(JSON.parse(fromGenerator))
   })

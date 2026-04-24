@@ -15,30 +15,30 @@
 export interface StrideContractInput {
   /** Column count. Integer >= 1. */
   cols: number
-  /** Gutter width. >= 0. */
-  gutter: number
-  /** Frame (outer margin). >= 0. */
-  frame: number
-  /** Max content width. >= 0. */
-  maxWidth: number
-  /** Minimum auto-track size. >= 0. */
-  minAutoTrack: number
+  /** Gutter width in px. >= 0. */
+  gutterPx: number
+  /** Frame (outer margin) in px. >= 0. */
+  framePx: number
+  /** Max content width in px. >= 0. */
+  maxInlinePx: number
+  /** Minimum auto-track size in px. >= 0. */
+  minAutoTrackPx: number
 
-  /** Type base size (e.g. 1rem). > 0. */
-  typeBase: number
-  /** Baseline unit (e.g. 0.5rem). > 0. */
-  baseline: number
+  /** Type base size in px. > 0. */
+  typeBasePx: number
+  /** Baseline unit in px. > 0. */
+  baselinePx: number
   /** Leading multiplier. > 0. */
   leadingSteps: number
   /** Type scale ratio. > 0. */
   scaleRatio: number
 
-  /** Body measure (e.g. 70ch). > 0. */
-  measureBody: number
-  /** Tight measure (e.g. 45ch). > 0. */
-  measureTight: number
-  /** UI measure (e.g. 35ch). > 0. */
-  measureUi: number
+  /** Body measure in px. > 0. */
+  measureBodyPx: number
+  /** Tight measure in px. > 0. */
+  measureTightPx: number
+  /** UI measure in px. > 0. */
+  measureUiPx: number
 }
 
 // ---------------------------------------------------------------------------
@@ -55,36 +55,38 @@ export class StrideValidationError extends Error {
 export function validateContract(input: StrideContractInput): void {
   const {
     cols,
-    gutter,
-    frame,
-    maxWidth,
-    minAutoTrack,
-    typeBase,
-    baseline,
+    gutterPx,
+    framePx,
+    maxInlinePx,
+    minAutoTrackPx,
+    typeBasePx,
+    baselinePx,
     leadingSteps,
     scaleRatio,
-    measureBody,
-    measureTight,
-    measureUi,
+    measureBodyPx,
+    measureTightPx,
+    measureUiPx,
   } = input
 
   if (!Number.isInteger(cols) || cols < 1)
     throw new StrideValidationError(`cols must be integer >= 1, got ${cols}`)
-  if (gutter < 0) throw new StrideValidationError(`gutter must be >= 0, got ${gutter}`)
-  if (frame < 0) throw new StrideValidationError(`frame must be >= 0, got ${frame}`)
-  if (maxWidth < 0) throw new StrideValidationError(`maxWidth must be >= 0, got ${maxWidth}`)
-  if (minAutoTrack < 0)
-    throw new StrideValidationError(`minAutoTrack must be >= 0, got ${minAutoTrack}`)
-  if (typeBase <= 0) throw new StrideValidationError(`typeBase must be > 0, got ${typeBase}`)
-  if (baseline <= 0) throw new StrideValidationError(`baseline must be > 0, got ${baseline}`)
+  if (gutterPx < 0) throw new StrideValidationError(`gutterPx must be >= 0, got ${gutterPx}`)
+  if (framePx < 0) throw new StrideValidationError(`framePx must be >= 0, got ${framePx}`)
+  if (maxInlinePx < 0)
+    throw new StrideValidationError(`maxInlinePx must be >= 0, got ${maxInlinePx}`)
+  if (minAutoTrackPx < 0)
+    throw new StrideValidationError(`minAutoTrackPx must be >= 0, got ${minAutoTrackPx}`)
+  if (typeBasePx <= 0) throw new StrideValidationError(`typeBasePx must be > 0, got ${typeBasePx}`)
+  if (baselinePx <= 0) throw new StrideValidationError(`baselinePx must be > 0, got ${baselinePx}`)
   if (leadingSteps <= 0)
     throw new StrideValidationError(`leadingSteps must be > 0, got ${leadingSteps}`)
   if (scaleRatio <= 0) throw new StrideValidationError(`scaleRatio must be > 0, got ${scaleRatio}`)
-  if (measureBody <= 0)
-    throw new StrideValidationError(`measureBody must be > 0, got ${measureBody}`)
-  if (measureTight <= 0)
-    throw new StrideValidationError(`measureTight must be > 0, got ${measureTight}`)
-  if (measureUi <= 0) throw new StrideValidationError(`measureUi must be > 0, got ${measureUi}`)
+  if (measureBodyPx <= 0)
+    throw new StrideValidationError(`measureBodyPx must be > 0, got ${measureBodyPx}`)
+  if (measureTightPx <= 0)
+    throw new StrideValidationError(`measureTightPx must be > 0, got ${measureTightPx}`)
+  if (measureUiPx <= 0)
+    throw new StrideValidationError(`measureUiPx must be > 0, got ${measureUiPx}`)
 }
 
 // ---------------------------------------------------------------------------
@@ -108,14 +110,14 @@ export interface TypeMetrics {
 }
 
 export function computeTypeMetrics(input: StrideContractInput): TypeMetrics {
-  const { baseline, leadingSteps, typeBase, scaleRatio } = input
+  const { baselinePx, leadingSteps, typeBasePx, scaleRatio } = input
 
-  const rhythm = baseline * leadingSteps
-  const proseLineHeight = rhythm / typeBase
+  const rhythm = baselinePx * leadingSteps
+  const proseLineHeight = rhythm / typeBasePx
 
-  const scaleNeg2 = typeBase / (scaleRatio * scaleRatio)
-  const scaleNeg1 = typeBase / scaleRatio
-  const scale0 = typeBase
+  const scaleNeg2 = typeBasePx / (scaleRatio * scaleRatio)
+  const scaleNeg1 = typeBasePx / scaleRatio
+  const scale0 = typeBasePx
   const scale1 = scale0 * scaleRatio
   const scale2 = scale1 * scaleRatio
   const scale3 = scale2 * scaleRatio
@@ -148,15 +150,15 @@ export function computeTypeMetrics(input: StrideContractInput): TypeMetrics {
 // ---------------------------------------------------------------------------
 
 export interface FieldGeometry {
-  gapTotal: number
-  unit: number
-  stride: number
-  fullStart: number
-  contentStart: number
-  contentEnd: number
-  fullEnd: number
-  linePositions: number[]
-  gutterCenters: number[]
+  gapTotalPx: number
+  unitRawPx: number
+  strideRawPx: number
+  fullStartPx: number
+  contentStartPx: number
+  contentEndPx: number
+  fullEndPx: number
+  lineStartPx: number[]
+  gutterCenterPx: number[]
 }
 
 // ---------------------------------------------------------------------------
@@ -164,33 +166,33 @@ export interface FieldGeometry {
 // ---------------------------------------------------------------------------
 
 export function computeRawField(inlineSize: number, input: StrideContractInput): FieldGeometry {
-  const { cols, gutter } = input
+  const { cols, gutterPx } = input
 
-  const gapTotal = gutter * (cols - 1)
-  const unit = (inlineSize - gapTotal) / cols
-  const stride = unit + gutter
+  const gapTotalPx = gutterPx * (cols - 1)
+  const unitRawPx = Math.max(0, (inlineSize - gapTotalPx) / cols)
+  const strideRawPx = unitRawPx + gutterPx
 
-  const fullStart = 0
-  const contentStart = 0
-  const contentEnd = inlineSize
-  const fullEnd = inlineSize
+  const fullStartPx = 0
+  const contentStartPx = 0
+  const contentEndPx = inlineSize
+  const fullEndPx = inlineSize
 
-  const linePositions = Array.from({ length: cols }, (_, i) => i * stride)
-  const gutterCenters = Array.from(
+  const lineStartPx = Array.from({ length: cols }, (_, i) => i * strideRawPx)
+  const gutterCenterPx = Array.from(
     { length: cols - 1 },
-    (_, i) => (i + 1) * unit + i * gutter + gutter / 2,
+    (_, i) => (i + 1) * unitRawPx + i * gutterPx + gutterPx / 2,
   )
 
   return {
-    gapTotal,
-    unit,
-    stride,
-    fullStart,
-    contentStart,
-    contentEnd,
-    fullEnd,
-    linePositions,
-    gutterCenters,
+    gapTotalPx,
+    unitRawPx,
+    strideRawPx,
+    fullStartPx,
+    contentStartPx,
+    contentEndPx,
+    fullEndPx,
+    lineStartPx,
+    gutterCenterPx,
   }
 }
 
@@ -202,34 +204,34 @@ export function computeShellField(
   outerInlineSize: number,
   input: StrideContractInput,
 ): FieldGeometry {
-  const { cols, gutter, frame, maxWidth } = input
+  const { cols, gutterPx, framePx, maxInlinePx } = input
 
-  const contentInline = Math.max(0, Math.min(maxWidth, outerInlineSize - frame * 2))
-  const gapTotal = gutter * (cols - 1)
-  const unit = (contentInline - gapTotal) / cols
-  const stride = unit + gutter
+  const contentInlinePx = Math.max(0, Math.min(maxInlinePx, outerInlineSize - framePx * 2))
+  const gapTotalPx = gutterPx * (cols - 1)
+  const unitRawPx = Math.max(0, (contentInlinePx - gapTotalPx) / cols)
+  const strideRawPx = unitRawPx + gutterPx
 
-  const fullStart = 0
-  const contentStart = frame
-  const contentEnd = frame + contentInline
-  const fullEnd = outerInlineSize
+  const fullStartPx = 0
+  const contentStartPx = framePx
+  const contentEndPx = framePx + contentInlinePx
+  const fullEndPx = outerInlineSize
 
-  const linePositions = Array.from({ length: cols }, (_, i) => contentStart + i * stride)
-  const gutterCenters = Array.from(
+  const lineStartPx = Array.from({ length: cols }, (_, i) => contentStartPx + i * strideRawPx)
+  const gutterCenterPx = Array.from(
     { length: cols - 1 },
-    (_, i) => contentStart + (i + 1) * unit + i * gutter + gutter / 2,
+    (_, i) => contentStartPx + (i + 1) * unitRawPx + i * gutterPx + gutterPx / 2,
   )
 
   return {
-    gapTotal,
-    unit,
-    stride,
-    fullStart,
-    contentStart,
-    contentEnd,
-    fullEnd,
-    linePositions,
-    gutterCenters,
+    gapTotalPx,
+    unitRawPx,
+    strideRawPx,
+    fullStartPx,
+    contentStartPx,
+    contentEndPx,
+    fullEndPx,
+    lineStartPx,
+    gutterCenterPx,
   }
 }
 
@@ -285,16 +287,16 @@ export function divisorGrouping(baseCols: number, viewCols: number): number[][] 
 // ---------------------------------------------------------------------------
 
 export function isDegenerate(field: FieldGeometry): boolean {
-  return field.unit <= 0
+  return field.unitRawPx <= 0
 }
 
 export function clampDegenerate(field: FieldGeometry): FieldGeometry {
   if (!isDegenerate(field)) return field
   return {
     ...field,
-    unit: 0,
-    stride: field.gapTotal >= 0 ? field.stride : 0,
-    linePositions: field.linePositions.map(() => 0),
-    gutterCenters: field.gutterCenters.map(() => 0),
+    unitRawPx: 0,
+    strideRawPx: field.gapTotalPx >= 0 ? field.strideRawPx : 0,
+    lineStartPx: field.lineStartPx.map(() => 0),
+    gutterCenterPx: field.gutterCenterPx.map(() => 0),
   }
 }

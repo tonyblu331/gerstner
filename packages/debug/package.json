@@ -1,0 +1,62 @@
+{
+  "name": "@gerstner/debug",
+  "version": "0.2.0",
+  "description": "Gerstner read-only debug visualizer — consumes stride truth, never computes truth",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "types": "./src/index.tsx",
+  "exports": {
+    ".": {
+      "types": "./src/index.tsx",
+      "development": "./src/index.tsx",
+      "default": "./dist/index.mjs"
+    },
+    "./observer": {
+      "types": "./src/observer.ts",
+      "development": "./src/observer.ts",
+      "default": "./dist/observer.mjs"
+    },
+    "./debug.css": {
+      "development": "./src/debug.css",
+      "default": "./dist/debug.css"
+    },
+    "./labels.json": {
+      "development": "./src/labels.json",
+      "default": "./dist/labels.json"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vp pack && npm run copy-css",
+    "copy-css": "node -e \"require('fs').cpSync('src/debug.css', 'dist/debug.css'); require('fs').cpSync('src/labels.json', 'dist/labels.json')\"",
+    "dev": "vp pack --watch",
+    "test": "vp test",
+    "check": "vp check"
+  },
+  "dependencies": {
+    "dialkit": "1.2.0",
+    "gerstner": "workspace:*",
+    "react": "19.2.5",
+    "react-dom": "19.2.5"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/react": "19.2.3",
+    "@types/react-dom": "19.2.3",
+    "typescript": "catalog:",
+    "vite-plus": "catalog:"
+  },
+  "bundledDependencies": [
+    "react",
+    "react-dom"
+  ]
+}

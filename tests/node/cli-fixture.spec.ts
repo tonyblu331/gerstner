@@ -58,7 +58,7 @@ describe('gerstner cli fixture tests', () => {
     expect(contract).toContain('--g-baseline: 0.5rem;')
     expect(contract).toContain('--g-measure-body: 70ch;')
 
-    expect(debug).toContain('@import "gerstner/debug/debug.css";')
+    expect(debug).toContain('@import "@gerstner/debug/debug.css";')
     expect(debugJs).toContain('initGerstnerDebug({')
     expect(reference).toMatch(/<!doctype html>/i)
   })

@@ -29,17 +29,17 @@ import { emitManifest, serializeManifest } from '../serialize'
 
 const DEFAULT_CONTRACT: StrideContractInput = {
   cols: 12,
-  gutter: 24,
-  frame: 80,
-  maxWidth: 1440,
-  minAutoTrack: 256,
-  typeBase: 16,
-  baseline: 8,
+  gutterPx: 24,
+  framePx: 80,
+  maxInlinePx: 1440,
+  minAutoTrackPx: 256,
+  typeBasePx: 16,
+  baselinePx: 8,
   leadingSteps: 3,
   scaleRatio: 1.25,
-  measureBody: 70,
-  measureTight: 45,
-  measureUi: 35,
+  measureBodyPx: 70,
+  measureTightPx: 45,
+  measureUiPx: 35,
 }
 
 // ---------------------------------------------------------------------------
@@ -63,19 +63,19 @@ describe('validateContract', () => {
   })
 
   it('rejects negative gutter', () => {
-    expect(() => validateContract({ ...DEFAULT_CONTRACT, gutter: -1 })).toThrow(
+    expect(() => validateContract({ ...DEFAULT_CONTRACT, gutterPx: -1 })).toThrow(
       StrideValidationError,
     )
   })
 
   it('rejects zero typeBase', () => {
-    expect(() => validateContract({ ...DEFAULT_CONTRACT, typeBase: 0 })).toThrow(
+    expect(() => validateContract({ ...DEFAULT_CONTRACT, typeBasePx: 0 })).toThrow(
       StrideValidationError,
     )
   })
 
   it('rejects zero baseline', () => {
-    expect(() => validateContract({ ...DEFAULT_CONTRACT, baseline: 0 })).toThrow(
+    expect(() => validateContract({ ...DEFAULT_CONTRACT, baselinePx: 0 })).toThrow(
       StrideValidationError,
     )
   })
@@ -93,23 +93,23 @@ describe('validateContract', () => {
   })
 
   it('rejects zero measure', () => {
-    expect(() => validateContract({ ...DEFAULT_CONTRACT, measureBody: 0 })).toThrow(
+    expect(() => validateContract({ ...DEFAULT_CONTRACT, measureBodyPx: 0 })).toThrow(
       StrideValidationError,
     )
-    expect(() => validateContract({ ...DEFAULT_CONTRACT, measureTight: 0 })).toThrow(
+    expect(() => validateContract({ ...DEFAULT_CONTRACT, measureTightPx: 0 })).toThrow(
       StrideValidationError,
     )
-    expect(() => validateContract({ ...DEFAULT_CONTRACT, measureUi: 0 })).toThrow(
+    expect(() => validateContract({ ...DEFAULT_CONTRACT, measureUiPx: 0 })).toThrow(
       StrideValidationError,
     )
   })
 
   it('allows gutter = 0', () => {
-    expect(() => validateContract({ ...DEFAULT_CONTRACT, gutter: 0 })).not.toThrow()
+    expect(() => validateContract({ ...DEFAULT_CONTRACT, gutterPx: 0 })).not.toThrow()
   })
 
   it('allows frame = 0', () => {
-    expect(() => validateContract({ ...DEFAULT_CONTRACT, frame: 0 })).not.toThrow()
+    expect(() => validateContract({ ...DEFAULT_CONTRACT, framePx: 0 })).not.toThrow()
   })
 
   it('allows cols = 1', () => {
@@ -184,36 +184,36 @@ describe('computeTypeMetrics', () => {
 describe('computeRawField', () => {
   const field = computeRawField(1440, DEFAULT_CONTRACT)
 
-  it('computes gapTotal = gutter * (cols - 1)', () => {
-    expect(field.gapTotal).toBe(24 * 11) // 264
+  it('computes gapTotalPx = gutterPx * (cols - 1)', () => {
+    expect(field.gapTotalPx).toBe(24 * 11) // 264
   })
 
-  it('computes unit = (inlineSize - gapTotal) / cols', () => {
-    expect(field.unit).toBeCloseTo((1440 - 264) / 12, 10) // 98
+  it('computes unitRawPx = (inlineSize - gapTotalPx) / cols', () => {
+    expect(field.unitRawPx).toBeCloseTo((1440 - 264) / 12, 10) // 98
   })
 
-  it('computes stride = unit + gutter', () => {
-    expect(field.stride).toBeCloseTo(98 + 24, 10) // 122
+  it('computes strideRawPx = unitRawPx + gutterPx', () => {
+    expect(field.strideRawPx).toBeCloseTo(98 + 24, 10) // 122
   })
 
   it('raw field has no frame offset', () => {
-    expect(field.fullStart).toBe(0)
-    expect(field.contentStart).toBe(0)
-    expect(field.contentEnd).toBe(1440)
-    expect(field.fullEnd).toBe(1440)
+    expect(field.fullStartPx).toBe(0)
+    expect(field.contentStartPx).toBe(0)
+    expect(field.contentEndPx).toBe(1440)
+    expect(field.fullEndPx).toBe(1440)
   })
 
-  it('computes linePositions[n] = n * stride', () => {
-    expect(field.linePositions).toHaveLength(12)
-    expect(field.linePositions[0]).toBe(0)
-    expect(field.linePositions[1]).toBeCloseTo(122, 10)
-    expect(field.linePositions[11]).toBeCloseTo(1342, 10)
+  it('computes lineStartPx[n] = n * strideRawPx', () => {
+    expect(field.lineStartPx).toHaveLength(12)
+    expect(field.lineStartPx[0]).toBe(0)
+    expect(field.lineStartPx[1]).toBeCloseTo(122, 10)
+    expect(field.lineStartPx[11]).toBeCloseTo(1342, 10)
   })
 
-  it('computes gutterCenters correctly', () => {
-    expect(field.gutterCenters).toHaveLength(11)
-    // gutter center after col 1: 1*unit + 0.5*gutter = 98 + 12 = 110
-    expect(field.gutterCenters[0]).toBeCloseTo(110, 10)
+  it('computes gutterCenterPx correctly', () => {
+    expect(field.gutterCenterPx).toHaveLength(11)
+    // gutter center after col 1: 1*unitRawPx + 0.5*gutterPx = 98 + 12 = 110
+    expect(field.gutterCenterPx[0]).toBeCloseTo(110, 10)
   })
 })
 
@@ -224,40 +224,42 @@ describe('computeRawField', () => {
 describe('computeShellField', () => {
   const field = computeShellField(1440, DEFAULT_CONTRACT)
 
-  it('computes contentInline = max(0, min(maxWidth, outerInlineSize - frame*2))', () => {
-    expect(field.contentEnd - field.contentStart).toBeLessThanOrEqual(DEFAULT_CONTRACT.maxWidth)
-    // With frame=80, outerInline=1440: contentInline = min(1440, 1440-160) = 1280
-    // But maxWidth=1440 so contentInline = min(1440, 1280) = 1280
+  it('computes contentInlinePx = max(0, min(maxInlinePx, outerInlineSize - framePx*2))', () => {
+    expect(field.contentEndPx - field.contentStartPx).toBeLessThanOrEqual(
+      DEFAULT_CONTRACT.maxInlinePx,
+    )
+    // With framePx=80, outerInline=1440: contentInlinePx = min(1440, 1440-160) = 1280
+    // But maxInlinePx=1440 so contentInlinePx = min(1440, 1280) = 1280
   })
 
-  it('computes gapTotal = gutter * (cols - 1)', () => {
-    expect(field.gapTotal).toBe(24 * 11) // 264
+  it('computes gapTotalPx = gutterPx * (cols - 1)', () => {
+    expect(field.gapTotalPx).toBe(24 * 11) // 264
   })
 
   it('shell field has frame offset', () => {
-    expect(field.fullStart).toBe(0)
-    expect(field.contentStart).toBe(80) // frame
-    expect(field.fullEnd).toBe(1440)
+    expect(field.fullStartPx).toBe(0)
+    expect(field.contentStartPx).toBe(80) // framePx
+    expect(field.fullEndPx).toBe(1440)
   })
 
-  it('computes linePositions with frame offset', () => {
-    expect(field.linePositions).toHaveLength(12)
-    expect(field.linePositions[0]).toBe(80) // contentStart
-    // contentInline = min(1440, 1280) = 1280, stride = (1280-264)/12 + 24 = 108.667
-    expect(field.linePositions[1]).toBeCloseTo(80 + (1280 - 264) / 12 + 24, 10)
+  it('computes lineStartPx with frame offset', () => {
+    expect(field.lineStartPx).toHaveLength(12)
+    expect(field.lineStartPx[0]).toBe(80) // contentStartPx
+    // contentInlinePx = min(1440, 1280) = 1280, strideRawPx = (1280-264)/12 + 24 = 108.667
+    expect(field.lineStartPx[1]).toBeCloseTo(80 + (1280 - 264) / 12 + 24, 10)
   })
 
-  it('clamps contentInline to 0 when outerInlineSize < frame*2', () => {
-    const tiny = computeShellField(100, { ...DEFAULT_CONTRACT, frame: 80 })
-    // outerInline=100, frame*2=160, so contentInline = max(0, min(1440, 100-160)) = 0
-    expect(tiny.contentEnd - tiny.contentStart).toBe(0)
-    expect(tiny.unit).toBeLessThanOrEqual(0)
+  it('clamps contentInlinePx to 0 when outerInlineSize < framePx*2', () => {
+    const tiny = computeShellField(100, { ...DEFAULT_CONTRACT, framePx: 80 })
+    // outerInline=100, framePx*2=160, so contentInlinePx = max(0, min(1440, 100-160)) = 0
+    expect(tiny.contentEndPx - tiny.contentStartPx).toBe(0)
+    expect(tiny.unitRawPx).toBeLessThanOrEqual(0)
   })
 
-  it('clamps contentInline to maxWidth when viewport is huge', () => {
+  it('clamps contentInlinePx to maxInlinePx when viewport is huge', () => {
     const huge = computeShellField(3000, DEFAULT_CONTRACT)
-    // outerInline=3000, frame*2=160, contentInline = min(1440, 2840) = 1440
-    expect(huge.contentEnd - huge.contentStart).toBe(DEFAULT_CONTRACT.maxWidth)
+    // outerInline=3000, framePx*2=160, contentInlinePx = min(1440, 2840) = 1440
+    expect(huge.contentEndPx - huge.contentStartPx).toBe(DEFAULT_CONTRACT.maxInlinePx)
   })
 })
 
@@ -348,8 +350,8 @@ describe('divisorGrouping', () => {
 
 describe('degenerate behavior', () => {
   it('detects degenerate field', () => {
-    const tiny = computeRawField(100, { ...DEFAULT_CONTRACT, gutter: 24 })
-    // 100 - 264 = -164, unit = -164/12 < 0
+    const tiny = computeRawField(100, { ...DEFAULT_CONTRACT, gutterPx: 24 })
+    // 100 - 264 = -164, unitRawPx = -164/12 < 0
     expect(isDegenerate(tiny)).toBe(true)
   })
 
@@ -361,9 +363,9 @@ describe('degenerate behavior', () => {
   it('clampDegenerate zeroes out unit and positions', () => {
     const tiny = computeRawField(100, DEFAULT_CONTRACT)
     const clamped = clampDegenerate(tiny)
-    expect(clamped.unit).toBe(0)
-    expect(clamped.linePositions.every((p) => p === 0)).toBe(true)
-    expect(clamped.gutterCenters.every((g) => g === 0)).toBe(true)
+    expect(clamped.unitRawPx).toBe(0)
+    expect(clamped.lineStartPx.every((p: number) => p === 0)).toBe(true)
+    expect(clamped.gutterCenterPx.every((g: number) => g === 0)).toBe(true)
   })
 
   it('clampDegenerate is identity for non-degenerate', () => {
@@ -393,7 +395,7 @@ describe('emitManifest', () => {
   })
 
   it('throws for degenerate sample geometry', () => {
-    const tiny: StrideContractInput = { ...DEFAULT_CONTRACT, maxWidth: 10 }
+    const tiny: StrideContractInput = { ...DEFAULT_CONTRACT, maxInlinePx: 10 }
     expect(() => emitManifest(tiny)).toThrow()
   })
 
@@ -409,16 +411,16 @@ describe('emitManifest', () => {
   it('manifest rawFieldSample matches computeRawField', () => {
     const manifest = emitManifest(DEFAULT_CONTRACT)
     const field = computeRawField(1440, DEFAULT_CONTRACT)
-    expect(manifest.rawFieldSample.gapTotal).toBe(field.gapTotal)
-    expect(manifest.rawFieldSample.unit).toBeCloseTo(field.unit, 10)
-    expect(manifest.rawFieldSample.stride).toBeCloseTo(field.stride, 10)
+    expect(manifest.rawFieldSample.gapTotalPx).toBe(field.gapTotalPx)
+    expect(manifest.rawFieldSample.unitRawPx).toBeCloseTo(field.unitRawPx, 10)
+    expect(manifest.rawFieldSample.strideRawPx).toBeCloseTo(field.strideRawPx, 10)
   })
 
   it('manifest shellFieldSample matches computeShellField', () => {
     const manifest = emitManifest(DEFAULT_CONTRACT)
     const field = computeShellField(1440, DEFAULT_CONTRACT)
-    expect(manifest.shellFieldSample.gapTotal).toBe(field.gapTotal)
-    expect(manifest.shellFieldSample.contentStart).toBe(field.contentStart)
+    expect(manifest.shellFieldSample.gapTotalPx).toBe(field.gapTotalPx)
+    expect(manifest.shellFieldSample.contentStartPx).toBe(field.contentStartPx)
   })
 
   it('excludes view-8 from views (8 does not divide 12)', () => {

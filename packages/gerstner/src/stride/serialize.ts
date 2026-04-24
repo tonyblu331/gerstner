@@ -93,27 +93,27 @@ export interface StrideManifest {
 
 function buildTokens(_input: StrideContractInput): ManifestTokenEntry[] {
   return [
-    // Authored
+    // Authored — must match StrideContractInput field names
     { name: 'cols', cssRef: '--g-cols', kind: 'authored' },
-    { name: 'gutter', cssRef: '--g-gutter', kind: 'authored' },
-    { name: 'frame', cssRef: '--g-frame', kind: 'authored' },
-    { name: 'maxWidth', cssRef: '--g-max-width', kind: 'authored' },
-    { name: 'minAutoTrack', cssRef: '--g-min', kind: 'authored' },
-    { name: 'typeBase', cssRef: '--g-type-base', kind: 'authored' },
-    { name: 'baseline', cssRef: '--g-baseline', kind: 'authored' },
+    { name: 'gutterPx', cssRef: '--g-gutter', kind: 'authored' },
+    { name: 'framePx', cssRef: '--g-frame', kind: 'authored' },
+    { name: 'maxInlinePx', cssRef: '--g-max-width', kind: 'authored' },
+    { name: 'minAutoTrackPx', cssRef: '--g-min', kind: 'authored' },
+    { name: 'typeBasePx', cssRef: '--g-type-base', kind: 'authored' },
+    { name: 'baselinePx', cssRef: '--g-baseline', kind: 'authored' },
     { name: 'leadingSteps', cssRef: '--g-leading-steps', kind: 'authored' },
     { name: 'scaleRatio', cssRef: '--g-scale-ratio', kind: 'authored' },
-    { name: 'measureBody', cssRef: '--g-measure-body', kind: 'authored' },
-    { name: 'measureTight', cssRef: '--g-measure-tight', kind: 'authored' },
-    { name: 'measureUi', cssRef: '--g-measure-ui', kind: 'authored' },
-    // Derived
-    { name: 'rhythm', cssRef: '--g-rhythm', kind: 'derived' },
+    { name: 'measureBodyPx', cssRef: '--g-measure-body', kind: 'authored' },
+    { name: 'measureTightPx', cssRef: '--g-measure-tight', kind: 'authored' },
+    { name: 'measureUiPx', cssRef: '--g-measure-ui', kind: 'authored' },
+    // Derived — computed by core.ts formulas, not authored
+    { name: 'rhythmPx', cssRef: '--g-rhythm', kind: 'derived' },
     { name: 'proseLineHeight', cssRef: '--g-prose', kind: 'derived' },
-    { name: 'gapTotal', cssRef: '--g-gap-total', kind: 'derived' },
-    { name: 'colUnitRaw', cssRef: '--g-col-unit-raw', kind: 'derived' },
-    { name: 'stride', cssRef: '--g-stride', kind: 'derived' },
-    { name: 'colUnit', cssRef: '--g-col-unit', kind: 'derived' },
-    { name: 'contentInline', cssRef: '--g-content-inline', kind: 'derived' },
+    { name: 'gapTotalPx', cssRef: '--g-gap-total', kind: 'derived' },
+    { name: 'colUnitRawPx', cssRef: '--g-col-unit-raw', kind: 'derived' },
+    { name: 'strideRawPx', cssRef: '--g-stride', kind: 'derived' },
+    { name: 'colUnitRoundedPx', cssRef: '--g-col-unit', kind: 'derived' },
+    { name: 'contentInlinePx', cssRef: '--g-content-inline', kind: 'derived' },
     { name: 'alignMode', cssRef: '--g-align-mode', kind: 'derived' },
   ]
 }

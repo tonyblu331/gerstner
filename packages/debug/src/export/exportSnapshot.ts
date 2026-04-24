@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import type { GridDebugSnapshot } from '../../stride/snapshot.js'
+import type { GridDebugSnapshot } from 'gerstner/stride/snapshot'
 
 /**
  * Serialize a snapshot to a JSON string (element ref is omitted — not serializable).

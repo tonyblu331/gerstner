@@ -9,15 +9,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { buildSnapshot, buildAllSnapshots, type GridDebugSnapshot } from '../stride/snapshot.js'
+import { buildSnapshot, buildAllSnapshots, type GridDebugSnapshot } from 'gerstner/stride/snapshot'
 
-export type { GridDebugSnapshot } from '../stride/snapshot.js'
+export type { GridDebugSnapshot } from 'gerstner/stride/snapshot'
 export type {
   AlignmentTruth,
   FieldKind,
   DebugWarning,
   DebugWarningCode,
-} from '../stride/snapshot.js'
+} from 'gerstner/stride/snapshot'
 
 export interface ObserverMetrics {
   colPx: number
@@ -107,22 +107,19 @@ export function syncShellOverlays(colsActive: boolean): void {
 
   if (!colsActive) return
 
+  const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
+  if (!debugRoot) return
+
   const shells = document.querySelectorAll<HTMLElement>('.g-shell')
   shells.forEach((shell) => {
     const snap = buildSnapshot(shell)
     if (!snap || snap.derived.colUnitRawPx <= 0) return
-
-    const shellPos = getComputedStyle(shell).position
-    if (shellPos === 'static') {
-      shell.style.position = 'relative'
-    }
 
     const overlay = document.createElement('div')
     overlay.className = COL_OVERLAY_CLASS
     overlay.setAttribute('aria-hidden', 'true')
 
     const { colUnitRawPx, strideRawPx } = snap.derived
-    const frameOffsetPx = snap.boundaries.contentStartPx
     const cols = snap.authored.cols
 
     const stops: string[] = []
@@ -138,15 +135,19 @@ export function syncShellOverlays(colsActive: boolean): void {
       )
     }
 
+    const rect = shell.getBoundingClientRect()
+    const frameOffsetPx = snap.boundaries.contentStartPx - snap.boundaries.fullStartPx
     overlay.style.cssText = [
       'position:absolute',
-      'inset-block:0',
-      `inset-inline:${frameOffsetPx}px`,
+      `top:${rect.top + window.scrollY}px`,
+      `left:${rect.left + window.scrollX + frameOffsetPx}px`,
+      `width:${snap.boundaries.contentEndPx - snap.boundaries.contentStartPx}px`,
+      `height:${rect.height}px`,
       'pointer-events:none',
       'z-index:9998',
       `background-image:linear-gradient(to right, ${stops.join(', ')})`,
     ].join(';')
 
-    shell.appendChild(overlay)
+    debugRoot.appendChild(overlay)
   })
 }

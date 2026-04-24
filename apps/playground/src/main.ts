@@ -1,7 +1,7 @@
 import './index.css'
 import 'dialkit/styles.css'
-import 'gerstner/debug/debug.css'
-import { initGerstnerDebug } from 'gerstner/debug'
+import '@gerstner/debug/debug.css'
+import { initGerstnerDebug } from '@gerstner/debug'
 import { initRouter } from './router'
 import * as showcase from './pages/showcase'
 import * as article from './pages/article'
@@ -54,7 +54,6 @@ initGerstnerDebug({
       baseline: true,
       rhythm: false,
       zones: false,
-      drift: false,
     },
   },
 })

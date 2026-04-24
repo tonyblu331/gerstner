@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import type { DebugWarning, DebugWarningCode } from '../stride/snapshot.js'
+import type { DebugWarning, DebugWarningCode } from 'gerstner/stride/snapshot'
 
 export type { DebugWarning, DebugWarningCode }
 

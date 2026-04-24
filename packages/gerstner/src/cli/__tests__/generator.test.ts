@@ -20,17 +20,17 @@ import { buildReferenceMetadata, emitReferenceMetadataJson } from '../lib/genera
 
 const DEFAULT_CONTRACT: StrideContractInput = {
   cols: 12,
-  gutter: 24,
-  frame: 80,
-  maxWidth: 1440,
-  minAutoTrack: 256,
-  typeBase: 16,
-  baseline: 8,
+  gutterPx: 24,
+  framePx: 80,
+  maxInlinePx: 1440,
+  minAutoTrackPx: 256,
+  typeBasePx: 16,
+  baselinePx: 8,
   leadingSteps: 3,
   scaleRatio: 1.25,
-  measureBody: 70,
-  measureTight: 45,
-  measureUi: 35,
+  measureBodyPx: 70,
+  measureTightPx: 45,
+  measureUiPx: 35,
 }
 
 const manifest = emitManifest(DEFAULT_CONTRACT)

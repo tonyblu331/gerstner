@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import type { GridDebugSnapshot } from '../../stride/snapshot.js'
+import type { GridDebugSnapshot } from 'gerstner/stride/snapshot'
 import { ZONE_COLORS } from './colors.js'
 
 export function renderZoneLayer(snap: GridDebugSnapshot, svg: SVGSVGElement): void {

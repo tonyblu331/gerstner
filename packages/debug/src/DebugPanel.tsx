@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { DialRoot, DialStore, useDialKit } from 'dialkit'
-import { buildSnapshot, type GridDebugSnapshot } from '../stride/snapshot.js'
+import { buildSnapshot, type GridDebugSnapshot } from 'gerstner/stride/snapshot'
 import { renderFieldSummary, renderFieldDetail } from './inspector/fieldInspector.js'
 import { formatWarningBadge } from './warnings.js'
 

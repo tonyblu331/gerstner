@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import type { GridDebugSnapshot } from '../../stride/snapshot.js'
+import type { GridDebugSnapshot } from 'gerstner/stride/snapshot'
 import { renderLineLayer } from './lineLayer.js'
 import { renderZoneLayer } from './zoneLayer.js'
 import { renderGutterLayer } from './gutterLayer.js'

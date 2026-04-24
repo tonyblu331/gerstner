@@ -27,27 +27,21 @@
       "development": "./src/tw4/index.css",
       "default": "./dist/tw4/index.css"
     },
-    "./debug": {
-      "development": "./src/debug/index.tsx",
-      "default": "./dist/debug/index.mjs",
-      "types": "./dist/debug/index.d.mts"
-    },
-    "./debug/observer": {
-      "development": "./src/debug/observer.ts",
-      "default": "./dist/debug/observer.mjs",
-      "types": "./dist/debug/observer.d.mts"
-    },
-    "./debug/debug.css": {
-      "development": "./src/debug/debug.css",
-      "default": "./dist/debug/debug.css"
-    },
-    "./debug/labels.json": {
-      "development": "./src/debug/labels.json",
-      "default": "./dist/debug/labels.json"
-    },
     "./stride": {
       "development": "./src/stride/index.css",
       "default": "./dist/stride/index.css"
+    },
+    "./stride/snapshot": {
+      "types": "./dist/stride/snapshot.d.mts",
+      "development": "./src/stride/snapshot.ts",
+      "import": "./src/stride/snapshot.ts",
+      "default": "./dist/stride/snapshot.mjs"
+    },
+    "./stride/debugManifest": {
+      "types": "./dist/stride/debugManifest.d.mts",
+      "development": "./src/stride/debugManifest.ts",
+      "import": "./src/stride/debugManifest.ts",
+      "default": "./dist/stride/debugManifest.mjs"
     },
     "./layout": {
       "development": "./src/css/layout-only.css",
@@ -59,26 +53,20 @@
   },
   "scripts": {
     "build": "vp pack && npm run copy-css",
-    "copy-css": "node -e \"require('fs').cpSync('src/css', 'dist/css', {recursive:true}); require('fs').cpSync('src/tw4', 'dist/tw4', {recursive:true}); require('fs').cpSync('src/debug/debug.css', 'dist/debug/debug.css'); require('fs').cpSync('src/debug/labels.json', 'dist/debug/labels.json'); require('fs').cpSync('src/stride', 'dist/stride', {recursive:true})\"",
+    "copy-css": "node -e \"require('fs').cpSync('src/css', 'dist/css', {recursive:true}); require('fs').cpSync('src/tw4', 'dist/tw4', {recursive:true}); require('fs').cpSync('src/stride', 'dist/stride', {recursive:true})\"",
     "dev": "vp pack --watch",
     "test": "vp test",
     "check": "vp check",
     "emit:manifest": "pnpm dlx tsx src/stride/emit-manifest.ts > src/stride/contract.manifest.json",
     "emit:helpers": "pnpm dlx tsx src/cli/lib/emit-helpers.ts > src/css/helpers.css",
     "emit:tw4": "pnpm dlx tsx src/cli/lib/emit-tw4.ts > src/tw4/helpers.css",
-    "emit:debug": "pnpm dlx tsx src/cli/lib/emit-debug.ts > src/debug/labels.json",
+    "emit:debug": "pnpm dlx tsx src/cli/lib/emit-debug.ts > ../debug/src/labels.json",
     "emit:reference": "pnpm dlx tsx src/cli/lib/emit-reference.ts > src/reference-fixtures/metadata.json",
     "prepublishOnly": "vp run build"
   },
-  "dependencies": {
-    "dialkit": "1.2.0",
-    "react": "19.2.5",
-    "react-dom": "19.2.5"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "catalog:",
-    "@types/react": "19.2.3",
-    "@types/react-dom": "19.2.3",
     "typescript": "catalog:",
     "vite-plus": "catalog:"
   },
@@ -89,9 +77,5 @@
     "tailwindcss": {
       "optional": true
     }
-  },
-  "bundledDependencies": [
-    "react",
-    "react-dom"
-  ]
+  }
 }

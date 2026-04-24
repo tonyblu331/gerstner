@@ -232,7 +232,6 @@
   @container gerstner (max-width: 30rem) {
     .g-view-3 {
       --g-cols: 1;
-      background-color: red !important;
     }
   }
 
