@@ -37,3 +37,35 @@
   --spacing-g-gutter: var(--g-gutter);
   --spacing-g-frame: var(--g-frame);
 }
+
+/* Debug metadata — read-only, mirrors stride.debug layer for TW4 consumers */
+.g-shell {
+  --g-debug-field: shell;
+  --g-debug-relationship: exact;
+}
+.g {
+  --g-debug-field: raw;
+  --g-debug-relationship: exact;
+}
+.g-sub {
+  --g-debug-field: subgrid;
+  --g-debug-relationship: exact;
+}
+.g-view-2,
+.g-view-3,
+.g-view-4,
+.g-view-6,
+.g-view-8,
+.g-view-12 {
+  --g-debug-field: view;
+  --g-debug-relationship: approximate;
+}
+.g-align-independent {
+  --g-debug-field: independent;
+  --g-debug-relationship: independent;
+}
+.g-fit,
+.g-fill {
+  --g-debug-field: raw;
+  --g-debug-relationship: exact;
+}

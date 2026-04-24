@@ -1,10 +1,10 @@
 import { createRoot } from 'react-dom/client'
 import { DebugPanel } from './DebugPanel.js'
-import { syncDebugMetrics, applyDriftDetection, syncShellOverlays } from './observer.js'
+import { syncDebugMetrics, syncShellOverlays } from './observer.js'
 
-export type DebugLayer = 'cols' | 'baseline' | 'rhythm' | 'zones' | 'drift'
+export type DebugLayer = 'cols' | 'baseline' | 'rhythm' | 'zones'
 
-const LAYERS: DebugLayer[] = ['cols', 'baseline', 'rhythm', 'zones', 'drift']
+const LAYERS: DebugLayer[] = ['cols', 'baseline', 'rhythm', 'zones']
 
 export interface GerstnerDebugOptions {
   defaultOpen?: boolean
@@ -43,7 +43,6 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
     baseline: true,
     rhythm: false,
     zones: false,
-    drift: false,
   }
 
   const syncLayers = () => {
@@ -73,14 +72,12 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
     syncLayers()
     syncMetrics()
     syncCols()
-    applyDriftDetection()
   }, 0)
 
   // Recompute metrics and per-shell overlays on resize
   const resizeObserver = new ResizeObserver(() => {
     syncMetrics()
     syncCols()
-    applyDriftDetection()
   })
 
   // Observe documentElement for resize events
@@ -105,7 +102,6 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
   const styleObserver = new MutationObserver(() => {
     syncMetrics()
     syncCols()
-    applyDriftDetection()
   })
 
   const observeShellStyles = () => {
@@ -128,7 +124,6 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
   const fullResync = () => {
     syncMetrics()
     syncCols()
-    applyDriftDetection()
   }
 
   // DebugPanel rescopes DialKit to hovered/pinned .g-shell — refresh metrics for baseline/rhythm.
@@ -167,7 +162,7 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
       return
     }
 
-    const layerIndex = ['1', '2', '3', '4', '5'].indexOf(key)
+    const layerIndex = ['1', '2', '3', '4'].indexOf(key)
     if (layerIndex >= 0) {
       const layer = LAYERS[layerIndex]
       const attr = `data-g-debug-${layer}`

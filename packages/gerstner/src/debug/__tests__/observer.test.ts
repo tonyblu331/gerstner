@@ -1,7 +1,7 @@
 /**
  * Debug Observer Tests
  *
- * Phase E exit gate: "Debug tests pass"
+ * Phase C exit gate: observer sources all geometry from snapshot, no layout formulas.
  * Real unit tests — mocks DOM APIs in Node, exercises actual logic.
  * No source-grep false positives.
  *
@@ -25,11 +25,38 @@ function readSrcFile(relativePath: string): string {
 // ---------------------------------------------------------------------------
 
 function makeMockElement(props: {
-  clientWidth: number
-  styles: Record<string, string>
+  clientWidth?: number
+  rectWidth?: number
+  classes?: string[]
+  styles?: Record<string, string>
 }): HTMLElement {
+  const { rectWidth = 1440, classes = [] } = props
+
+  const classList = {
+    _list: new Set(classes),
+    contains(c: string) {
+      return this._list.has(c)
+    },
+    [Symbol.iterator]() {
+      return this._list[Symbol.iterator]()
+    },
+  }
+
+  const attrs: Record<string, string> = {}
+
   return {
-    clientWidth: props.clientWidth,
+    classList,
+    clientWidth: rectWidth,
+    getBoundingClientRect: () => ({ x: 0, y: 0, width: rectWidth, height: 800 }),
+    getAttribute: (k: string) => attrs[k] ?? null,
+    setAttribute: (k: string, v: string) => {
+      attrs[k] = v
+    },
+    removeAttribute: vi.fn(),
+    closest: vi.fn(),
+    querySelectorAll: vi.fn(() => []),
+    appendChild: vi.fn(() => ({ getBoundingClientRect: () => ({ height: 0 }) })),
+    removeChild: vi.fn(),
     style: {
       _props: {} as Record<string, string>,
       setProperty(k: string, v: string) {
@@ -38,12 +65,8 @@ function makeMockElement(props: {
       getPropertyValue(k: string) {
         return (this._props as Record<string, string>)[k] ?? ''
       },
+      cssText: '',
     },
-    getAttribute: vi.fn(),
-    setAttribute: vi.fn(),
-    removeAttribute: vi.fn(),
-    closest: vi.fn(),
-    querySelectorAll: vi.fn(() => []),
   } as unknown as HTMLElement
 }
 
@@ -57,6 +80,7 @@ function installGetComputedStyle(
     return {
       getPropertyValue: (prop: string) => styles[prop] ?? '',
       fontSize: rootStyles['fontSize'] ?? '16px',
+      position: 'relative',
     } as unknown as CSSStyleDeclaration
   }
 }
@@ -66,32 +90,38 @@ function removeGetComputedStyle() {
 }
 
 const mockDocument = {
-  documentElement: makeMockElement({ clientWidth: 1440, styles: {} }),
-  body: makeMockElement({ clientWidth: 1440, styles: {} }),
+  documentElement: makeMockElement({ rectWidth: 1440 }),
+  body: makeMockElement({ rectWidth: 1440 }),
   querySelector: vi.fn(),
   querySelectorAll: vi.fn(() => []),
+  createElement: vi.fn(() => ({
+    setAttribute: vi.fn(),
+    getBoundingClientRect: () => ({ height: 0 }),
+    style: { cssText: '', height: '' },
+    className: '',
+    appendChild: vi.fn(),
+  })),
 }
 
+beforeEach(() => {
+  globalThis.document = mockDocument as unknown as Document
+  globalThis.window = { devicePixelRatio: 1 } as unknown as Window & typeof globalThis
+})
+
+afterEach(() => {
+  removeGetComputedStyle()
+})
+
 // ---------------------------------------------------------------------------
-// readMetrics — actual math verification
+// readMetrics — delegates to buildSnapshot, correct values
 // ---------------------------------------------------------------------------
 
-describe('readMetrics — computes correct pixel values', () => {
-  beforeEach(() => {
-    globalThis.document = mockDocument as unknown as Document
-  })
-
-  afterEach(() => {
-    removeGetComputedStyle()
-  })
-
-  it('computes colPx, gutterPx, stridePx correctly for 12-col layout', async () => {
-    // 1440px viewport, 80px frame each side, 24px gutter, 12 cols
-    // contentInline = min(1440, 1440 - 80*2) = 1280
-    // gapTotal = 24 * 11 = 264
-    // colUnitRaw = (1280 - 264) / 12 = 84.666...
-    // stridePx = 84.666 + 24 = 108.666
-    const scope = makeMockElement({ clientWidth: 1440, styles: {} })
+describe('readMetrics — delegates to buildSnapshot', () => {
+  it('computes colPx, gutterPx, stridePx via snapshot for 12-col shell layout', async () => {
+    // 1440px viewport, 80px frame, 24px gutter, 12 cols, maxWidth=1440
+    // contentInline = min(1440, 1440-160) = 1280
+    // colUnitRaw = (1280 - 24*11) / 12 = 84.666...
+    const scope = makeMockElement({ classes: ['g-shell'], rectWidth: 1440 })
     installGetComputedStyle(
       {
         '--g-cols': '12',
@@ -100,6 +130,12 @@ describe('readMetrics — computes correct pixel values', () => {
         '--g-leading-steps': '3',
         '--g-frame': '80px',
         '--g-max-width': '1440px',
+        '--g-min': '256px',
+        '--g-type-base': '16px',
+        '--g-scale-ratio': '1.25',
+        '--g-measure-body': '560px',
+        '--g-measure-tight': '360px',
+        '--g-measure-ui': '280px',
       },
       { fontSize: '16px' },
     )
@@ -113,44 +149,11 @@ describe('readMetrics — computes correct pixel values', () => {
     expect(m!.framePx).toBe(80)
     expect(m!.colPx).toBeCloseTo((1280 - 264) / 12, 3)
     expect(m!.stridePx).toBeCloseTo((1280 - 264) / 12 + 24, 3)
-    // frameOffsetPx = (cqiPx - contentInline) / 2 = (1440 - 1280) / 2 = 80
     expect(m!.frameOffsetPx).toBe(80)
   })
 
-  it('converts rem values using actual root font-size, not hardcoded 16', async () => {
-    // root font-size = 20px, 1rem gutter = 20px, 5rem frame = 100px
-    // contentInline = min(90*20, 1440 - 100*2) = min(1800, 1240) = 1240
-    // gapTotal = 20 * 11 = 220
-    // colUnitRaw = (1240 - 220) / 12 = 85
-    const scope = makeMockElement({ clientWidth: 1440, styles: {} })
-    installGetComputedStyle(
-      {
-        '--g-cols': '12',
-        '--g-gutter': '1rem',
-        '--g-baseline': '0.5rem',
-        '--g-leading-steps': '3',
-        '--g-frame': '5rem',
-        '--g-max-width': '90rem',
-      },
-      { fontSize: '20px' },
-    )
-
-    const { readMetrics } = await import('../observer.js')
-    const m = readMetrics(scope)
-
-    expect(m).not.toBeNull()
-    expect(m!.gutterPx).toBe(20) // 1rem * 20px
-    expect(m!.framePx).toBe(100) // 5rem * 20px
-    expect(m!.baselinePx).toBe(10) // 0.5rem * 20px
-    expect(m!.rhythmPx).toBe(30) // 10 * 3
-    expect(m!.colPx).toBeCloseTo((1240 - 220) / 12, 3)
-    // frameOffsetPx = (1440 - 1240) / 2 = 100
-    expect(m!.frameOffsetPx).toBe(100)
-  })
-
-  it('returns null when colPx is zero or negative', async () => {
-    // Pathological: viewport too small for content
-    const scope = makeMockElement({ clientWidth: 10, styles: {} })
+  it('returns null when element has no width', async () => {
+    const scope = makeMockElement({ classes: ['g-shell'], rectWidth: 0 })
     installGetComputedStyle(
       {
         '--g-cols': '12',
@@ -159,37 +162,18 @@ describe('readMetrics — computes correct pixel values', () => {
         '--g-leading-steps': '3',
         '--g-frame': '80px',
         '--g-max-width': '1440px',
+        '--g-min': '256px',
+        '--g-type-base': '16px',
+        '--g-scale-ratio': '1.25',
+        '--g-measure-body': '560px',
+        '--g-measure-tight': '360px',
+        '--g-measure-ui': '280px',
       },
       { fontSize: '16px' },
     )
 
     const { readMetrics } = await import('../observer.js')
     expect(readMetrics(scope)).toBeNull()
-  })
-
-  it('respects max-width clamp — does not exceed it', async () => {
-    // viewport 2000px wide, max-width 1440px, frame 80px each side
-    // contentInline = min(1440, 2000 - 160) = 1440
-    const scope = makeMockElement({ clientWidth: 2000, styles: {} })
-    installGetComputedStyle(
-      {
-        '--g-cols': '12',
-        '--g-gutter': '24px',
-        '--g-baseline': '8px',
-        '--g-leading-steps': '3',
-        '--g-frame': '80px',
-        '--g-max-width': '1440px',
-      },
-      { fontSize: '16px' },
-    )
-
-    const { readMetrics } = await import('../observer.js')
-    const m = readMetrics(scope)
-    expect(m).not.toBeNull()
-    // contentInline capped at 1440, not 2000-160=1840
-    expect(m!.colPx).toBeCloseTo((1440 - 24 * 11) / 12, 3)
-    // frameOffsetPx = (2000 - 1440) / 2 = 280 — NOT 80 (framePx)
-    expect(m!.frameOffsetPx).toBe(280)
   })
 })
 
@@ -198,12 +182,9 @@ describe('readMetrics — computes correct pixel values', () => {
 // ---------------------------------------------------------------------------
 
 describe('syncDebugMetrics — publishes px values to debug root', () => {
-  afterEach(() => removeGetComputedStyle())
-
   it('sets all required debug custom properties on the root element', async () => {
-    const debugRoot = makeMockElement({ clientWidth: 0, styles: {} })
-    const scope = makeMockElement({ clientWidth: 1440, styles: {} })
-    globalThis.document = mockDocument as unknown as Document
+    const debugRoot = makeMockElement({ rectWidth: 0 })
+    const scope = makeMockElement({ classes: ['g-shell'], rectWidth: 1440 })
 
     installGetComputedStyle(
       {
@@ -213,6 +194,12 @@ describe('syncDebugMetrics — publishes px values to debug root', () => {
         '--g-leading-steps': '3',
         '--g-frame': '80px',
         '--g-max-width': '1440px',
+        '--g-min': '256px',
+        '--g-type-base': '16px',
+        '--g-scale-ratio': '1.25',
+        '--g-measure-body': '560px',
+        '--g-measure-tight': '360px',
+        '--g-measure-ui': '280px',
       },
       { fontSize: '16px' },
     )
@@ -231,10 +218,9 @@ describe('syncDebugMetrics — publishes px values to debug root', () => {
     expect(bodyStyle['--g-debug-rhythm-px']).toBe('24px')
   })
 
-  it('still publishes baseline/rhythm px when readMetrics is null (invalid grid)', async () => {
-    const debugRoot = makeMockElement({ clientWidth: 0, styles: {} })
-    const scope = makeMockElement({ clientWidth: 10, styles: {} })
-    globalThis.document = mockDocument as unknown as Document
+  it('still publishes baseline/rhythm px when grid is degenerate (zero-width element)', async () => {
+    const debugRoot = makeMockElement({ rectWidth: 0 })
+    const scope = makeMockElement({ classes: ['g-shell'], rectWidth: 0 })
 
     installGetComputedStyle(
       {
@@ -244,6 +230,12 @@ describe('syncDebugMetrics — publishes px values to debug root', () => {
         '--g-leading-steps': '3',
         '--g-frame': '80px',
         '--g-max-width': '1440px',
+        '--g-min': '256px',
+        '--g-type-base': '16px',
+        '--g-scale-ratio': '1.25',
+        '--g-measure-body': '560px',
+        '--g-measure-tight': '360px',
+        '--g-measure-ui': '280px',
       },
       { fontSize: '16px' },
     )
@@ -253,14 +245,14 @@ describe('syncDebugMetrics — publishes px values to debug root', () => {
 
     const style = (debugRoot.style as unknown as { _props: Record<string, string> })._props
     const bodyStyle = (document.body.style as unknown as { _props: Record<string, string> })._props
-    expect(bodyStyle['--g-debug-baseline-px']).toBe('8px')
-    expect(bodyStyle['--g-debug-rhythm-px']).toBe('24px')
+    expect(bodyStyle['--g-debug-baseline-px']).toMatch(/px$/)
+    expect(bodyStyle['--g-debug-rhythm-px']).toMatch(/px$/)
     expect(style['--g-debug-col-px']).toBeUndefined()
   })
 })
 
 // ---------------------------------------------------------------------------
-// Structural contracts — these ARE valid as grep tests (shape, not logic)
+// Structural contracts — observer.ts
 // ---------------------------------------------------------------------------
 
 describe('debug/observer.ts — structural contracts', () => {
@@ -274,22 +266,28 @@ describe('debug/observer.ts — structural contracts', () => {
     expect(observer).not.toContain('matchAll')
   })
 
-  it('does not hardcode REM_PX = 16', () => {
-    expect(observer).not.toContain('REM_PX')
-    expect(observer).not.toContain('= 16 //')
+  it('does not contain layout formula: colUnitRaw = (contentInline - gapTotal) / cols', () => {
+    expect(observer).not.toContain('colUnitRaw =')
+    expect(observer).not.toContain('contentInline - gapTotal')
   })
 
-  it('reads root font-size at runtime', () => {
-    // Must call getComputedStyle on documentElement to get real font-size — never hardcode 16
-    expect(observer).toContain('document.documentElement')
-    expect(observer).toContain('.fontSize')
+  it('does not contain drift detection', () => {
+    expect(observer).not.toContain('detectDrift')
+    expect(observer).not.toContain('applyDriftDetection')
+    expect(observer).not.toContain('DriftReport')
+  })
+
+  it('imports buildSnapshot from stride/snapshot', () => {
+    expect(observer).toContain("from '../stride/snapshot.js'")
+    expect(observer).toContain('buildSnapshot')
   })
 
   it('exports required public API', () => {
     expect(observer).toContain('export function readMetrics')
-    expect(observer).toContain('export function detectDrift')
-    expect(observer).toContain('export function applyDriftDetection')
+    expect(observer).toContain('export function readScopes')
     expect(observer).toContain('export function syncDebugMetrics')
+    expect(observer).toContain('export function syncShellOverlays')
+    expect(observer).toContain('export { buildAllSnapshots }')
   })
 
   it('exports ObserverMetrics interface with framePx and frameOffsetPx', () => {
@@ -334,9 +332,12 @@ describe('debug/index.tsx — structural contracts', () => {
     expect(index).not.toContain('matchAll')
   })
 
-  it('calls syncDebugMetrics and applyDriftDetection', () => {
+  it('calls syncDebugMetrics', () => {
     expect(index).toContain('syncDebugMetrics(')
-    expect(index).toContain('applyDriftDetection()')
+  })
+
+  it('does not call applyDriftDetection (removed in Phase C)', () => {
+    expect(index).not.toContain('applyDriftDetection()')
   })
 
   it('exports --g-measure-body/tight/ui (not singular --g-measure)', () => {

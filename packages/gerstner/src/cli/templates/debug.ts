@@ -14,8 +14,7 @@ if (import.meta.env.DEV && !(window).__GERSTNER_DEBUG__) {
         cols: true,
         baseline: true,
         rhythm: false,
-        zones: false,
-        drift: false
+        zones: false
       }
     }
   })

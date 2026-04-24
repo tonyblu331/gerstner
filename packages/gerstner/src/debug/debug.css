@@ -13,6 +13,14 @@
   --g-debug-rhythm-line: oklch(0.65 0.15 145 / 0.25);
   --g-debug-zone-line: oklch(0.65 0.2 55 / 0.8);
   --g-debug-drift-indicator: oklch(0.65 0.22 25 / 0.9);
+
+  /* SVG overlay relationship color encoding */
+  --g-debug-color-exact: oklch(0.65 0.2 145);
+  --g-debug-color-approximate: oklch(0.72 0.18 75);
+  --g-debug-color-independent: oklch(0.65 0.22 320);
+  --g-debug-color-warning: oklch(0.65 0.22 25);
+  --g-debug-color-boundary: oklch(0.5 0 0 / 0.4);
+  --g-debug-color-raw: oklch(0.65 0.18 254);
 }
 
 /* ── CSS-NATIVE OVERLAY LAYERS ── */
@@ -287,4 +295,14 @@ body[data-g-debug-drift='true'] [data-g-debug-drift-px]::before {
   .g-debug-root[data-g-debug-rhythm='true']::before {
     transition: none;
   }
+}
+
+/* ── SVG Overlay ── */
+/* Absolutely positioned SVG inside each scope element. Injected by svgOverlay.ts. */
+.g-debug-svg-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 9999;
 }

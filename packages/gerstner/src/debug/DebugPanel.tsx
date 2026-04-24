@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { DialRoot, DialStore, useDialKit } from 'dialkit'
+import { buildSnapshot, type GridDebugSnapshot } from '../stride/snapshot.js'
+import { renderFieldSummary, renderFieldDetail } from './inspector/fieldInspector.js'
+import { formatWarningBadge } from './warnings.js'
 
 const SCOPE_SELECTOR = '.g-shell, .g, .g-fit, .g-fill, .g-sub'
-const LAYER_KEYS = ['cols', 'baseline', 'rhythm', 'zones', 'drift'] as const
+const LAYER_KEYS = ['cols', 'baseline', 'rhythm', 'zones'] as const
 const DEFAULT_LAYERS: Record<string, boolean> = {
   cols: true,
   baseline: true,
   rhythm: false,
   zones: false,
-  drift: false,
 }
 
 // @property initial-value declarations from stride/index.css — single source of truth
@@ -72,10 +74,15 @@ export function DebugPanel() {
   }))
   layerStatesRef.current = layerStates
 
+  // Inspector snapshot — built from current scope, updated on rescope
+  const [snapshot, setSnapshot] = useState<GridDebugSnapshot | null>(null)
+  const [inspectorOpen, setInspectorOpen] = useState(false)
+
   // Re-read scope values when scope changes (hover/pin) — single getComputedStyle call
   const rescope = useCallback((scope: HTMLElement) => {
     scopeRef.current = scope
     setValues(readScopeValues(scope))
+    setSnapshot(buildSnapshot(scope))
     document.dispatchEvent(new CustomEvent('gerstner-debug-sync', { detail: { scope } }))
   }, [])
 
@@ -98,7 +105,6 @@ export function DebugPanel() {
         baseline: layerStates.baseline,
         rhythm: layerStates.rhythm,
         zones: layerStates.zones,
-        drift: layerStates.drift,
       },
     },
     {
@@ -107,7 +113,6 @@ export function DebugPanel() {
         'Overlays.baseline': { key: '2', modifier: 'alt' },
         'Overlays.rhythm': { key: '3', modifier: 'alt' },
         'Overlays.zones': { key: '4', modifier: 'alt' },
-        'Overlays.drift': { key: '5', modifier: 'alt' },
       },
     },
   )
@@ -124,16 +129,14 @@ export function DebugPanel() {
     scope.style.setProperty('--g-scale-ratio', String(params.Typography['Scale Ratio']))
   }, [params.Grid, params.Typography])
 
-  // Sync overlay toggles → DOM data attributes
+  // Sync overlay toggles → DOM data attributes on body (matches index.tsx keyboard handler)
   useEffect(() => {
-    const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
-    if (!debugRoot) return
     syncingRef.current = true // prevent observer from echoing back
     for (const layer of LAYER_KEYS) {
-      const current = debugRoot.getAttribute(`data-g-debug-${layer}`) === 'true'
+      const current = document.body.getAttribute(`data-g-debug-${layer}`) === 'true'
       const target = params.Overlays[layer]
       if (current !== target) {
-        debugRoot.setAttribute(`data-g-debug-${layer}`, String(target))
+        document.body.setAttribute(`data-g-debug-${layer}`, String(target))
       }
     }
     syncingRef.current = false
@@ -142,14 +145,10 @@ export function DebugPanel() {
     params.Overlays.baseline,
     params.Overlays.rhythm,
     params.Overlays.zones,
-    params.Overlays.drift,
   ])
 
-  // Watch for DOM attribute changes (keyboard shortcuts) → sync back to DialKit + state
+  // Watch for DOM attribute changes on body (keyboard shortcuts) → sync back to DialKit + state
   useEffect(() => {
-    const debugRoot = document.querySelector<HTMLElement>('.g-debug-root')
-    if (!debugRoot) return
-
     const observer = new MutationObserver(() => {
       if (syncingRef.current) return // skip echo from panel-initiated changes
 
@@ -160,7 +159,7 @@ export function DebugPanel() {
       const newStates = { ...layerStatesRef.current }
       let changed = false
       for (const layer of LAYER_KEYS) {
-        const domValue = debugRoot.getAttribute(`data-g-debug-${layer}`) === 'true'
+        const domValue = document.body.getAttribute(`data-g-debug-${layer}`) === 'true'
         const dialValue = DialStore.getValue(panel.id, `Overlays.${layer}`)
         if (domValue !== dialValue) {
           DialStore.updateValue(panel.id, `Overlays.${layer}`, domValue)
@@ -173,7 +172,7 @@ export function DebugPanel() {
       if (changed) setLayerStates(newStates)
     })
 
-    observer.observe(debugRoot, {
+    observer.observe(document.body, {
       attributes: true,
       attributeFilter: LAYER_KEYS.map((l) => `data-g-debug-${l}`),
     })
@@ -217,5 +216,85 @@ export function DebugPanel() {
     return () => document.removeEventListener('click', onClick)
   }, [rescope])
 
-  return <DialRoot position="top-right" defaultOpen />
+  return (
+    <>
+      <DialRoot position="top-right" defaultOpen />
+      {inspectorOpen && snapshot && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '1rem',
+            right: '1rem',
+            zIndex: 2147483001,
+            background: 'oklch(0.15 0 0 / 0.92)',
+            color: 'oklch(0.9 0 0)',
+            fontFamily: 'monospace',
+            fontSize: '11px',
+            lineHeight: '1.6',
+            padding: '0.75rem 1rem',
+            borderRadius: '6px',
+            maxWidth: '340px',
+            boxShadow: '0 4px 24px oklch(0 0 0 / 0.5)',
+            whiteSpace: 'pre',
+            pointerEvents: 'auto',
+          }}
+          data-g-inspector
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+            <strong style={{ color: 'oklch(0.65 0.2 145)' }}>{renderFieldSummary(snapshot)}</strong>
+            <button
+              onClick={() => setInspectorOpen(false)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'oklch(0.6 0 0)',
+                cursor: 'pointer',
+                fontSize: '12px',
+                padding: '0 0 0 0.5rem',
+              }}
+              aria-label="Close inspector"
+            >
+              ✕
+            </button>
+          </div>
+          <div>{renderFieldDetail(snapshot)}</div>
+          {snapshot.warnings.length > 0 && (
+            <div style={{ marginTop: '0.5rem', color: 'oklch(0.65 0.22 25)' }}>
+              {snapshot.warnings.map((w) => (
+                <div key={w.code} title={formatWarningBadge(w)}>
+                  ⚠ {w.code}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      <button
+        onClick={() => {
+          const snap = buildSnapshot(scopeRef.current)
+          setSnapshot(snap)
+          setInspectorOpen((v) => !v)
+        }}
+        style={{
+          position: 'fixed',
+          bottom: inspectorOpen && snapshot ? '1rem' : '0.5rem',
+          right: inspectorOpen && snapshot ? '22rem' : '1rem',
+          zIndex: 2147483001,
+          background: 'oklch(0.15 0 0 / 0.85)',
+          color: 'oklch(0.9 0 0)',
+          border: '1px solid oklch(0.3 0 0)',
+          borderRadius: '4px',
+          fontFamily: 'monospace',
+          fontSize: '10px',
+          padding: '0.25rem 0.5rem',
+          cursor: 'pointer',
+          pointerEvents: 'auto',
+        }}
+        data-g-inspector-toggle
+        aria-label="Toggle field inspector"
+      >
+        {inspectorOpen ? 'inspector ▼' : 'inspector ▶'}
+      </button>
+    </>
+  )
 }
