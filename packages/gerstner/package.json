@@ -32,16 +32,16 @@
       "default": "./dist/stride/index.css"
     },
     "./stride/snapshot": {
-      "types": "./dist/stride/snapshot.d.mts",
+      "types": "./src/stride/snapshot.ts",
       "development": "./src/stride/snapshot.ts",
-      "import": "./src/stride/snapshot.ts",
-      "default": "./dist/stride/snapshot.mjs"
+      "import": "./dist/stride/snapshot.mjs",
+      "default": "./src/stride/snapshot.ts"
     },
     "./stride/debugManifest": {
-      "types": "./dist/stride/debugManifest.d.mts",
+      "types": "./src/stride/debugManifest.ts",
       "development": "./src/stride/debugManifest.ts",
-      "import": "./src/stride/debugManifest.ts",
-      "default": "./dist/stride/debugManifest.mjs"
+      "import": "./dist/stride/debugManifest.mjs",
+      "default": "./src/stride/debugManifest.ts"
     },
     "./layout": {
       "development": "./src/css/layout-only.css",

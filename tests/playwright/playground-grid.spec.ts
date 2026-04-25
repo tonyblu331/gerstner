@@ -27,8 +27,29 @@ test.describe('Playground grid smoke', () => {
   }) => {
     await page.goto('/')
     await page.waitForTimeout(150)
-    const heroTextCol = await page.locator('.hero-text').getAttribute('style')
-    expect(heroTextCol).toContain('col 8')
-    expect(heroTextCol).not.toContain('gutter-')
+    const heroTextClasses = await page.locator('.hero-text').getAttribute('class')
+    expect(heroTextClasses).toContain('col-end-8')
+    expect(heroTextClasses).not.toContain('gutter-')
+  })
+
+  test('ny-times route has shell, masthead subgrid, and editorial cards', async ({ page }) => {
+    await page.goto('/#/ny-times')
+    await page.waitForTimeout(200)
+
+    const shell = page.locator('.page-nyt .g-shell').first()
+    await expect(shell).toBeVisible()
+
+    const mastheadSubgrid = page.locator('.nyt-masthead .g-sub').first()
+    await expect(mastheadSubgrid).toBeVisible()
+
+    const editorialGrid = page.locator('.nyt-editorial__grid').first()
+    await expect(editorialGrid).toBeVisible()
+
+    const editorialCards = page.locator('.nyt-editorial__grid .nyt-editorial__card')
+    await expect(editorialCards).toHaveCount(3)
+
+    for (let i = 0; i < 3; i++) {
+      await expect(editorialCards.nth(i)).toBeVisible()
+    }
   })
 })

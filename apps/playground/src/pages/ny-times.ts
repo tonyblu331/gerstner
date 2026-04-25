@@ -5,9 +5,68 @@ const today = new Date().toLocaleDateString('en-US', {
   day: 'numeric',
 })
 
+function editorialCard(
+  kicker: string,
+  headline: string,
+  body: string,
+  byline: string,
+  imgSeed?: string,
+  imgAlt?: string,
+): string {
+  return `
+    <article class="nyt-editorial__card col-2">
+      ${
+        imgSeed
+          ? `
+      <figure class="nyt-editorial__fig">
+        <img class="nyt-editorial__img" src="https://picsum.photos/seed/${imgSeed}/400/240" alt="${imgAlt ?? ''}" loading="lazy" />
+      </figure>`
+          : ''
+      }
+      <p class="nyt-kicker">${kicker}</p>
+      <h2 class="g-heading">${headline}</h2>
+      <p class="nyt-body">${body}</p>
+      <p class="g-ui nyt-byline">${byline}</p>
+    </article>
+  `
+}
+
+function opinionCard(author: string, headline: string): string {
+  return `
+    <article class="nyt-op-card">
+      <div class="nyt-op-avatar"></div>
+      <p class="nyt-op-author g-ui">${author}</p>
+      <h4 class="g-heading">${headline}</h4>
+    </article>
+  `
+}
+
+function popularItem(num: number, text: string): string {
+  return `
+    <li class="nyt-popular__item">
+      <span class="nyt-popular__num">${num}</span>
+      <a href="#">${text}</a>
+    </li>
+  `
+}
+
+function footerCol(head: string, links: string[]): string {
+  return `
+    <div class="col-2 nyt-footer__col">
+      <span class="nyt-footer__head">${head}</span>
+      <ul class="nyt-footer__list">
+        ${links.map((l) => `<li><a class="nyt-footer__link" href="#">${l}</a></li>`).join('')}
+      </ul>
+    </div>
+  `
+}
+
 export function render(): string {
   return `
-  <div class="page-nyt" style="padding-bottom:4rem">
+  <div class="page-nyt g-editorial" style="padding-bottom:4rem">
+    <!-- ════════════════════════════════════════════════════════════
+         1. UTILITY BAR — g-shell + g-content zone placement
+         ════════════════════════════════════════════════════════════ -->
     <div class="nyt-utility">
       <div class="g-shell">
         <div class="g-content nyt-utility__content g-ui">
@@ -26,6 +85,9 @@ export function render(): string {
       </div>
     </div>
 
+    <!-- ════════════════════════════════════════════════════════════
+         2. MASTHEAD — g-sub exact alignment to parent shell tracks
+         ════════════════════════════════════════════════════════════ -->
     <header class="nyt-masthead">
       <div class="g-shell">
         <div class="g-sub nyt-masthead__grid">
@@ -47,8 +109,15 @@ export function render(): string {
       </div>
     </header>
 
+    <!-- ════════════════════════════════════════════════════════════
+         3. SECTION NAV — g-content zone + g-breakout-l promo demo
+         ════════════════════════════════════════════════════════════ -->
     <nav class="nyt-nav" aria-label="Sections">
       <div class="g-shell">
+        <div class="g-breakout-l nyt-nav__promo g-ui">
+          <span class="nyt-nav__promo-label">Special Report</span>
+          <span class="nyt-nav__promo-text">The State of Layout Systems, 2026</span>
+        </div>
         <div class="g-content nyt-nav__content">
           <ul class="nyt-nav__list">
             <li><a class="nyt-nav__link" href="#">U.S.</a></li>
@@ -70,177 +139,98 @@ export function render(): string {
       <hr class="nyt-nav__rule nyt-nav__rule--thin" />
     </nav>
 
-    <main>
+    <main class="g-stack-3">
+      <!-- ════════════════════════════════════════════════════════════
+           4. LEAD EDITORIAL ROW — g-view-6 + g-sub
+              3 cards reinterpreted as 6 view cols (2 view cols each)
+              Responsive collapse built into stride defaults
+           ════════════════════════════════════════════════════════════ -->
       <section class="g-shell nyt-main" style="--g-frame: clamp(1rem, 2vw, 1.25rem); --g-max-width: 80rem; --g-gutter: clamp(0.75rem, 1.5vw, 1rem);">
-        <div class="g-content">
-        <div class="g nyt-content">
-          <div class="col-4 nyt-col nyt-col--left">
-            <div class="nyt-live-block">
-              <span class="nyt-live-dot"></span>
-              <span class="nyt-live-label g-ui">Live</span>
-            </div>
-            <p class="nyt-kicker">U.S. Politics</p>
-            <h2 class="g-heading">In a Stunning Reversal, Grid-Based Layouts Overtake Fixed-Width Design</h2>
-            <p class="nyt-body">Stride-derived column systems, once confined to specialist typography shops, have reached critical mass in mainstream publishing platforms.</p>
-            <ul class="nyt-bullets">
-              <li class="nyt-bullet">Publishers report 40% faster design iteration with stride grids.</li>
-              <li class="nyt-bullet">Container queries replace breakpoint tables at major outlets.</li>
-              <li class="nyt-bullet">The 12-column standard holds, but its derivation has fundamentally changed.</li>
-            </ul>
-            <p class="g-ui">By Jane Mitchell</p>
-            <hr class="nyt-divider" />
-            <h3 class="g-heading">Swiss Modernism's Enduring Grip on Digital Layout</h3>
-            <p class="nyt-body-sm">Karl Gerstner's 1964 <em>Designing Programmes</em> laid the philosophical groundwork for systems that are only now finding their natural habitat in CSS.</p>
-            <hr class="nyt-divider" />
-            <h3 class="g-heading">The Serif Refuses to Die</h3>
-            <p class="nyt-body-sm">Screen resolution and hinting technology have finally caught up with what print designers always knew: serifs aid legibility at scale.</p>
-          </div>
-
-          <div class="col-5 nyt-col nyt-col--center">
-            <div class="nyt-photo-header">
-              <span class="nyt-photo-label g-ui">Photo: Reuters / Gerstner Archive</span>
-            </div>
-            <figure class="nyt-center-figure">
-              <img class="nyt-center-img" src="https://picsum.photos/seed/nyt-lead/640/400" alt="Grid visualisation" />
-              <figcaption class="nyt-figcaption">A modular grid system visualised as physical architecture at a Swiss type foundry, 2026.</figcaption>
-            </figure>
-            <div class="nyt-center-arrows">
-              <button class="nyt-arrow">←</button>
-              <button class="nyt-arrow">→</button>
-            </div>
-            <h2 class="g-heading">Inside the Invisible Structure That Shapes Every Page You Read</h2>
-            <p class="nyt-body">The column grid is among the oldest tools in publishing. What changes now is not its presence but its derivation — from an authored measurement, typed once, to a computed system that adapts to every screen without human intervention.</p>
-            <a class="nyt-read-more" href="#">Continue reading ›</a>
-            <hr class="nyt-divider" />
-            <h3 class="g-heading">Variable Fonts Deliver on the Promise of Optical Sizing</h3>
-            <p class="nyt-body-sm">After a decade of theoretical advantage, variable font adoption has crossed 70% of major editorial publishers, driven by performance and design fidelity gains.</p>
-          </div>
-
-          <div class="col-3 nyt-col">
-            <figure class="nyt-right-figure">
-              <img class="nyt-right-img" src="https://picsum.photos/seed/nyt-right/400/260" alt="Typographers" />
-              <figcaption class="nyt-figcaption">Typographers at the Zurich Institute of Design review baseline grid software, 2026.</figcaption>
-            </figure>
-            <p class="nyt-kicker">Design</p>
-            <h3 class="g-heading">The Baseline Grid Returns as CSS Gains Subgrid Support</h3>
-            <p class="nyt-body-sm">Subgrid alignment across independent components was once a dream. Now it is a single declaration — and teams at major newsrooms are rewriting layout systems to exploit it.</p>
-            <hr class="nyt-divider" />
-            <div class="nyt-promo g-stack-1">
-              <div class="nyt-promo__label g-ui">Newsletter</div>
-              <p class="nyt-body-sm">The Morning: What you need to know today.</p>
-              <a class="nyt-promo__link" href="#">Sign up ›</a>
-            </div>
-            <hr class="nyt-divider" />
-            <h3 class="g-heading">Container Queries Finally Live Up to the Hype</h3>
-            <p class="nyt-body-sm">The CSS feature that lets components respond to their own width — not the viewport — has reshaped component-driven design at scale.</p>
-          </div>
-        </div>
+        <div class="g g-view-6 nyt-editorial__grid">
+          ${editorialCard(
+            'U.S. Politics',
+            'In a Stunning Reversal, Grid-Based Layouts Overtake Fixed-Width Design',
+            'Stride-derived column systems, once confined to specialist typography shops, have reached critical mass in mainstream publishing platforms. Publishers report 40% faster design iteration with computed grids.',
+            'By <strong>Jane Mitchell</strong>',
+            'nyt-lead',
+            'Grid visualisation',
+          )}
+          ${editorialCard(
+            'Design Systems',
+            'Inside the Invisible Structure That Shapes Every Page You Read',
+            'The column grid is among the oldest tools in publishing. What changes now is not its presence but its derivation — from an authored measurement, typed once, to a computed system that adapts to every screen.',
+            'By <strong>Marcus Webb</strong> and <strong>Sarah Lindqvist</strong>',
+            'nyt-center',
+            'Swiss typography workshop',
+          )}
+          ${editorialCard(
+            'Technology',
+            'Container Queries Finally Live Up to the Hype',
+            'The CSS feature that lets components respond to their own width — not the viewport — has reshaped component-driven design at scale. Major platforms report elimination of breakpoint tables.',
+            'By <strong>Reza Farahani</strong>',
+            'nyt-right',
+            'Responsive design schematic',
+          )}
         </div>
       </section>
 
+      <!-- ════════════════════════════════════════════════════════════
+           5. HERO IMAGE — g-full breakout spanning shell frames
+           ════════════════════════════════════════════════════════════ -->
+      <section class="g-shell nyt-hero-shell">
+        <figure class="g-full nyt-hero__figure">
+          <img class="nyt-hero__img" src="https://picsum.photos/seed/nyt-hero/1200/500" alt="Aerial view of a modernist typography institute" loading="lazy" />
+          <figcaption class="nyt-hero__caption g-ui">The Zurich Institute of Design, where Karl Gerstner's grid philosophy is taught to a new generation of digital designers. <span class="nyt-hero__credit">Photo: Gerstner Archive</span></figcaption>
+        </figure>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════════════
+           6. OPINION ROW — g-fit adaptive auto-fit cards
+           7. MOST POPULAR — g-view-4 sidebar inside raw 12-col grid
+           ════════════════════════════════════════════════════════════ -->
       <section class="g-shell nyt-second-row" style="--g-frame: clamp(1rem, 2vw, 1.25rem); --g-max-width: 80rem; --g-gutter: clamp(0.75rem, 1.5vw, 1rem);">
-        <div class="g-content">
         <div class="g nyt-second-content">
-          <div class="col-8">
+          <div class="col-8 nyt-opinion">
             <hr class="nyt-section-rule" />
             <span class="nyt-section-label g-ui">Opinion</span>
-            <div class="g nyt-opinion__grid">
-              <article class="col-3 nyt-op-card">
-                <div class="nyt-op-avatar"></div>
-                <p class="nyt-op-author">Reza Farahani</p>
-                <h4 class="g-heading">The case for constraint in an age of infinite canvas</h4>
-              </article>
-              <article class="col-3 nyt-op-card">
-                <div class="nyt-op-avatar"></div>
-                <p class="nyt-op-author">Sarah Lindqvist</p>
-                <h4 class="g-heading">Typography is not decoration — it is architecture</h4>
-              </article>
-              <article class="col-3 nyt-op-card">
-                <div class="nyt-op-avatar"></div>
-                <p class="nyt-op-author">Marcus Webb</p>
-                <h4 class="g-heading">What the Bauhaus got right about systems thinking</h4>
-              </article>
-              <article class="col-3 nyt-op-card">
-                <div class="nyt-op-avatar"></div>
-                <p class="nyt-op-author">Elena Vasquez</p>
-                <h4 class="g-heading">In defence of the serif in the age of screens</h4>
-              </article>
+            <div class="g-fit nyt-opinion__grid">
+              ${opinionCard('Reza Farahani', 'The case for constraint in an age of infinite canvas')}
+              ${opinionCard('Sarah Lindqvist', 'Typography is not decoration — it is architecture')}
+              ${opinionCard('Marcus Webb', 'What the Bauhaus got right about systems thinking')}
+              ${opinionCard('Elena Vasquez', 'In defence of the serif in the age of screens')}
             </div>
           </div>
-          <div class="col-4">
+          <div class="col-4 nyt-popular">
             <hr class="nyt-section-rule" />
             <span class="nyt-section-label g-ui">Most Popular</span>
             <ol class="nyt-popular__list">
-              <li class="nyt-popular__item"><span class="nyt-popular__num">1</span><a href="#">The Hidden Grammar of the Page: Column Grids From Gutenberg to CSS</a></li>
-              <li class="nyt-popular__item"><span class="nyt-popular__num">2</span><a href="#">How Container Queries Changed Everything About Responsive Design</a></li>
-              <li class="nyt-popular__item"><span class="nyt-popular__num">3</span><a href="#">Variable Fonts and the End of the Weight Dropdown</a></li>
-              <li class="nyt-popular__item"><span class="nyt-popular__num">4</span><a href="#">Subgrid Support Finally Lands — Here Is Why It Matters</a></li>
-              <li class="nyt-popular__item"><span class="nyt-popular__num">5</span><a href="#">Optical Sizing in Type: The Feature You Never Knew You Were Missing</a></li>
+              ${popularItem(1, 'The Hidden Grammar of the Page: Column Grids From Gutenberg to CSS')}
+              ${popularItem(2, 'How Container Queries Changed Everything About Responsive Design')}
+              ${popularItem(3, 'Variable Fonts and the End of the Weight Dropdown')}
+              ${popularItem(4, 'Subgrid Support Finally Lands — Here Is Why It Matters')}
+              ${popularItem(5, 'Optical Sizing in Type: The Feature You Never Knew You Were Missing')}
             </ol>
           </div>
         </div>
-        </div>
       </section>
-    </main>
 
-    <footer class="nyt-footer">
-      <div class="g-shell">
-        <div class="g-content nyt-footer__inner g-stack-3">
-          <div class="nyt-footer__logo">The New York Times</div>
-          <div class="g nyt-footer__nav">
-            <div class="col-2">
-              <span class="nyt-footer__head">News</span>
-              <ul class="nyt-footer__list">
-                <li><a class="nyt-footer__link" href="#">Home Page</a></li>
-                <li><a class="nyt-footer__link" href="#">World</a></li>
-                <li><a class="nyt-footer__link" href="#">U.S.</a></li>
-                <li><a class="nyt-footer__link" href="#">Politics</a></li>
-              </ul>
-            </div>
-            <div class="col-2">
-              <span class="nyt-footer__head">Opinion</span>
-              <ul class="nyt-footer__list">
-                <li><a class="nyt-footer__link" href="#">Columnists</a></li>
-                <li><a class="nyt-footer__link" href="#">Editorials</a></li>
-                <li><a class="nyt-footer__link" href="#">Letters</a></li>
-              </ul>
-            </div>
-            <div class="col-2">
-              <span class="nyt-footer__head">Arts</span>
-              <ul class="nyt-footer__list">
-                <li><a class="nyt-footer__link" href="#">Books</a></li>
-                <li><a class="nyt-footer__link" href="#">Movies</a></li>
-                <li><a class="nyt-footer__link" href="#">Music</a></li>
-              </ul>
-            </div>
-            <div class="col-2">
-              <span class="nyt-footer__head">Living</span>
-              <ul class="nyt-footer__list">
-                <li><a class="nyt-footer__link" href="#">Food</a></li>
-                <li><a class="nyt-footer__link" href="#">Health</a></li>
-                <li><a class="nyt-footer__link" href="#">Travel</a></li>
-              </ul>
-            </div>
-            <div class="col-2">
-              <span class="nyt-footer__head">More</span>
-              <ul class="nyt-footer__list">
-                <li><a class="nyt-footer__link" href="#">Wirecutter</a></li>
-                <li><a class="nyt-footer__link" href="#">The Athletic</a></li>
-                <li><a class="nyt-footer__link" href="#">Cooking</a></li>
-              </ul>
-            </div>
-            <div class="col-2">
-              <span class="nyt-footer__head">Subscribe</span>
-              <ul class="nyt-footer__list">
-                <li><a class="nyt-footer__link" href="#">Home Delivery</a></li>
-                <li><a class="nyt-footer__link" href="#">Digital</a></li>
-                <li><a class="nyt-footer__link" href="#">Games</a></li>
-              </ul>
-            </div>
+      <!-- ════════════════════════════════════════════════════════════
+           8. FOOTER NAV — g-sub exact 6-column alignment to shell
+           ════════════════════════════════════════════════════════════ -->
+      <footer class="nyt-footer">
+        <div class="g-shell">
+          <div class="g-sub nyt-footer__grid g-stack-2">
+            <div class="nyt-footer__logo col-from-content-start col-to-content-end g-display">The New York Times</div>
+            ${footerCol('News', ['Home Page', 'World', 'U.S.', 'Politics'])}
+            ${footerCol('Opinion', ['Columnists', 'Editorials', 'Letters'])}
+            ${footerCol('Arts', ['Books', 'Movies', 'Music'])}
+            ${footerCol('Living', ['Food', 'Health', 'Travel'])}
+            ${footerCol('More', ['Wirecutter', 'The Athletic', 'Cooking'])}
+            ${footerCol('Subscribe', ['Home Delivery', 'Digital', 'Games'])}
           </div>
         </div>
-      </div>
-    </footer>
+      </footer>
+    </main>
   </div>
 `
 }

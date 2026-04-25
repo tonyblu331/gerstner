@@ -13,16 +13,16 @@ const app = document.querySelector<HTMLDivElement>('#app')!
 const navHTML = `
   <nav class="bottom-nav" aria-label="Demo pages">
     <a class="bottom-nav__link" data-path="/" href="#/" aria-current="page">
+      <span class="bottom-nav__icon" aria-hidden="true">&#9638;</span>
+      <span class="g-ui bottom-nav__label">Real Estate</span>
+    </a>
+    <a class="bottom-nav__link" data-path="/showcase" href="#/showcase" aria-current="false">
       <span class="bottom-nav__icon" aria-hidden="true">&#9632;</span>
       <span class="g-ui bottom-nav__label">Showcase</span>
     </a>
     <a class="bottom-nav__link" data-path="/article" href="#/article" aria-current="false">
       <span class="bottom-nav__icon" aria-hidden="true">&#9641;</span>
       <span class="g-ui bottom-nav__label">Article</span>
-    </a>
-    <a class="bottom-nav__link" data-path="/real-estate" href="#/real-estate" aria-current="false">
-      <span class="bottom-nav__icon" aria-hidden="true">&#9638;</span>
-      <span class="g-ui bottom-nav__label">Real Estate</span>
     </a>
     <a class="bottom-nav__link" data-path="/ny-times" href="#/ny-times" aria-current="false">
       <span class="bottom-nav__icon" aria-hidden="true">&#9645;</span>
@@ -40,20 +40,21 @@ const mount = app.querySelector<HTMLElement>('#page-mount')!
 const nav = app.querySelector<HTMLElement>('.bottom-nav')!
 
 initRouter(mount, nav, [
-  { path: '/', label: 'Showcase', render: showcase.render },
-  { path: '/article', label: 'Article', render: article.render },
+  { path: '/', label: 'Real Estate', render: realEstate.render },
   { path: '/real-estate', label: 'Real Estate', render: realEstate.render },
+  { path: '/showcase', label: 'Showcase', render: showcase.render },
+  { path: '/article', label: 'Article', render: article.render },
   { path: '/ny-times', label: 'NY Times', render: nyTimes.render },
 ])
 
 initGerstnerDebug({
-  defaultOpen: false,
+  defaultOpen: true,
   initial: {
     layers: {
       cols: true,
       baseline: true,
-      rhythm: false,
-      zones: false,
+      rhythm: true,
+      zones: true,
     },
   },
 })

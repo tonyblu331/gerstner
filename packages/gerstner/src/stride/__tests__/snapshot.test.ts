@@ -7,7 +7,7 @@
  */
 
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vite-plus/test'
-import { buildSnapshot, validDebugGutterAnchors, type GridDebugSnapshot } from '../snapshot.js'
+import { buildSnapshot, validDebugGutterAnchors } from '../snapshot.js'
 
 // ---------------------------------------------------------------------------
 // DOM mock helpers
@@ -17,10 +17,9 @@ function makeMockElement(opts: {
   clientWidth?: number
   rectWidth?: number
   classes?: string[]
-  styles?: Record<string, string>
   snapshotId?: string
 }): HTMLElement {
-  const { rectWidth = 1440, classes = [], styles = {}, snapshotId } = opts
+  const { rectWidth = 1440, classes = [], snapshotId } = opts
 
   const classList = {
     _list: new Set(classes),

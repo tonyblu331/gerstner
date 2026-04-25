@@ -245,7 +245,7 @@ function detectFieldKind(el: HTMLElement): FieldKind {
   if (cls.contains('g-sub')) return 'subgrid'
   if (cls.contains('g-align-independent')) return 'independent'
   // g-view-* check
-  for (const c of [...cls]) {
+  for (const c of cls) {
     if (/^g-view-\d+$/.test(c)) return 'view'
   }
   if (cls.contains('g') || cls.contains('g-fit') || cls.contains('g-fill')) return 'raw'
@@ -253,7 +253,7 @@ function detectFieldKind(el: HTMLElement): FieldKind {
 }
 
 function detectViewCols(el: HTMLElement): number | undefined {
-  for (const c of [...el.classList]) {
+  for (const c of el.classList) {
     const m = c.match(/^g-view-(\d+)$/)
     if (m) return parseInt(m[1])
   }
