@@ -1,4 +1,3 @@
-import { createRoot } from 'react-dom/client'
 import { DebugPanel } from './DebugPanel.js'
 import { syncDebugMetrics, syncShellOverlays } from './observer.js'
 
@@ -30,12 +29,8 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
     }
   }
 
-  const container = document.createElement('div')
-  container.className = 'g-debug-root'
-  document.body.appendChild(container)
-
-  const root = createRoot(container)
-  root.render(<DebugPanel />)
+  // Create vanilla debug panel — zero React, zero DialKit
+  const panel = new DebugPanel()
 
   // Initialize layer attributes from options
   const initialLayers = options.initial?.layers ?? {
@@ -96,7 +91,7 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
     })
   }, 0)
 
-  // Watch for inline style changes on scope element (DialKit writes --g-cols etc. to inline style).
+  // Watch for inline style changes on scope element (panel writes --g-cols etc. to inline style).
   // ResizeObserver on documentElement doesn't fire when --g-cols changes because the document
   // size doesn't change — only the internal grid layout reflows.
   const styleObserver = new MutationObserver(() => {
@@ -126,7 +121,7 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
     syncCols()
   }
 
-  // DebugPanel rescopes DialKit to hovered/pinned .g-shell — refresh metrics for baseline/rhythm.
+  // DebugPanel rescopes to hovered/pinned .g-shell — refresh metrics for baseline/rhythm.
   const onGerstnerDebugSync = (ev: Event) => {
     const ce = ev as CustomEvent<{ scope?: HTMLElement }>
     if (ce.detail?.scope) metricsScope = ce.detail.scope
@@ -204,8 +199,7 @@ export function initGerstnerDebug(options: GerstnerDebugOptions = {}): GerstnerD
       colsObserver.disconnect()
       styleObserver.disconnect()
       syncShellOverlays(false)
-      root.unmount()
-      container.remove()
+      panel.destroy()
     },
     toggleLayer(layer) {
       const attr = `data-g-debug-${layer}`

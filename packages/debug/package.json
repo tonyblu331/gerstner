@@ -11,11 +11,11 @@
   "sideEffects": [
     "**/*.css"
   ],
-  "types": "./src/index.tsx",
+  "types": "./src/index.ts",
   "exports": {
     ".": {
-      "types": "./src/index.tsx",
-      "development": "./src/index.tsx",
+      "types": "./src/index.ts",
+      "development": "./src/index.ts",
       "default": "./dist/index.mjs"
     },
     "./observer": {
@@ -43,20 +43,11 @@
     "check": "vp check"
   },
   "dependencies": {
-    "dialkit": "1.2.0",
-    "gerstner": "workspace:*",
-    "react": "19.2.5",
-    "react-dom": "19.2.5"
+    "gerstner": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "@types/react": "19.2.3",
-    "@types/react-dom": "19.2.3",
     "typescript": "catalog:",
     "vite-plus": "catalog:"
-  },
-  "bundledDependencies": [
-    "react",
-    "react-dom"
-  ]
+  }
 }

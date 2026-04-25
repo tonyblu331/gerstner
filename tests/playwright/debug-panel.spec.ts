@@ -297,26 +297,14 @@ test.describe('No layout mutation', () => {
   })
 })
 
-test.describe('DialKit panel', () => {
+test.describe('Debug panel mount', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
     await page.waitForTimeout(200)
   })
 
-  test('DialKit React root is mounted', async ({ page }) => {
+  test('Debug root is mounted', async ({ page }) => {
     const debugRoot = page.locator('.g-debug-root')
     await expect(debugRoot).toBeAttached()
-  })
-
-  test.skip('DialKit panel toggles with Alt+G - skipped in production', async ({ page }) => {
-    await page.keyboard.press('Alt+G')
-    await page.waitForTimeout(500)
-    const panelVisible = await page.evaluate(() => {
-      const dialEl = document.querySelector('[data-dialkit], [data-testid="dialkit"]')
-      if (dialEl) return true
-      const fixed = document.querySelector('[style*="position: fixed"]')
-      return !!fixed
-    })
-    expect(panelVisible).toBe(true)
   })
 })

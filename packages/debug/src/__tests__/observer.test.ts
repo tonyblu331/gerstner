@@ -314,14 +314,14 @@ describe('debug/debug.css — structural contracts', () => {
     expect(css).toContain('--g-debug-col-tint')
   })
 
-  it('hides version/presets UI from the panel toolbar', () => {
-    expect(css).toContain('.dialkit-preset-manager')
-    expect(css).toContain('.dialkit-toolbar-add')
+  it('has native panel styles instead of DialKit', () => {
+    expect(css).toContain('.g-debug-panel')
+    expect(css).toContain('.g-debug-slider')
   })
 })
 
-describe('debug/index.tsx — structural contracts', () => {
-  const index = readSrcFile('index.tsx')
+describe('debug/index.ts — structural contracts', () => {
+  const index = readSrcFile('index.ts')
 
   it('imports from observer.js', () => {
     expect(index).toContain("from './observer.js'")

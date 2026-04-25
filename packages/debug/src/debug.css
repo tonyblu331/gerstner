@@ -39,7 +39,7 @@
 /* ── Layer 2: Baseline grid — global fixed, same baseline unit page-wide ── */
 body::after {
   content: '';
-  position: absolute;
+  position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 9997;
@@ -60,7 +60,7 @@ body[data-g-debug-baseline='true']::after {
 /* ── Layer 3: Rhythm — global fixed, same rhythm unit page-wide ── */
 body::before {
   content: '';
-  position: absolute;
+  position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 9997;
@@ -130,7 +130,9 @@ body[data-g-debug-drift='true'] [data-g-debug-drift-px]::before {
   z-index: 9999;
 }
 
-/* ── DIALKIT MOUNT CONTAINER ── */
+/* ── NATIVE DEBUG PANEL ── */
+/* Zero React, zero DialKit — pure DOM controls over CSS custom properties. */
+
 .g-debug-root {
   position: fixed;
   inset: 0;
@@ -142,133 +144,36 @@ body[data-g-debug-drift='true'] [data-g-debug-drift-px]::before {
   pointer-events: auto;
 }
 
-/* DialKit portals to document.body, so it sits outside .g-debug-root's
-   stacking context. DialKit's visible fixed panel uses .dialkit-panel,
-   and dropdowns use .dialkit-select-dropdown. Those must sit above the
-   overlay container's z-index, not just .dialkit-root. */
-.dialkit-root,
-.dialkit-panel,
-.dialkit-select-dropdown {
-  z-index: calc(var(--g-debug-z, 2147483000) + 1) !important;
-}
-
-/* ── DIALKIT LEVA-STYLE THEME ── */
-/* Override DialKit's default glassmorphic tokens to match the
-   Leva-inspired inspector aesthetic from the Gerstner spec. */
-.dialkit-root {
-  /* Surfaces — tighter, darker */
-  --dial-surface: rgba(255, 255, 255, 0.04);
-  --dial-surface-hover: rgba(255, 255, 255, 0.07);
-  --dial-surface-active: rgba(255, 255, 255, 0.08);
-  --dial-surface-subtle: rgba(255, 255, 255, 0.03);
-
-  /* Text — muted hierarchy */
-  --dial-text-root: var(--g-debug-stride, #e8a14a);
-  --dial-text-section: rgba(255, 255, 255, 0.22);
-  --dial-text-label: rgba(255, 255, 255, 0.5);
-  --dial-text-focus: #e0ddd6;
-
-  --dial-text-primary: #e0ddd6;
-  --dial-text-secondary: rgba(255, 255, 255, 0.45);
-  --dial-text-tertiary: rgba(255, 255, 255, 0.22);
-
-  /* Borders — near-invisible dividers */
-  --dial-border: rgba(255, 255, 255, 0.06);
-  --dial-border-hover: rgba(255, 255, 255, 0.1);
-
-  /* Panel — Leva dark */
-  --dial-glass-bg: #18181a;
-  --dial-dropdown-bg: #1e1e20;
-  --dial-backdrop-blur: 12px;
-  --dial-radius: 3px;
-  --dial-row-height: 28px;
-  --dial-shadow: 0 28px 64px rgba(0, 0, 0, 0.5);
-  --dial-shadow-collapsed: 0 4px 16px rgba(0, 0, 0, 0.25);
-  --dial-shadow-dropdown: 0 8px 24px rgba(0, 0, 0, 0.4);
-
-  /* Font — monospace, compact */
+.g-debug-panel {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  width: 260px;
+  max-height: calc(100dvh - 2rem);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   font-family: ui-monospace, 'Cascadia Code', 'SF Mono', 'Menlo', monospace;
   font-size: 11px;
+  color: #e0ddd6;
+  background: #18181a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 11px;
+  box-shadow: 0 28px 64px rgba(0, 0, 0, 0.5);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Panel structure ── */
-.dialkit-panel-inner {
-  border-radius: 11px;
-  max-width: 320px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.g-debug-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
 }
 
-/* ── Folder headers — uppercase, tight ── */
-.dialkit-folder-title {
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-}
-
-.dialkit-folder-title-root {
-  font-size: 9.5px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-/* ── Slider — thinner, compact ── */
-.dialkit-slider {
-  border-radius: 3px;
-}
-
-.dialkit-slider-handle {
-  width: 3px;
-  height: 14px;
-}
-
-.dialkit-slider-label {
-  font-size: 10.5px;
-}
-
-.dialkit-slider-value {
-  font-size: 10px;
-}
-
-/* ── Toggle — inline row, no block padding ── */
-.dialkit-toggle {
-  padding: 4px 10px;
-  border-radius: 3px;
-}
-
-.dialkit-toggle-label {
-  font-size: 10.5px;
-}
-
-.dialkit-toggle-track {
-  width: 28px;
-  height: 14px;
-  border-radius: 7px;
-}
-
-.dialkit-toggle-thumb {
-  top: 2px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
-}
-
-/* ── Labeled control row — compact ── */
-.dialkit-labeled-control {
-  height: 28px;
-  padding: 2px 8px 2px 10px;
-  border-radius: 3px;
-}
-
-.dialkit-labeled-control-label {
-  font-size: 10.5px;
-}
-
-/* ── Stride brand indicator on panel header ── */
-.dialkit-panel-header::before {
+.g-debug-header::before {
   content: '';
   display: inline-block;
   width: 8px;
@@ -279,15 +184,212 @@ body[data-g-debug-drift='true'] [data-g-debug-drift-px]::before {
   flex-shrink: 0;
 }
 
-.dialkit-panel-header {
+.g-debug-brand {
   display: flex;
   align-items: center;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--g-debug-stride, #e8a14a);
+  flex: 1;
 }
 
-/* Hide the version/presets UI from the panel toolbar */
-.dialkit-preset-manager,
-.dialkit-toolbar-add[title='Add preset'] {
-  display: none !important;
+.g-debug-toggle {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0 0 0 0.5rem;
+  line-height: 1;
+}
+
+.g-debug-toggle:hover {
+  color: #e0ddd6;
+}
+
+.g-debug-body {
+  overflow-y: auto;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.g-debug-body.is-collapsed {
+  display: none;
+}
+
+.g-debug-section h3 {
+  margin: 0 0 6px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.22);
+}
+
+.g-debug-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 0;
+  min-height: 26px;
+}
+
+.g-debug-row--toggle {
+  justify-content: space-between;
+}
+
+.g-debug-label {
+  flex: 1;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 10.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.g-debug-value {
+  min-width: 48px;
+  text-align: right;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Native range input styling ── */
+.g-debug-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 80px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.g-debug-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--g-debug-stride, #e8a14a);
+  border: 2px solid #18181a;
+  cursor: pointer;
+}
+
+.g-debug-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--g-debug-stride, #e8a14a);
+  border: 2px solid #18181a;
+  cursor: pointer;
+}
+
+/* ── Native checkbox styling ── */
+.g-debug-row--toggle input[type='checkbox'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 14px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.15);
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+}
+
+.g-debug-row--toggle input[type='checkbox']::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+  transition: transform 0.15s ease;
+}
+
+.g-debug-row--toggle input[type='checkbox']:checked {
+  background: var(--g-debug-stride, #e8a14a);
+}
+
+.g-debug-row--toggle input[type='checkbox']:checked::after {
+  transform: translateX(14px);
+  background: #18181a;
+}
+
+/* ── Inspector toggle & panel ── */
+.g-debug-inspector-toggle {
+  position: fixed;
+  bottom: 0.5rem;
+  right: 1rem;
+  z-index: calc(var(--g-debug-z) + 1);
+  background: oklch(0.15 0 0 / 0.85);
+  color: oklch(0.9 0 0);
+  border: 1px solid oklch(0.3 0 0);
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: 10px;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.g-debug-inspector {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: calc(var(--g-debug-z) + 1);
+  background: oklch(0.15 0 0 / 0.92);
+  color: oklch(0.9 0 0);
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  max-width: 340px;
+  box-shadow: 0 4px 24px oklch(0 0 0 / 0.5);
+  white-space: pre;
+  pointer-events: auto;
+}
+
+.g-debug-inspector-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.g-debug-inspector-header strong {
+  color: oklch(0.65 0.2 145);
+}
+
+.g-debug-inspector-close {
+  background: none;
+  border: none;
+  color: oklch(0.6 0 0);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0 0 0 0.5rem;
+}
+
+.g-debug-inspector-detail {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.g-debug-warnings {
+  margin-top: 0.5rem;
+  color: oklch(0.65 0.22 25);
 }
 
 @media (prefers-reduced-motion: reduce) {

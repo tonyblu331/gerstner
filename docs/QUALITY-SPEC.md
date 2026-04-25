@@ -16,7 +16,7 @@ North star: one Stride contract, CSS-owned layout, optional debug that observes 
 
 1. On Tailwind v4, `.g-shell` + `.col-6` matches `--g-stride` and the column overlay.
 2. `.col-start-*` / `.col-end-*` work on **both** `gerstner/css` and `gerstner/tw4`.
-3. Changing `--g-cols` via DialKit stays coherent with a `repeat(var(--g-cols), …)` shell (no fixed 12-track template).
+3. Changing `--g-cols` via the debug panel stays coherent with a `repeat(var(--g-cols), …)` shell (no fixed 12-track template).
 4. Playground routes respect frame, max-width, and breakout; no double gutters.
 5. Baseline/rhythm overlays use the hovered/pinned shell’s tokens; each `.g-shell` gets its own column overlay geometry.
 6. Hash navigation without full reload re-syncs debug overlays and style observers.
