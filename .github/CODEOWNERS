@@ -1,0 +1,16 @@
+# Security-sensitive automation and release surfaces
+.github/workflows/** @tonyblu331
+.github/CODEOWNERS @tonyblu331
+
+# Dependency and package integrity inputs
+package.json @tonyblu331
+package-lock.json @tonyblu331
+pnpm-lock.yaml @tonyblu331
+pnpm-workspace.yaml @tonyblu331
+bun.lock @tonyblu331
+bun.lockb @tonyblu331
+
+# Publish and release configuration
+.npmrc @tonyblu331
+changeset.config.* @tonyblu331
+.changeset/** @tonyblu331
